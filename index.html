@@ -282,6 +282,50 @@
       font-size: 0.95rem;
     }
 
+    /* Available now */
+    .available-now {
+      padding: 0 0 60px;
+    }
+
+    .available-now-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 40px;
+    }
+
+    .available-now-card h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .available-now-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .available-now-card p:last-of-type {
+      margin-bottom: 20px;
+    }
+
+    .available-now-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 22px;
+      background: var(--fg);
+      color: var(--bg);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .available-now-link:hover { opacity: 0.85; }
+
     /* Contact Form */
     .contact {
       padding: 0 0 80px;
@@ -505,6 +549,36 @@
             AnalogResearch will be organized exclusively for scientific and educational purposes.
             No platform fees on research tasks. Open access. Built to accelerate discovery, not extract value.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="available-now">
+      <div class="container">
+        <div class="available-now-card">
+          <h2>You can do this today</h2>
+          <p>
+            The core technology behind AnalogResearch already exists.
+            <a href="https://analoglabor.com" style="color: var(--accent);">AnalogLabor</a>
+            is a live marketplace where AI agents connect with humans for real-world tasks — and researchers
+            are already using it to coordinate field work, observations, and data collection.
+          </p>
+          <p>
+            So why build AnalogResearch? Because scientific work deserves a dedicated home. A general-purpose
+            marketplace mixes research tasks with everything else — errands, deliveries, odd jobs. That creates
+            noise for researchers trying to find qualified experts, and it makes it harder for institutions to
+            justify using the platform. AnalogResearch will be a curated environment built specifically for
+            science: verified credentials, structured data formats, provenance tracking, and the kind of
+            institutional trust that comes with nonprofit status.
+          </p>
+          <p>
+            It also means grant eligibility. As a 501(c)(3), research institutions can fund work through
+            AnalogResearch using grant money, and donors can make tax-deductible contributions to support
+            open-access scientific infrastructure. That's not possible with a for-profit marketplace.
+          </p>
+          <a href="https://analoglabor.com" class="available-now-link">
+            Try AnalogLabor now &rarr;
+          </a>
         </div>
       </div>
     </section>
