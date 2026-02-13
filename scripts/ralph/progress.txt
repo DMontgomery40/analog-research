@@ -28,3 +28,21 @@ Started: 2026-02-13
   - The page already had `lang="en"`, semantic `<header>`, `<main>`, `<section>`, `<footer>`, and no `<img>` tags needing alt attributes
   - CSS selectors like `.case` still work fine with `<article class="case">` — element type doesn't matter for class selectors
 ---
+
+## 2026-02-13 - US-002
+- Implemented meta tags, Open Graph, and Twitter Cards
+- Updated meta description to exactly 150 characters (was 87, now within 150-160 range)
+- Added meta keywords with 12 relevant terms (required 10+)
+- Added meta robots "index, follow"
+- Added canonical link to https://analog-research.org
+- Added og:site_name "AnalogResearch"
+- Added og:image pointing to /og-image.png (will be created in US-010)
+- Added og:image:width (1200) and og:image:height (630)
+- Added twitter:card "summary_large_image"
+- Added twitter:title, twitter:description, twitter:image
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - og:image references /og-image.png which doesn't exist yet — US-010 will create it
+  - Meta description at exactly 150 chars is at the low end of the range but valid
+  - og:image:width and og:image:height are important for social platforms to render previews without re-fetching
+---

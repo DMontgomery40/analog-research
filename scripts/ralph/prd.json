@@ -44,7 +44,7 @@
         "meta robots content is 'index, follow'"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
