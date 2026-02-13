@@ -59,7 +59,7 @@
         "netlify.toml includes custom header for X-Robots-Tag: index, follow"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
