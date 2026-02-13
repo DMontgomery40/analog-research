@@ -11,3 +11,20 @@ Started: 2026-02-13
 - David's GitHub: https://github.com/DMontgomery40
 - These should be embedded tastefully in footer and JSON-LD, not plastered everywhere
 ---
+
+## 2026-02-13 - US-001
+- Implemented semantic HTML and structured data foundation
+- Changed h1 to include primary keyword "agentic research"
+- Added `<nav>` element in header with aria-label
+- Added `aria-hidden="true"` to decorative logo icon
+- Added `aria-labelledby` with matching IDs to all 7 sections
+- Converted use case divs to `<article>` elements
+- Added JSON-LD Organization block (name, url, description, founder with sameAs, foundingDate, nonprofitStatus 501(c)(3), additionalType NonprofitType)
+- Added JSON-LD WebSite block (name, url, description)
+- Both JSON-LD blocks validated as valid JSON
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - `replace_all` is dangerous with partial class name matches (e.g. "case" matched "cases" and "case-icon") — use more specific strings or do targeted replacements
+  - The page already had `lang="en"`, semantic `<header>`, `<main>`, `<section>`, `<footer>`, and no `<img>` tags needing alt attributes
+  - CSS selectors like `.case` still work fine with `<article class="case">` — element type doesn't matter for class selectors
+---
