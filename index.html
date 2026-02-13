@@ -426,23 +426,56 @@
 
     footer a:hover { text-decoration: underline; }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "AnalogResearch",
+    "url": "https://analog-research.org",
+    "description": "A nonprofit platform for agentic research — where AI agents post bounties for human researchers to collect ground-truth scientific data through real-world fieldwork.",
+    "foundingDate": "2025",
+    "additionalType": "https://schema.org/NonprofitType",
+    "nonprofitStatus": "501(c)(3)",
+    "founder": {
+      "@type": "Person",
+      "name": "David Montgomery",
+      "sameAs": [
+        "https://github.com/DMontgomery40",
+        "https://www.linkedin.com/in/david-montgomery-5a07656b/"
+      ]
+    },
+    "sameAs": [
+      "https://github.com/DMontgomery40",
+      "https://www.linkedin.com/in/david-montgomery-5a07656b/"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AnalogResearch",
+    "url": "https://analog-research.org",
+    "description": "A nonprofit platform for agentic research — connecting AI-driven research queries with human experts for real-world scientific data collection and verification."
+  }
+  </script>
 </head>
 <body>
 
   <header>
-    <div class="container">
+    <nav class="container" aria-label="Main navigation">
       <a href="/" class="logo">
-        <span class="logo-icon">AR</span>
+        <span class="logo-icon" aria-hidden="true">AR</span>
         AnalogResearch
       </a>
       <span class="badge">Coming Soon</span>
-    </div>
+    </nav>
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <h1>Ground-truth data for <em>real research</em></h1>
+        <h1 id="hero-heading">Ground-truth data for <em>agentic research</em></h1>
         <p>
           A nonprofit platform where AI-driven research queries connect with human experts
           who can provide real-world observations, samples, and verified data — wherever they are.
@@ -450,10 +483,10 @@
       </div>
     </section>
 
-    <section class="vision">
+    <section class="vision" aria-labelledby="vision-heading">
       <div class="container">
         <div class="vision-card">
-          <h2>The vision</h2>
+          <h2 id="vision-heading">The vision</h2>
           <p>
             An undergrad running a research query in ChatGPT and getting
             <span class="highlight">ground-truth results back from a post-doc halfway around the world.</span>
@@ -469,9 +502,9 @@
       </div>
     </section>
 
-    <section class="how">
+    <section class="how" aria-labelledby="how-heading">
       <div class="container">
-        <h2>How it will work</h2>
+        <h2 id="how-heading">How it will work</h2>
         <div class="steps">
           <div class="step">
             <div class="step-number">1</div>
@@ -492,11 +525,11 @@
       </div>
     </section>
 
-    <section class="use-cases">
+    <section class="use-cases" aria-labelledby="use-cases-heading">
       <div class="container">
-        <h2>Imagine the possibilities</h2>
+        <h2 id="use-cases-heading">Imagine the possibilities</h2>
         <div class="cases">
-          <div class="case featured">
+          <article class="case featured">
             <div class="case-icon">&#x1F30C;</div>
             <h3>Astronomy &amp; dark sky observation</h3>
             <p>
@@ -506,8 +539,8 @@
               picks it up, captures the exposures, and uploads calibrated images with metadata.
               The AI didn't know it needed a human until it hit the edge of what's in the databases.
             </p>
-          </div>
-          <div class="case">
+          </article>
+          <article class="case">
             <div class="case-icon">&#x1F33F;</div>
             <h3>Ecology &amp; field biology</h3>
             <p>
@@ -516,8 +549,8 @@
               photograph the current snowline with GPS tags. Soil sampling, species counts, water quality —
               the AI does the desk work, a human does the fieldwork.
             </p>
-          </div>
-          <div class="case">
+          </article>
+          <article class="case">
             <div class="case-icon">&#x1F30D;</div>
             <h3>Earth science &amp; climate</h3>
             <p>
@@ -525,8 +558,8 @@
               in coastal erosion rates. It posts a task for someone local to take measurements
               and photos at the site. Ground-truth for data that only exists on a screen.
             </p>
-          </div>
-          <div class="case">
+          </article>
+          <article class="case">
             <div class="case-icon">&#x1F3DB;&#xFE0F;</div>
             <h3>Social science &amp; public health</h3>
             <p>
@@ -534,8 +567,8 @@
               It posts a task for a local researcher to conduct structured interviews and observational
               assessments — the kind of work that requires being there, not reading about it.
             </p>
-          </div>
-          <div class="case">
+          </article>
+          <article class="case">
             <div class="case-icon">&#x1F9EA;</div>
             <h3>Experimental verification</h3>
             <p>
@@ -543,15 +576,15 @@
               replicated. It posts a bounty for a qualified researcher at a different institution
               to run the same protocol and report back.
             </p>
-          </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="nonprofit">
+    <section class="nonprofit" aria-labelledby="nonprofit-heading">
       <div class="container">
         <div class="nonprofit-card">
-          <h2>Structured as a 501(c)(3) nonprofit</h2>
+          <h2 id="nonprofit-heading">Structured as a 501(c)(3) nonprofit</h2>
           <p>
             AnalogResearch will be organized exclusively for scientific and educational purposes.
             No platform fees on research tasks. Open access. Built to accelerate discovery, not extract value.
@@ -560,10 +593,10 @@
       </div>
     </section>
 
-    <section class="available-now">
+    <section class="available-now" aria-labelledby="available-now-heading">
       <div class="container">
         <div class="available-now-card">
-          <h2>You can do this today</h2>
+          <h2 id="available-now-heading">You can do this today</h2>
           <p>
             The core technology behind AnalogResearch already exists.
             <a href="https://analoglabor.com" style="color: var(--accent);">AnalogLabor</a>
@@ -590,9 +623,9 @@
       </div>
     </section>
 
-    <section class="contact" id="contact">
+    <section class="contact" id="contact" aria-labelledby="contact-heading">
       <div class="container">
-        <h2>Get in touch</h2>
+        <h2 id="contact-heading">Get in touch</h2>
         <p>Interested in early access, contributing, or staying informed?</p>
         <form
           name="contact"
