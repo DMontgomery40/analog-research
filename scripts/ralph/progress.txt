@@ -171,3 +171,25 @@ Started: 2026-02-13
   - FAQ JSON-LD must exactly match visible page content — Google will not show rich results if there's a mismatch
   - `replace_all` worked well here because the answer text was identical in both HTML and JSON-LD (by design)
 ---
+
+## 2026-02-13 - US-010
+- Implemented OG image generation for social sharing
+- Created `og-image.svg` — a 1200x630 branded card with:
+  - Dark background (#0c0a09 → #1c1917 gradient) matching dark mode palette
+  - AR logo mark (teal rounded square) + "AnalogResearch" text
+  - Main headline: "Ground-truth data for *agentic research*" with accent color
+  - Tagline: "AI posts bounties. Humans collect data. Science advances."
+  - 501(c)(3) Nonprofit badge
+  - analog-research.org URL
+  - Decorative concentric circles and accent dots as visual elements
+  - Subtle diagonal grid pattern for depth
+- Created `og-image.png` (1200x630) by converting SVG via macOS qlmanage + sips
+- Created `og-image.html` — preview page that renders the SVG at 1200x630 for visual inspection
+- Meta tags og:image, og:image:width, og:image:height, and twitter:image were already set correctly from US-002
+- Files changed: og-image.svg (new), og-image.png (new), og-image.html (new), scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - macOS `qlmanage -t -s 1200` renders SVGs as square thumbnails regardless of viewBox — need `sips -z` to resize to correct dimensions afterward
+  - Most social platforms (Facebook, Twitter, LinkedIn) require PNG/JPG for og:image — SVG alone is not sufficient
+  - The SVG uses system font stack (`-apple-system, BlinkMacSystemFont, ...`) which renders correctly on macOS but may vary on other OS — acceptable for OG images since the PNG is the canonical version
+  - Brand colors from the site's CSS custom properties were reused directly in the SVG for consistency
+---

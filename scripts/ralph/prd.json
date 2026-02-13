@@ -180,7 +180,7 @@
         "Image includes: AnalogResearch logo/text, tagline, and visual element"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "For a static site without a build step, create the OG image as an SVG or use an HTML file that can be screenshotted. The simplest approach is a clean SVG with the brand colors."
     },
     {
