@@ -207,6 +207,56 @@
       color: var(--muted);
     }
 
+    /* Use cases */
+    .use-cases {
+      padding: 0 0 60px;
+    }
+
+    .use-cases h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .cases {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .cases { grid-template-columns: 1fr 1fr; }
+    }
+
+    .case {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .case-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .case h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .case p {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .case.featured {
+      border-color: var(--accent);
+      grid-column: 1 / -1;
+    }
+
     /* Nonprofit */
     .nonprofit {
       padding: 0 0 60px;
@@ -367,7 +417,7 @@
           <p>
             AnalogResearch connects AI systems with human researchers, field experts, and domain specialists
             for tasks that require physical presence, local knowledge, or specialized expertise that no model
-            can replicate — soil samples, wildlife observations, on-site measurements, patient interviews,
+            can replicate — dark sky observations, soil samples, wildlife surveys, on-site measurements,
             and hundreds of other research tasks that require a human in the loop.
           </p>
         </div>
@@ -392,6 +442,56 @@
             <div class="step-number">3</div>
             <h3>Verified results</h3>
             <p>Data flows back through structured formats with provenance tracking and quality validation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="use-cases">
+      <div class="container">
+        <h2>Imagine the possibilities</h2>
+        <div class="cases">
+          <div class="case featured">
+            <div class="case-icon">&#x1F30C;</div>
+            <h3>Astronomy &amp; dark sky observation</h3>
+            <p>
+              A transient event is flagged by a survey telescope — within minutes, an observer at a verified
+              dark sky site 6,000 miles away confirms the object visually and uploads calibrated images.
+              Ground-based follow-up for astronomical surveys, light pollution monitoring, meteor counts,
+              and variable star observations from distributed human observers worldwide.
+            </p>
+          </div>
+          <div class="case">
+            <div class="case-icon">&#x1F33F;</div>
+            <h3>Ecology &amp; field biology</h3>
+            <p>
+              Species counts, soil sampling, water quality testing, and phenology observations
+              from trained field researchers at specific GPS coordinates.
+            </p>
+          </div>
+          <div class="case">
+            <div class="case-icon">&#x1F30D;</div>
+            <h3>Earth science &amp; climate</h3>
+            <p>
+              Ground-truth validation for satellite data — snow depth measurements, coastal erosion
+              surveys, air quality readings from locations where sensors don't exist yet.
+            </p>
+          </div>
+          <div class="case">
+            <div class="case-icon">&#x1F3DB;&#xFE0F;</div>
+            <h3>Social science &amp; public health</h3>
+            <p>
+              On-the-ground interviews, community assessments, and observational studies
+              where local context and cultural fluency matter.
+            </p>
+          </div>
+          <div class="case">
+            <div class="case-icon">&#x1F9EA;</div>
+            <h3>Experimental verification</h3>
+            <p>
+              Independent replication of published results by qualified researchers
+              at different institutions and locations.
+            </p>
           </div>
         </div>
       </div>
