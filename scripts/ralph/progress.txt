@@ -1,0 +1,13 @@
+# Ralph Progress Log
+Started: 2026-02-13
+---
+## Codebase Patterns
+- This is a static HTML site on Netlify — no build step, no framework, no npm
+- All CSS is inline in index.html <style> block
+- Dark mode via prefers-color-scheme media query with CSS custom properties
+- Netlify Forms with data-netlify="true" and honeypot spam protection
+- netlify-forms.html exists as a standalone form detection file for Netlify's build bot
+- David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/
+- David's GitHub: https://github.com/DMontgomery40
+- These should be embedded tastefully in footer and JSON-LD, not plastered everywhere
+---

@@ -1,0 +1,220 @@
+{
+  "project": "analog-research-landing",
+  "branchName": "ralph/seo-nuclear",
+  "description": "SEO domination for analog-research.org — every technique humanly and non-humanly possible for a static Netlify landing page",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Semantic HTML and structured data foundation",
+      "description": "As a search engine crawler, I need proper semantic HTML5 elements and JSON-LD structured data so I can understand and rank this page correctly.",
+      "acceptanceCriteria": [
+        "All sections use semantic HTML5 elements (main, article, section, nav, header, footer, aside) instead of generic divs where appropriate",
+        "JSON-LD script block exists with @type Organization including name, url, description, founder, foundingDate, sameAs array",
+        "JSON-LD sameAs array includes https://github.com/DMontgomery40 and https://www.linkedin.com/in/david-montgomery-5a07656b/",
+        "JSON-LD script block exists with @type WebSite including name, url, description",
+        "JSON-LD script block exists with @type NonprofitType or additionalType 501c3 reference",
+        "h1 tag contains primary keyword 'agentic research'",
+        "Only ONE h1 tag exists on the page",
+        "h2 and h3 tags follow logical hierarchy with no skipped levels",
+        "All images (if any) have descriptive alt attributes",
+        "lang='en' attribute exists on html element"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Meta tags, Open Graph, and Twitter Cards",
+      "description": "As a social media platform and search engine, I need comprehensive meta tags so link previews and search snippets are compelling.",
+      "acceptanceCriteria": [
+        "meta description exists and is between 150-160 characters",
+        "meta keywords exists with at least 10 relevant terms including: agentic research, AI research, ground truth data, scientific discovery, 501c3, nonprofit, field research, dark sky observation, citizen science, human-AI collaboration",
+        "og:title exists and matches page title",
+        "og:description exists and is compelling",
+        "og:type is 'website'",
+        "og:url is https://analog-research.org",
+        "og:image exists pointing to a valid image URL (create an OG image or use a placeholder)",
+        "og:site_name is 'AnalogResearch'",
+        "twitter:card is 'summary_large_image'",
+        "twitter:title exists",
+        "twitter:description exists",
+        "twitter:image exists",
+        "canonical link tag points to https://analog-research.org",
+        "meta robots content is 'index, follow'"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Sitemap, robots.txt, and crawl optimization",
+      "description": "As a search engine bot, I need a sitemap and robots.txt to efficiently discover and crawl all pages.",
+      "acceptanceCriteria": [
+        "sitemap.xml exists in repo root with entries for / and /thank-you.html",
+        "sitemap.xml includes lastmod dates and priority values",
+        "robots.txt exists in repo root with Sitemap directive pointing to https://analog-research.org/sitemap.xml",
+        "robots.txt allows all crawlers with User-agent: *",
+        "netlify.toml includes custom header for X-Robots-Tag: index, follow"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Performance and Core Web Vitals optimization",
+      "description": "As Google's ranking algorithm, I reward pages with excellent Core Web Vitals scores.",
+      "acceptanceCriteria": [
+        "All CSS is inlined (no external stylesheet requests) — already true, verify it stays that way",
+        "No render-blocking JavaScript exists",
+        "Font-display: swap is set if any web fonts are loaded",
+        "meta viewport tag exists with width=device-width, initial-scale=1.0",
+        "Images (if any) have width and height attributes to prevent layout shift",
+        "Preconnect hints exist for any external domains (e.g., analoglabor.com)",
+        "netlify.toml includes Cache-Control headers for static assets",
+        "HTML is minified or at minimum has no unnecessary whitespace in production-critical areas"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Accessibility and mobile optimization",
+      "description": "As a search engine, I boost rankings for accessible, mobile-friendly pages.",
+      "acceptanceCriteria": [
+        "All form inputs have associated label elements with matching for/id attributes",
+        "All interactive elements have sufficient color contrast (WCAG AA — 4.5:1 for text)",
+        "Skip-to-content link exists as first focusable element",
+        "All sections have aria-labelledby or aria-label attributes",
+        "Form has aria-describedby for any help text",
+        "Focus styles are visible on all interactive elements",
+        "Touch targets are at least 44x44px on mobile",
+        "Page is fully usable at 320px viewport width"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Keyword-rich content optimization",
+      "description": "As a search engine, I need keyword-rich content that naturally covers the topic cluster for agentic research and AI-human scientific collaboration.",
+      "acceptanceCriteria": [
+        "Primary keyword 'agentic research' appears in: h1, first paragraph, at least one h2 or h3, and meta description",
+        "Secondary keywords appear naturally in body content: 'ground truth data', 'field research', 'AI research platform', 'scientific discovery', 'human-AI collaboration', 'citizen science'",
+        "Long-tail keywords appear in use case descriptions: 'dark sky observation', 'astronomical survey', 'soil sampling', 'ecological fieldwork', 'climate data collection'",
+        "Content length is at least 800 words of visible text (excluding HTML/CSS)",
+        "Each use case section contains at least 40 words",
+        "Internal link to analoglabor.com exists with descriptive anchor text (not 'click here')",
+        "No keyword stuffing — keywords read naturally in context"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Footer links, author attribution, and E-E-A-T signals",
+      "description": "As Google's quality raters, I look for Experience, Expertise, Authoritativeness, and Trustworthiness signals.",
+      "acceptanceCriteria": [
+        "Footer contains link to AnalogLabor with rel='noopener' attribute",
+        "Footer contains a 'Founded by David Montgomery' credit with link to https://www.linkedin.com/in/david-montgomery-5a07656b/",
+        "Footer contains link to https://github.com/DMontgomery40 with text like 'Open Source' or 'GitHub'",
+        "LinkedIn and GitHub links have rel='noopener me' attributes for rel-me verification",
+        "JSON-LD founder object includes sameAs array with LinkedIn and GitHub URLs",
+        "501(c)(3) status is mentioned prominently as a trust signal",
+        "Contact form exists as a trust signal (already present)",
+        "Copyright notice exists with current year"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/ — David's GitHub: https://github.com/DMontgomery40 — These must be embedded tastefully, not spammy. E-E-A-T signals matter for Google quality scoring."
+    },
+    {
+      "id": "US-008",
+      "title": "Netlify SEO headers and redirects",
+      "description": "As a search engine, I need proper HTTP headers and redirects to understand canonical URLs and caching.",
+      "acceptanceCriteria": [
+        "netlify.toml has redirect from www.analog-research.org to analog-research.org with 301 status",
+        "netlify.toml has redirect from http to https with 301 status (Netlify does this by default but be explicit)",
+        "netlify.toml custom headers include X-Content-Type-Options: nosniff",
+        "netlify.toml custom headers include Strict-Transport-Security with max-age of at least 31536000",
+        "netlify.toml custom headers include Content-Security-Policy that allows inline styles",
+        "netlify.toml has Cache-Control header for HTML files: public, max-age=0, must-revalidate",
+        "netlify.toml has Cache-Control header for static assets: public, max-age=31536000, immutable"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "FAQ section with FAQ schema markup",
+      "description": "As Google Search, I can display FAQ rich results which dramatically increase click-through rates.",
+      "acceptanceCriteria": [
+        "FAQ section exists on the page with at least 5 questions and answers",
+        "FAQ questions cover: What is AnalogResearch, How does agentic research work, Who can participate, Is AnalogResearch a nonprofit, How is this different from citizen science",
+        "JSON-LD FAQPage schema markup exists matching the visible FAQ content exactly",
+        "FAQ section uses details/summary HTML elements or equivalent accessible pattern",
+        "FAQ content includes relevant keywords naturally",
+        "FAQ section has an h2 heading"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "OG image generation",
+      "description": "As a social media platform, I need a compelling OG image so link shares look professional.",
+      "acceptanceCriteria": [
+        "og-image.html file exists that renders a 1200x630 card with AnalogResearch branding",
+        "og-image.png or og-image.svg exists as a static fallback (can be a simple branded card)",
+        "og:image meta tag points to https://analog-research.org/og-image.png",
+        "og:image:width is 1200",
+        "og:image:height is 630",
+        "twitter:image points to same image",
+        "Image includes: AnalogResearch logo/text, tagline, and visual element"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "For a static site without a build step, create the OG image as an SVG or use an HTML file that can be screenshotted. The simplest approach is a clean SVG with the brand colors."
+    },
+    {
+      "id": "US-011",
+      "title": "Humans.txt and security.txt",
+      "description": "As a thorough SEO audit, every signal matters — including humans.txt for authorship and security.txt for trust.",
+      "acceptanceCriteria": [
+        "humans.txt exists with team info (David Montgomery, founder, link to LinkedIn and GitHub)",
+        "security.txt exists at /.well-known/security.txt with contact email and preferred-languages",
+        "netlify.toml redirects /.well-known/security.txt to /security.txt if needed",
+        "Both files are referenced in HTML comments or link tags where appropriate"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Final SEO audit and verification",
+      "description": "As a QA engineer, I need to verify all SEO elements are correctly implemented and no regressions exist.",
+      "acceptanceCriteria": [
+        "All JSON-LD blocks are valid JSON (parse with jq or JSON.parse)",
+        "No duplicate meta tags exist",
+        "No broken internal links (all href values resolve to existing files)",
+        "HTML is valid (no unclosed tags, no duplicate IDs)",
+        "All files referenced in meta tags exist in the repo (og-image, sitemap, robots.txt, etc.)",
+        "Page still renders correctly with dark mode (prefers-color-scheme: dark)",
+        "Contact form still has data-netlify='true' and honeypot attributes",
+        "Total page weight is under 100KB",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
