@@ -147,7 +147,7 @@
         "netlify.toml has Cache-Control header for static assets: public, max-age=31536000, immutable"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
