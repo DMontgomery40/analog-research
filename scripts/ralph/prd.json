@@ -130,7 +130,7 @@
         "Copyright notice exists with current year"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/ — David's GitHub: https://github.com/DMontgomery40 — These must be embedded tastefully, not spammy. E-E-A-T signals matter for Google quality scoring."
     },
     {

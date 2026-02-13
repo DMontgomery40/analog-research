@@ -438,6 +438,24 @@
 
     footer a:hover { text-decoration: underline; }
 
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-separator {
+      color: var(--border);
+    }
+
     /* Skip to content link */
     .skip-link {
       position: absolute;
@@ -798,9 +816,18 @@
 
   <footer>
     <div class="container">
+      <div class="footer-links">
+        <a href="https://analoglabor.com" rel="noopener">AnalogLabor</a>
+        <span class="footer-separator" aria-hidden="true">·</span>
+        <a href="https://github.com/DMontgomery40" rel="noopener me">GitHub</a>
+        <span class="footer-separator" aria-hidden="true">·</span>
+        <a href="https://www.linkedin.com/in/david-montgomery-5a07656b/" rel="noopener me">LinkedIn</a>
+      </div>
       <p>
-        A project by <a href="https://analoglabor.com">AnalogLabor</a>
+        Founded by <a href="https://www.linkedin.com/in/david-montgomery-5a07656b/" rel="noopener me">David Montgomery</a>
+        · A 501(c)(3) nonprofit
       </p>
+      <p>&copy; 2025–2026 AnalogResearch. All rights reserved.</p>
     </div>
   </footer>
 
