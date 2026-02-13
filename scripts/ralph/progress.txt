@@ -134,3 +134,20 @@ Started: 2026-02-13
   - Footer E-E-A-T signals are low-effort, high-impact for Google quality scoring
   - Using `aria-hidden="true"` on decorative separators (·) keeps screen reader output clean
 ---
+
+## 2026-02-13 - US-008
+- Implemented Netlify SEO headers and redirects
+- Added `[[redirects]]` for www.analog-research.org → analog-research.org with 301 status and `force = true`
+- HTTP→HTTPS redirect is handled automatically by Netlify at the CDN edge (cannot be configured in netlify.toml)
+- Added `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` header — HSTS is the explicit enforcement mechanism for HTTPS
+- Added `Content-Security-Policy` header: `default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'`
+- X-Content-Type-Options: nosniff was already present from US-003
+- Cache-Control headers for HTML and static assets were already present from US-004
+- Files changed: netlify.toml, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Netlify's HTTP→HTTPS redirect happens at the edge before `netlify.toml` is evaluated — you can't configure it in redirects
+  - HSTS with `preload` is the strongest way to enforce HTTPS — browsers will refuse to even attempt HTTP connections
+  - CSP needs `'unsafe-inline'` for `style-src` when all CSS is inline (our architecture choice) — this is a reasonable tradeoff for a static site with no user-generated content
+  - CSP `img-src 'self' data:` is needed because the favicon uses a `data:` URI
+  - `force = true` on Netlify redirects ensures the redirect takes precedence over existing files (important for www→apex)
+---
