@@ -77,7 +77,7 @@
         "HTML is minified or at minimum has no unnecessary whitespace in production-critical areas"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {

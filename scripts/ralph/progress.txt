@@ -58,3 +58,20 @@ Started: 2026-02-13
   - thank-you.html gets low priority (0.3) since it's a form submission confirmation, not a landing page
   - robots.txt Allow: / is technically redundant (everything is allowed by default) but makes intent explicit
 ---
+
+## 2026-02-13 - US-004
+- Implemented Performance and Core Web Vitals optimization
+- Verified all CSS is inline (no external stylesheets) — already true
+- Verified no render-blocking JavaScript exists — only JSON-LD data blocks
+- No web fonts loaded (system font stack) — font-display: swap not needed
+- Verified meta viewport already has width=device-width, initial-scale=1.0
+- No <img> tags on page — no width/height attributes needed
+- Added `<link rel="preconnect">` and `<link rel="dns-prefetch">` for analoglabor.com
+- Added Cache-Control headers to netlify.toml: HTML files get `public, max-age=0, must-revalidate`, static assets (.png, .svg, .ico) get `public, max-age=31536000, immutable`, XML/txt configs get `public, max-age=3600`
+- Files changed: index.html, netlify.toml
+- **Learnings for future iterations:**
+  - Most CWV criteria were already satisfied by the existing architecture (inline CSS, system fonts, no images, no blocking JS)
+  - The main additions needed were preconnect hints and cache headers
+  - dns-prefetch is a good fallback for browsers that don't support preconnect
+  - Netlify header rules use glob patterns — `/*.html` matches HTML files at root level
+---
