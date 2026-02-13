@@ -30,7 +30,7 @@
       --bg: #fafaf9;
       --fg: #1c1917;
       --muted: #78716c;
-      --accent: #0d9488;
+      --accent: #0f766e;
       --accent-light: #ccfbf1;
       --border: #e7e5e4;
       --card-bg: #ffffff;
@@ -395,7 +395,6 @@
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
-      outline: none;
       border-color: var(--accent);
     }
 
@@ -438,6 +437,106 @@
     }
 
     footer a:hover { text-decoration: underline; }
+
+    /* Skip to content link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      background: var(--accent);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 0 0 8px 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      z-index: 100;
+      transition: top 0.15s;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* Focus styles */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .form-group input:focus-visible,
+    .form-group select:focus-visible,
+    .form-group textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 0;
+      border-color: var(--accent);
+    }
+
+    /* Touch targets — minimum 44x44px */
+    .form-submit {
+      min-height: 44px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      min-height: 44px;
+    }
+
+    .available-now-link {
+      min-height: 44px;
+    }
+
+    .logo {
+      min-height: 44px;
+    }
+
+    /* Dark mode: ensure button and logo text contrast */
+    @media (prefers-color-scheme: dark) {
+      .form-submit {
+        color: #042f2e;
+      }
+
+      .skip-link {
+        color: #042f2e;
+      }
+
+      .logo-icon {
+        color: #042f2e;
+      }
+    }
+
+    /* 320px viewport support */
+    @media (max-width: 359px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .vision-card,
+      .available-now-card {
+        padding: 24px 20px;
+      }
+
+      .nonprofit-card {
+        padding: 24px 20px;
+      }
+
+      .contact-form {
+        padding: 24px 20px;
+      }
+
+      header .container {
+        gap: 8px;
+      }
+
+      .hero {
+        padding: 48px 0 40px;
+      }
+
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -475,6 +574,8 @@
 </head>
 <body>
 
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
   <header>
     <nav class="container" aria-label="Main navigation">
       <a href="/" class="logo">
@@ -485,7 +586,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
         <h1 id="hero-heading">Ground-truth data for <em>agentic research</em></h1>
@@ -639,7 +740,7 @@
     <section class="contact" id="contact" aria-labelledby="contact-heading">
       <div class="container">
         <h2 id="contact-heading">Get in touch</h2>
-        <p>Interested in early access, contributing, or staying informed?</p>
+        <p id="contact-help">Interested in early access, contributing, or staying informed?</p>
         <form
           name="contact"
           method="POST"
@@ -647,6 +748,7 @@
           netlify-honeypot="bot-field"
           action="/thank-you.html"
           class="contact-form"
+          aria-describedby="contact-help"
         >
           <input type="hidden" name="form-name" value="contact" />
           <p class="honeypot">
