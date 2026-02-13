@@ -151,3 +151,23 @@ Started: 2026-02-13
   - CSP `img-src 'self' data:` is needed because the favicon uses a `data:` URI
   - `force = true` on Netlify redirects ensures the redirect takes precedence over existing files (important for www→apex)
 ---
+
+## 2026-02-13 - US-009
+- Implemented FAQ section with FAQ schema markup for rich results
+- Added 5 questions with `<details>/<summary>` accessible accordion pattern:
+  1. What is AnalogResearch?
+  2. How does agentic research work?
+  3. Who can participate as a researcher?
+  4. Is AnalogResearch a nonprofit?
+  5. How is this different from citizen science?
+- Added CSS for FAQ section: card-style details elements, custom +/− markers, accent border on open state, 44px min-height touch targets on summaries
+- Added JSON-LD FAQPage schema with all 5 questions — text matches visible content exactly (required for rich results eligibility)
+- FAQ content includes keywords naturally: agentic research, field research, citizen science, human-AI collaboration, ground-truth, 501(c)(3), dark sky
+- FAQ placed between "available-now" and "contact" sections for natural reading flow
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - `<details>/<summary>` is the best semantic HTML pattern for FAQs — accessible by default, no JS needed
+  - `summary::-webkit-details-marker { display: none; }` removes the default disclosure triangle in Chrome/Safari so you can use custom markers
+  - FAQ JSON-LD must exactly match visible page content — Google will not show rich results if there's a mismatch
+  - `replace_all` worked well here because the answer text was identical in both HTML and JSON-LD (by design)
+---

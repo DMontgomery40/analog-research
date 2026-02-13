@@ -163,7 +163,7 @@
         "FAQ section has an h2 heading"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
