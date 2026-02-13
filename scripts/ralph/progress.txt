@@ -75,3 +75,43 @@ Started: 2026-02-13
   - dns-prefetch is a good fallback for browsers that don't support preconnect
   - Netlify header rules use glob patterns — `/*.html` matches HTML files at root level
 ---
+
+## 2026-02-13 - US-005
+- Implemented accessibility and mobile optimization
+- Added skip-to-content link as first focusable element (`<a href="#main-content">`) with `id="main-content"` on `<main>`
+- Fixed color contrast for WCAG AA compliance:
+  - Light mode accent changed from `#0d9488` (3.59:1) to `#0f766e` (5.24:1 on bg, 5.47:1 on white)
+  - Dark mode: submit button and skip-link text changed to `#042f2e` on `#2dd4bf` (7.77:1)
+  - Dark mode: logo-icon text changed to `#042f2e` for contrast on teal background
+- Added `*:focus-visible` styles with 2px solid accent outline for all interactive elements
+- Removed `outline: none` from form `:focus` (was hiding browser focus rings)
+- Added `min-height: 44px` for touch targets on form inputs, submit button, available-now-link, and logo
+- Added `aria-describedby="contact-help"` on form, with `id="contact-help"` on the help text paragraph
+- Added `@media (max-width: 359px)` breakpoint for 320px viewport: reduced padding, smaller hero text
+- All sections already had `aria-labelledby` from US-001
+- All form inputs already had matching `label[for]` / `input[id]` pairs
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18pt+ or 14pt+ bold)
+  - `#0d9488` (Tailwind teal-600) fails WCAG AA on white backgrounds — `#0f766e` (Tailwind teal-700) passes
+  - `focus-visible` is better than `focus` for keyboard accessibility — it doesn't trigger on mouse clicks
+  - Decorative elements with `aria-hidden="true"` are exempt from contrast requirements, but still good to fix
+  - The `available-now-link` uses `var(--fg)` bg with `var(--bg)` text which auto-inverts in dark mode — good pattern
+---
+
+## 2026-02-13 - US-006
+- Implemented keyword-rich content optimization
+- Added "agentic research" to first paragraph (hero subtitle) and vision h2 heading (was already in h1 and meta description)
+- Inserted secondary keywords naturally: "AI research platform" in vision, "citizen science" + "human-AI collaboration" + "scientific discovery" in new vision paragraph, "field research" in hero and how-it-works
+- Added long-tail keywords to use cases: "astronomical survey" in astronomy, "ecological fieldwork" in ecology heading+body, "climate data collection" in earth science heading+body
+- Expanded content from 681 to 816 visible words (requirement: 800+)
+- All 5 use cases now over 40 words (smallest: social science at 48 words)
+- Updated analoglabor.com link anchor text to descriptive "AnalogLabor, the AI-human task marketplace"
+- Added a new third paragraph to vision section about human-AI collaboration closing the research loop
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - "ground-truth" (hyphenated) is the standard academic usage — both forms are valid for SEO
+  - Adding keywords to h2/h3 headings is a high-impact SEO signal that's easy to miss
+  - The vision section was the best place for a new paragraph since it's the narrative heart of the page
+  - Use case headings are great SEO real estate — changing "Ecology & field biology" to "Ecological fieldwork & biology" hits a target keyword naturally
+---
