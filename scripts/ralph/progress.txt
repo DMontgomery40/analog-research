@@ -115,3 +115,22 @@ Started: 2026-02-13
   - The vision section was the best place for a new paragraph since it's the narrative heart of the page
   - Use case headings are great SEO real estate — changing "Ecology & field biology" to "Ecological fieldwork & biology" hits a target keyword naturally
 ---
+
+## 2026-02-13 - US-007
+- Implemented footer links, author attribution, and E-E-A-T signals
+- Expanded footer from single "A project by AnalogLabor" line to full E-E-A-T footer
+- Added footer links row: AnalogLabor (rel="noopener"), GitHub (rel="noopener me"), LinkedIn (rel="noopener me")
+- Added "Founded by David Montgomery" with LinkedIn link (rel="noopener me")
+- Added "A 501(c)(3) nonprofit" trust signal in footer
+- Added copyright notice: © 2025–2026 AnalogResearch
+- Added CSS for `.footer-links` flexbox layout and `.footer-separator` styling
+- JSON-LD founder sameAs array already had both LinkedIn and GitHub URLs from US-001
+- Contact form already present from original site
+- 501(c)(3) already mentioned prominently in nonprofit section
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - `rel="me"` is important for IndieWeb/rel-me verification — helps Google connect author identity across platforms
+  - `rel="noopener"` should always be on external links for security (prevents window.opener access)
+  - Footer E-E-A-T signals are low-effort, high-impact for Google quality scoring
+  - Using `aria-hidden="true"` on decorative separators (·) keeps screen reader output clean
+---
