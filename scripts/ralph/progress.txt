@@ -46,3 +46,15 @@ Started: 2026-02-13
   - Meta description at exactly 150 chars is at the low end of the range but valid
   - og:image:width and og:image:height are important for social platforms to render previews without re-fetching
 ---
+
+## 2026-02-13 - US-003
+- Implemented sitemap, robots.txt, and crawl optimization
+- Created sitemap.xml with entries for / (priority 1.0) and /thank-you.html (priority 0.3), both with lastmod dates
+- Created robots.txt with User-agent: *, Allow: /, and Sitemap directive pointing to https://analog-research.org/sitemap.xml
+- Added X-Robots-Tag: index, follow header to netlify.toml
+- Files changed: sitemap.xml (new), robots.txt (new), netlify.toml
+- **Learnings for future iterations:**
+  - Netlify serves files from the publish directory root, so sitemap.xml and robots.txt just go in the repo root
+  - thank-you.html gets low priority (0.3) since it's a form submission confirmation, not a landing page
+  - robots.txt Allow: / is technically redundant (everything is allowed by default) but makes intent explicit
+---
