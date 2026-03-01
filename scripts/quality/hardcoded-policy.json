@@ -1,0 +1,58 @@
+{
+  "scanExtensions": [".ts", ".tsx", ".js", ".mjs", ".cjs", ".sql", ".sh"],
+  "ignorePathRegex": [
+    "^node_modules/",
+    "^apps/web/\\.next/",
+    "^apps/web/\\.netlify/",
+    "^packages/.*/dist/",
+    "^coverage/",
+    "^docs/",
+    "^scripts/ralph/",
+    "^tests/",
+    "^\\.tests/",
+    "\\.d\\.ts$",
+    "\\.test\\.(ts|tsx|js|mjs|cjs)$",
+    "\\.spec\\.(ts|tsx|js|mjs|cjs)$"
+  ],
+  "secretPatterns": [
+    {
+      "name": "Stripe live secret key",
+      "regex": "\\bsk_live_[A-Za-z0-9]{16,}\\b"
+    },
+    {
+      "name": "Stripe restricted live key",
+      "regex": "\\brk_live_[A-Za-z0-9]{16,}\\b"
+    },
+    {
+      "name": "AnalogLabor live API key literal",
+      "regex": "\\bal_live_[a-z0-9]{20,}\\b"
+    },
+    {
+      "name": "Legacy AnalogLabor API key literal",
+      "regex": "\\banaloglabor_[a-f0-9]{20,}\\b"
+    },
+    {
+      "name": "AWS access key",
+      "regex": "\\bAKIA[0-9A-Z]{16}\\b"
+    },
+    {
+      "name": "GitHub personal access token",
+      "regex": "\\b(?:ghp|github_pat)_[A-Za-z0-9_]{20,}\\b"
+    },
+    {
+      "name": "Slack token",
+      "regex": "\\bxox[baprs]-[A-Za-z0-9-]{10,}\\b"
+    },
+    {
+      "name": "Hardcoded Postgres connection string",
+      "regex": "postgres(?:ql)?:\\/\\/[^\\s'\"`]+"
+    }
+  ],
+  "forbiddenAssignments": [
+    {
+      "name": "Hardcoded platform fee bps",
+      "regex": "\\bconst\\s+PLATFORM_FEE_BPS\\s*=\\s*\\d+\\b",
+      "message": "Use COINBASE_COMMERCE_PLATFORM_FEE_BPS env configuration instead of hardcoding the fee."
+    }
+  ]
+}

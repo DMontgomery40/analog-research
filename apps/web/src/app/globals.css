@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 30% 97%;
+    --foreground: 220 28% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 28% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 28% 14%;
+    --primary: 201 86% 35%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 212 28% 92%;
+    --secondary-foreground: 220 24% 18%;
+    --muted: 212 28% 92%;
+    --muted-foreground: 218 12% 38%;
+    --accent: 204 30% 89%;
+    --accent-foreground: 220 24% 18%;
+    --destructive: 0 78% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 23% 84%;
+    --input: 214 23% 84%;
+    --ring: 201 86% 35%;
+    --radius: 0.28rem;
+  }
+
+  .dark {
+    --background: 220 26% 10%;
+    --foreground: 210 25% 94%;
+    --card: 220 23% 13%;
+    --card-foreground: 210 25% 94%;
+    --popover: 220 23% 13%;
+    --popover-foreground: 210 25% 94%;
+    --primary: 201 72% 58%;
+    --primary-foreground: 219 38% 8%;
+    --secondary: 220 18% 19%;
+    --secondary-foreground: 210 24% 92%;
+    --muted: 220 18% 19%;
+    --muted-foreground: 214 12% 70%;
+    --accent: 220 18% 19%;
+    --accent-foreground: 210 24% 92%;
+    --destructive: 0 73% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 26%;
+    --input: 220 14% 26%;
+    --ring: 201 72% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background-image:
+      radial-gradient(circle at 100% 0%, hsl(var(--primary) / 0.08), transparent 28rem),
+      radial-gradient(circle at 0% 15%, hsl(var(--accent) / 0.6), transparent 24rem);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .clinical-panel {
+    @apply rounded-md border border-border bg-card shadow-sm;
+  }
+
+  .clinical-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground;
+  }
+}

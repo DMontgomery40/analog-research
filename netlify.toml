@@ -1,50 +1,60 @@
 [build]
-  publish = "."
+  command = "pnpm install && pnpm turbo build --filter=./apps/web"
+  publish = "apps/web/.next"
 
-# Redirects — www to apex and trailing slash normalization
-[[redirects]]
-  from = "https://www.analog-research.org/*"
-  to = "https://analog-research.org/:splat"
-  status = 301
-  force = true
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
-# Security and SEO headers
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_USE_NETLIFY_EDGE = "true"
+
+[dev]
+  command = "pnpm --filter ./apps/web dev"
+  targetPort = 3000
+  autoLaunch = true
+
+# Global SEO/security headers
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Robots-Tag = "index, follow"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'"
-
-[[headers]]
-  for = "/*.html"
-  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Next.js build assets - long-lived immutable caching
 [[headers]]
-  for = "/sitemap.xml"
-  [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
-
-[[headers]]
-  for = "/robots.txt"
-  [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
-
-[[headers]]
-  for = "/*.png"
+  for = "/_next/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# API subdomain CORS headers
 [[headers]]
-  for = "/*.svg"
+  for = "/api/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PATCH, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, X-API-Key, Authorization"
+    X-Robots-Tag = "noindex"
+
+# OpenAPI spec - serve from public folder
+[[headers]]
+  for = "/openapi.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Cache-Control = "public, max-age=3600"
+
+# llms.txt caching
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
 
 [[headers]]
-  for = "/*.ico"
+  for = "/.well-known/llms.txt"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+# NOTE: supabase.analog-research.org proxy is handled in proxy.ts
+# Netlify redirects with Host conditions don't work with Next.js runtime

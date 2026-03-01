@@ -1,0 +1,634 @@
+[
+  {
+    "id": "TC001",
+    "title": "Create human profile successfully",
+    "description": "Verify that a logged-in human user can create a detailed profile with all required and optional fields including name, bio, avatar_url, location, timezone, skills, rate_min, rate_max, and availability.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as a human user"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/humans with valid profile data including name and other optional fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 201 Created response"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the returned profile data matches the sent data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the profile is stored and retrievable via GET /api/v1/humans/[id]"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Prevent duplicate human profile creation",
+    "description": "Verify that creating a human profile when one already exists returns a 409 Conflict response.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as a human user with an existing profile"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/humans with profile data"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 409 Conflict response indicating profile already exists"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Search human profiles with all filters",
+    "description": "Verify that searching humans supports filtering by skill, skills (multiple), search term, min_rate, max_rate, available_day, location, min_rating, verified status, and pagination parameters.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/humans with various combinations of filters and pagination parameters"
+      },
+      {
+        "type": "assertion",
+        "description": "Response code is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Returned list matches filter criteria respectively for each parameter"
+      },
+      {
+        "type": "assertion",
+        "description": "Result list is paginated and respects limit and offset parameters"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Create bounty successfully by authenticated Molty",
+    "description": "Verify that an authenticated Molty can create a task bounty with title, description, budget_min/max, skills_required, deadline, and spots_available.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty via API key"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/bounties with complete bounty data"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 201 Created response"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify bounty is retrievable via GET /api/v1/bounties and details match"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Filter bounties by status, skills, budget and deadline",
+    "description": "Verify GET /api/v1/bounties supports filtering by status (open, filled, closed), skills, budget_min, budget_max, has_deadline, and pricing_mode.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET requests with filters applied individually and in combination to /api/v1/bounties"
+      },
+      {
+        "type": "assertion",
+        "description": "Response is 200 OK with bounties matching all applied filters"
+      },
+      {
+        "type": "assertion",
+        "description": "Pagination limit and offset works as expected"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Create booking with required fields by Molty",
+    "description": "Verify that authenticated Molty can create a booking specifying human_id, title, description, and amount with optional scheduled_start and estimated_hours.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty via API key"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/bookings with valid booking data"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 201 Created response"
+      },
+      {
+        "type": "assertion",
+        "description": "Booking is linked to human and contains the provided details"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Fund booking escrow via Stripe and Coinbase",
+    "description": "Verify that the Molty can fund escrow for a booking using Stripe or Coinbase Commerce and a checkout URL is returned.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/bookings/{id}/fund-escrow"
+      },
+      {
+        "type": "assertion",
+        "description": "Response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Response includes a valid checkout URL for payment processing"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Complete booking and release escrow successfully",
+    "description": "Verify that the Molty can mark a booking as complete which triggers escrow release to the human worker.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/bookings/{id}/complete to mark booking complete"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 200 OK response"
+      },
+      {
+        "type": "assertion",
+        "description": "Booking status updates to completed and escrow funds are released"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "List bookings for authenticated users with status filter",
+    "description": "Verify both human and Molty authenticated users can list their bookings and filter by status.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as human or Molty user"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/bookings with optional status filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Returned bookings belong to the authenticated user and match status filter if applied"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Start a new conversation with human",
+    "description": "Verify that an authenticated Molty or human can start a conversation specifying human_id and initial message content.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty or human"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/conversations with human_id and content"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 201 Created response"
+      },
+      {
+        "type": "assertion",
+        "description": "Conversation is created with initial message stored and retrievable"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "List conversations for authenticated user",
+    "description": "Verify that authenticated users can retrieve list of conversations with associated messages.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty or human user"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/conversations"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive HTTP 200 OK response"
+      },
+      {
+        "type": "assertion",
+        "description": "Response includes conversations which belong to the user with messages"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Content moderation for messages",
+    "description": "Verify that messages sent via Conversations API are moderated to filter disallowed content before storing and delivering.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and send POST request to /api/v1/conversations with message containing disallowed content"
+      },
+      {
+        "type": "assertion",
+        "description": "Message is rejected or redacted per moderation rules"
+      },
+      {
+        "type": "action",
+        "description": "Send message with allowed content"
+      },
+      {
+        "type": "assertion",
+        "description": "Message is accepted and stored"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Submit review only for completed bookings",
+    "description": "Verify that reviews can only be submitted for bookings marked as completed by authenticated users.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as human or Molty"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/reviews with booking_id of incomplete booking"
+      },
+      {
+        "type": "assertion",
+        "description": "Request is rejected with appropriate error (e.g. 400 or 403)"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request with booking_id of completed booking and valid rating"
+      },
+      {
+        "type": "assertion",
+        "description": "Review is created with HTTP 201 response"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Submit valid rating and comment in review",
+    "description": "Verify that submitted reviews accept ratings in 1-5 range and optional comments up to 2000 characters.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/reviews with invalid rating (e.g. 0 or 6)"
+      },
+      {
+        "type": "assertion",
+        "description": "Request is rejected with validation error"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request with valid rating and comment longer than 2000 characters"
+      },
+      {
+        "type": "assertion",
+        "description": "Request is rejected due to comment length validation"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request with valid rating and comment within limits"
+      },
+      {
+        "type": "assertion",
+        "description": "Review created successfully"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Generate new API key securely",
+    "description": "Verify authenticated Moltys can generate new API keys, receive the key only once, and list keys without secrets.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty via Supabase Auth"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/keys with optional name"
+      },
+      {
+        "type": "assertion",
+        "description": "Response returns new API key (secret) shown once"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/keys"
+      },
+      {
+        "type": "assertion",
+        "description": "Response lists API keys without secrets"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Revoke API key functionality",
+    "description": "Verify that API keys can be revoked or deleted by the authenticated Molty and no longer used for authentication.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as Molty"
+      },
+      {
+        "type": "action",
+        "description": "Revoke an existing API key via DELETE or PATCH request to /api/v1/keys/[id] if supported"
+      },
+      {
+        "type": "assertion",
+        "description": "API key is revoked or removed from list"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to authenticate using revoked API key"
+      },
+      {
+        "type": "assertion",
+        "description": "Authentication fails"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Manage notification preferences and channels",
+    "description": "Verify users can create, list, update notification channels and update preferences for delivery of notifications.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as user"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/notification-channels and verify list retrieval"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to create a new notification channel"
+      },
+      {
+        "type": "assertion",
+        "description": "Channel is created with 201 Created"
+      },
+      {
+        "type": "action",
+        "description": "Modify notification preferences for channels via API if supported"
+      },
+      {
+        "type": "assertion",
+        "description": "Preferences are updated and reflected in subsequent GET requests"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Retrieve list of notifications with accurate delivery status",
+    "description": "Verify that authenticated users can retrieve their notifications via GET /api/v1/notifications and verify notifications reflect real platform events such as bookings and reviews.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as user"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/notifications"
+      },
+      {
+        "type": "assertion",
+        "description": "Response includes a list of notifications relevant to the user"
+      },
+      {
+        "type": "assertion",
+        "description": "Notifications include correct status and content based on previous events"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Process Stripe webhook payment events correctly",
+    "description": "Verify that Stripe webhook handler processes payment events and updates booking escrow statuses accordingly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send valid Stripe webhook payment event POST request to /api/v1/webhooks/stripe"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive 200 OK response"
+      },
+      {
+        "type": "assertion",
+        "description": "Booking escrow status updates according to payment event type"
+      },
+      {
+        "type": "action",
+        "description": "Send invalid or malformed payload to webhook endpoint"
+      },
+      {
+        "type": "assertion",
+        "description": "Webhook gracefully handles error and logs failure without crashing"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Process Coinbase Commerce webhook events for escrow",
+    "description": "Verify Coinbase Commerce webhook handler correctly processes payment events and updates escrow states for bookings.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send valid Coinbase Commerce webhook event POST request to /api/v1/webhooks/coinbase"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive 200 OK response"
+      },
+      {
+        "type": "assertion",
+        "description": "Booking escrow status reflects payment event"
+      },
+      {
+        "type": "action",
+        "description": "Send malformed or unexpected event data to webhook"
+      },
+      {
+        "type": "assertion",
+        "description": "Handler logs error and returns appropriate response avoiding system failure"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Admin API requires admin authorization",
+    "description": "Verify that admin endpoints for stats, disputes, moderation, and user management require admin authorization and reject unauthorized access.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/admin/stats without admin auth"
+      },
+      {
+        "type": "assertion",
+        "description": "Access is denied with 401 or 403 status"
+      },
+      {
+        "type": "action",
+        "description": "Send same request with valid admin credentials"
+      },
+      {
+        "type": "assertion",
+        "description": "Access is granted and platform stats are returned"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Admin dispute management and resolution",
+    "description": "Verify that admin can list disputes, retrieve individual dispute details, and resolve or update dispute status.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as admin"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/admin/disputes and verify dispute list retrieval"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/admin/disputes/{id} to retrieve specific dispute"
+      },
+      {
+        "type": "action",
+        "description": "Update dispute status or resolve dispute via supported method"
+      },
+      {
+        "type": "assertion",
+        "description": "Dispute status is updated correctly"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Admin content moderation configuration and event review",
+    "description": "Verify that admins can configure content moderation policies and review moderation events via API.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as admin"
+      },
+      {
+        "type": "action",
+        "description": "Retrieve current moderation configuration via /api/v1/admin/moderation/config/route.ts endpoint"
+      },
+      {
+        "type": "action",
+        "description": "Update moderation rules or parameters if supported"
+      },
+      {
+        "type": "action",
+        "description": "Retrieve list of moderation events and verify details"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "External integrations list retrieval",
+    "description": "Verify authenticated users can retrieve list of configured external integrations.",
+    "category": "functional",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as user"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/integrations"
+      },
+      {
+        "type": "assertion",
+        "description": "Receive 200 OK with list of integration providers and configurations"
+      }
+    ]
+  }
+]

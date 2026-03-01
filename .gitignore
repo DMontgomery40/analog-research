@@ -1,0 +1,76 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Git worktrees
+.worktrees/
+
+# Ralph process state
+ralph.pid
+
+# Build outputs
+dist
+.next
+.turbo
+out
+*.tsbuildinfo
+.last/*
+.last
+# Environment
+.env
+.env.local
+.env.*.local
+scripts/
+!scripts/
+scripts/*
+!scripts/quality/
+!scripts/quality/**
+!scripts/ralph-real-test-remediation/
+!scripts/ralph-real-test-remediation/**
+# Ralph loop state (must never be committed)
+scripts/ralph-real-test-remediation/.last-story
+scripts/ralph-real-test-remediation/.story-attempts
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.tgz
+.netlify
+.claude/*
+!.claude/hooks/
+!.claude/hooks/**
+!.claude/settings.json
+.codex/*
+!.codex/MEMORY.md
+!.codex/memory/
+!.codex/memory/**
+.playwright-mcp
+.tests/*
+*/AGENTS.md
+MEMORY.md
+WORKSPACE.md
+ARCHITECTURE.md
+*.temp/
+tmp/
+.tmp/
+*.temp*.tsbuildinfo
+
+# Playwright
+playwright-report
+test-results

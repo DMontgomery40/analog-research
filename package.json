@@ -1,0 +1,51 @@
+{
+  "name": "analoglabor",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "test:watch": "pnpm --filter @analoglabor/web test:watch",
+    "test:coverage": "pnpm --filter @analoglabor/web test:coverage",
+    "check:hardcoded": "node scripts/quality/check-hardcoded.mjs",
+    "check:duplicates": "node scripts/quality/check-duplicates.mjs",
+    "check:ai-slop": "node scripts/quality/check-ai-slop.mjs",
+    "check:no-mock-tests": "node scripts/quality/check-no-mock-tests.mjs",
+    "check:risk-tests": "node scripts/quality/check-risk-invariants.mjs",
+    "check:realness": "node scripts/quality/check-realness-triad.mjs",
+    "check:remote-schema-parity": "node scripts/quality/check-remote-schema-parity.mjs",
+    "check:live-money-flow": "node scripts/quality/check-live-money-flow.mjs",
+    "check:migration-prefix": "node scripts/quality/check-migration-prefix-collisions.mjs",
+    "smoke:e2e": "playwright test --config playwright.config.ts",
+    "verify": "bash .claude/hooks/run-quality-gates.sh --full",
+    "verify:changed": "bash .claude/hooks/run-quality-gates.sh --changed",
+    "verify:stop": "bash .claude/hooks/verify-stop.sh",
+    "install:stop-hooks": "bash scripts/install-stop-hooks.sh",
+    "clean": "turbo clean",
+    "typecheck": "turbo typecheck",
+    "db:generate": "pnpm --filter @analoglabor/database generate",
+    "db:push": "pnpm --filter @analoglabor/database push",
+    "payments:env:bootstrap": "node scripts/payments/bootstrap-local-env.mjs",
+    "payments:stripe:canary:bootstrap": "node scripts/payments/bootstrap-canary-connected-account.mjs",
+    "payments:stripe:listen": "bash scripts/payments/stripe-listen.sh",
+    "payments:stripe:secret": "bash scripts/payments/stripe-listen.sh --print-secret",
+    "payments:coinbase:webhook:test": "node scripts/payments/coinbase-send-webhook.mjs",
+    "bounties:post:analoglabor": "node scripts/founding-bounties/post-analoglabor.mjs",
+    "bounties:post:rentahuman": "node scripts/founding-bounties/post-rentahuman.mjs",
+    "bounties:post:all": "node scripts/founding-bounties/post-all.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@supabase/supabase-js": "^2.47.10",
+    "jscpd": "^4.0.8",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "tar": "^7.5.7"
+    }
+  }
+}
