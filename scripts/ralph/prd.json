@@ -1,220 +1,303 @@
 {
-  "project": "analog-research-landing",
-  "branchName": "ralph/seo-nuclear",
-  "description": "SEO domination for analog-research.org — every technique humanly and non-humanly possible for a static Netlify landing page",
+  "project": "AnalogLaborAPI",
+  "branchName": "ralph/mvp-launch",
+  "description": "Complete the AnalogLaborAPI platform — a free marketplace where AI agents hire humans for real-world tasks. 3% transaction fee, no monthly paywall. Deploys to Netlify with Supabase backend. Includes subdomain architecture: main site for humans, api subdomain for bots with llms.txt.",
+  "verificationCommands": {
+    "typecheck": "cd apps/web && npx tsc --noEmit",
+    "lint": "cd apps/web && npx next lint",
+    "build": "cd apps/web && npx next build"
+  },
   "userStories": [
     {
       "id": "US-001",
-      "title": "Semantic HTML and structured data foundation",
-      "description": "As a search engine crawler, I need proper semantic HTML5 elements and JSON-LD structured data so I can understand and rank this page correctly.",
+      "title": "Apply database migration to Supabase",
+      "description": "The migration SQL exists at packages/database/supabase/migrations/001_initial_schema.sql but has NOT been applied to the Supabase instance. Apply it using the Supabase CLI or the dashboard SQL editor. The Supabase URL is in .env.local.",
       "acceptanceCriteria": [
-        "All sections use semantic HTML5 elements (main, article, section, nav, header, footer, aside) instead of generic divs where appropriate",
-        "JSON-LD script block exists with @type Organization including name, url, description, founder, foundingDate, sameAs array",
-        "JSON-LD sameAs array includes https://github.com/DMontgomery40 and https://www.linkedin.com/in/david-montgomery-5a07656b/",
-        "JSON-LD script block exists with @type WebSite including name, url, description",
-        "JSON-LD script block exists with @type NonprofitType or additionalType 501c3 reference",
-        "h1 tag contains primary keyword 'agentic research'",
-        "Only ONE h1 tag exists on the page",
-        "h2 and h3 tags follow logical hierarchy with no skipped levels",
-        "All images (if any) have descriptive alt attributes",
-        "lang='en' attribute exists on html element"
+        "All tables from 001_initial_schema.sql exist in Supabase (humans, agents, api_keys, bounties, applications, conversations, messages, bookings, proofs, reviews, transactions, disputes, notifications)",
+        "All indexes are created",
+        "All RLS policies are active",
+        "All triggers are functional",
+        "Realtime is enabled for messages, notifications, conversations tables",
+        "Verify by querying: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' — should return all tables",
+        "Typecheck passes"
       ],
       "priority": 1,
       "passes": true,
-      "notes": ""
+      "notes": "Supabase project URL: https://ensqpqbhdvbnsiuujeoj.supabase.co — Use service role key from .env.local to run migration. Can use supabase CLI: supabase db push, or POST the SQL directly via the Supabase management API, or use the SQL editor in the dashboard. If using CLI, init supabase first."
     },
     {
       "id": "US-002",
-      "title": "Meta tags, Open Graph, and Twitter Cards",
-      "description": "As a social media platform and search engine, I need comprehensive meta tags so link previews and search snippets are compelling.",
+      "title": "Auth flow — signup, login, logout with Supabase Auth",
+      "description": "Wire up the auth pages at (auth)/login and (auth)/signup to Supabase Auth. Email+password signup with email confirmation. After signup, auto-create a row in the humans table. Middleware should protect /dashboard/* routes.",
       "acceptanceCriteria": [
-        "meta description exists and is between 150-160 characters",
-        "meta keywords exists with at least 10 relevant terms including: agentic research, AI research, ground truth data, scientific discovery, 501c3, nonprofit, field research, dark sky observation, citizen science, human-AI collaboration",
-        "og:title exists and matches page title",
-        "og:description exists and is compelling",
-        "og:type is 'website'",
-        "og:url is https://analog-research.org",
-        "og:image exists pointing to a valid image URL (create an OG image or use a placeholder)",
-        "og:site_name is 'AnalogResearch'",
-        "twitter:card is 'summary_large_image'",
-        "twitter:title exists",
-        "twitter:description exists",
-        "twitter:image exists",
-        "canonical link tag points to https://analog-research.org",
-        "meta robots content is 'index, follow'"
+        "Signup page at /signup collects name, email, password and creates a Supabase Auth user",
+        "On signup, a row is inserted into the humans table with user_id = auth.uid() and name from form",
+        "Login page at /login authenticates with email/password",
+        "Logout button in dashboard clears session and redirects to /",
+        "middleware.ts redirects unauthenticated users from /dashboard/* to /login",
+        "middleware.ts redirects authenticated users from /login and /signup to /dashboard",
+        "Supabase client is properly configured for both server and client components using @supabase/ssr",
+        "Typecheck passes"
       ],
       "priority": 2,
       "passes": true,
-      "notes": ""
+      "notes": "Check existing lib/supabase/ files — may already have client setup. Use createServerClient for server components and createBrowserClient for client components."
     },
     {
       "id": "US-003",
-      "title": "Sitemap, robots.txt, and crawl optimization",
-      "description": "As a search engine bot, I need a sitemap and robots.txt to efficiently discover and crawl all pages.",
+      "title": "Human profile editor with availability scheduler",
+      "description": "The dashboard/profile page lets the logged-in human edit ALL profile fields. The availability-scheduler.tsx component should be a visual weekly grid where users click/drag to set time blocks. Rate range slider lets users set min and max hourly rate. All changes save to Supabase.",
       "acceptanceCriteria": [
-        "sitemap.xml exists in repo root with entries for / and /thank-you.html",
-        "sitemap.xml includes lastmod dates and priority values",
-        "robots.txt exists in repo root with Sitemap directive pointing to https://analog-research.org/sitemap.xml",
-        "robots.txt allows all crawlers with User-agent: *",
-        "netlify.toml includes custom header for X-Robots-Tag: index, follow"
+        "Profile page at /dashboard/profile shows all editable fields: name, bio, avatar, location, timezone, skills, rate_min, rate_max, availability, wallet_address, social links",
+        "Availability scheduler renders a 7-day weekly grid with 30-min time increments from 6am to midnight",
+        "Users can click/drag to create time blocks on the scheduler",
+        "Users can click existing blocks to delete them",
+        "Scheduler saves as JSONB: {monday: [{start: '09:00', end: '17:00'}], ...}",
+        "Rate range slider has two handles for min ($) and max ($), displays both values",
+        "Skills input allows adding/removing skills with autocomplete from existing skills in DB",
+        "Avatar upload stores file in Supabase Storage and updates avatar_url",
+        "All changes persist to the humans table via PATCH /api/v1/humans/[id] or direct Supabase update",
+        "Form shows loading states while saving",
+        "Profile completeness indicator shows percentage and what fields are missing",
+        "Typecheck passes"
       ],
       "priority": 3,
       "passes": true,
-      "notes": ""
+      "notes": "Components already exist at: availability-scheduler.tsx, rate-range-slider.tsx, skills-input.tsx. Wire them up and make them functional. Store rates in cents in the DB (rate_min, rate_max INTEGER)."
     },
     {
       "id": "US-004",
-      "title": "Performance and Core Web Vitals optimization",
-      "description": "As Google's ranking algorithm, I reward pages with excellent Core Web Vitals scores.",
+      "title": "REST API — humans endpoints with PATCH support",
+      "description": "Complete the REST API at /api/v1/humans with full CRUD. GET for search/list, GET by ID, POST to create, and critically PATCH to update — which RentAHuman lacks entirely. Agents authenticate via X-API-Key header.",
       "acceptanceCriteria": [
-        "All CSS is inlined (no external stylesheet requests) — already true, verify it stays that way",
-        "No render-blocking JavaScript exists",
-        "Font-display: swap is set if any web fonts are loaded",
-        "meta viewport tag exists with width=device-width, initial-scale=1.0",
-        "Images (if any) have width and height attributes to prevent layout shift",
-        "Preconnect hints exist for any external domains (e.g., analoglabor.com)",
-        "netlify.toml includes Cache-Control headers for static assets",
-        "HTML is minified or at minimum has no unnecessary whitespace in production-critical areas"
+        "GET /api/v1/humans returns paginated list with filters: skill, city, state, country, min_rate, max_rate, is_remote, available_now (checks availability vs current time+timezone)",
+        "GET /api/v1/humans/[id] returns full human profile including availability schedule",
+        "POST /api/v1/humans creates a new profile (used by signup flow)",
+        "PATCH /api/v1/humans/[id] updates any subset of profile fields (auth required — own profile only via Supabase Auth, or service role)",
+        "All endpoints return consistent JSON: { success: boolean, data?: any, error?: string }",
+        "Agent auth via X-API-Key header verified against api_keys table (key_hash comparison)",
+        "Human auth via Supabase session cookie/Bearer token",
+        "Public endpoints (GET) work without auth",
+        "Write endpoints require auth",
+        "Typecheck passes"
       ],
       "priority": 4,
       "passes": true,
-      "notes": ""
+      "notes": "Check existing route files at apps/web/src/app/api/v1/humans/. May be partially implemented. The available_now filter should compare current UTC time against the human's availability schedule + timezone."
     },
     {
       "id": "US-005",
-      "title": "Accessibility and mobile optimization",
-      "description": "As a search engine, I boost rankings for accessible, mobile-friendly pages.",
+      "title": "Browse humans page — public search and filter",
+      "description": "Public page at /dashboard/browse (or /browse) that lets anyone search and filter available humans. Shows human cards with key info. Links to individual human profile pages.",
       "acceptanceCriteria": [
-        "All form inputs have associated label elements with matching for/id attributes",
-        "All interactive elements have sufficient color contrast (WCAG AA — 4.5:1 for text)",
-        "Skip-to-content link exists as first focusable element",
-        "All sections have aria-labelledby or aria-label attributes",
-        "Form has aria-describedby for any help text",
-        "Focus styles are visible on all interactive elements",
-        "Touch targets are at least 44x44px on mobile",
-        "Page is fully usable at 320px viewport width"
+        "Browse page shows a searchable, filterable grid of human cards",
+        "Search by name, skills, or bio text",
+        "Filter by: skill (dropdown/multi-select), rate range (slider), location (city/state), remote available (toggle), available now (toggle)",
+        "Human cards show: avatar, name, headline/bio snippet, skills tags, rate range, rating, location, availability indicator (green dot if available now)",
+        "Cards link to /humans/[id] public profile page",
+        "Public profile page shows full read-only profile including availability grid",
+        "Pagination or infinite scroll for results",
+        "Empty state when no results match filters",
+        "Works without authentication",
+        "Typecheck passes"
       ],
       "priority": 5,
       "passes": true,
-      "notes": ""
+      "notes": "Fetch from GET /api/v1/humans with query params. Human card component may need to be created or already exists."
     },
     {
       "id": "US-006",
-      "title": "Keyword-rich content optimization",
-      "description": "As a search engine, I need keyword-rich content that naturally covers the topic cluster for agentic research and AI-human scientific collaboration.",
+      "title": "Agent API key system",
+      "description": "Agents need API keys to interact with the platform. Keys are prefixed al_live_ for production. Provide endpoints to create, list, and revoke keys. Keys are hashed before storage.",
       "acceptanceCriteria": [
-        "Primary keyword 'agentic research' appears in: h1, first paragraph, at least one h2 or h3, and meta description",
-        "Secondary keywords appear naturally in body content: 'ground truth data', 'field research', 'AI research platform', 'scientific discovery', 'human-AI collaboration', 'citizen science'",
-        "Long-tail keywords appear in use case descriptions: 'dark sky observation', 'astronomical survey', 'soil sampling', 'ecological fieldwork', 'climate data collection'",
-        "Content length is at least 800 words of visible text (excluding HTML/CSS)",
-        "Each use case section contains at least 40 words",
-        "Internal link to analoglabor.com exists with descriptive anchor text (not 'click here')",
-        "No keyword stuffing — keywords read naturally in context"
+        "POST /api/v1/keys/generate creates a new API key: generates random key with al_live_ prefix, hashes it, stores hash + prefix in api_keys table, returns the raw key ONCE",
+        "GET /api/v1/keys lists all keys for the authenticated agent (shows prefix, name, created_at, last_used_at — never the full key)",
+        "DELETE /api/v1/keys/[id] revokes a key by setting is_active = false",
+        "API key auth middleware: extracts key from X-API-Key header, hashes it, looks up in api_keys table, verifies is_active, updates last_used_at",
+        "When an agent authenticates with a key for the first time, auto-create the agent row if it doesn't exist",
+        "Rate limiting: track request_count per key",
+        "Dashboard page at /dashboard/settings shows API key management UI for humans who also want to test as agents",
+        "Typecheck passes"
       ],
       "priority": 6,
       "passes": true,
-      "notes": ""
+      "notes": "Use crypto.randomBytes for key generation. Hash with SHA-256. Prefix format: al_live_[32 random hex chars]."
     },
     {
       "id": "US-007",
-      "title": "Footer links, author attribution, and E-E-A-T signals",
-      "description": "As Google's quality raters, I look for Experience, Expertise, Authoritativeness, and Trustworthiness signals.",
+      "title": "Bounties — create, list, apply, accept/reject",
+      "description": "Full bounty lifecycle. Agents (or humans) create bounties with task details and budget. Humans browse and apply. Bounty creator accepts or rejects applications.",
       "acceptanceCriteria": [
-        "Footer contains link to AnalogLabor with rel='noopener' attribute",
-        "Footer contains a 'Founded by David Montgomery' credit with link to https://www.linkedin.com/in/david-montgomery-5a07656b/",
-        "Footer contains link to https://github.com/DMontgomery40 with text like 'Open Source' or 'GitHub'",
-        "LinkedIn and GitHub links have rel='noopener me' attributes for rel-me verification",
-        "JSON-LD founder object includes sameAs array with LinkedIn and GitHub URLs",
-        "501(c)(3) status is mentioned prominently as a trust signal",
-        "Contact form exists as a trust signal (already present)",
-        "Copyright notice exists with current year"
+        "POST /api/v1/bounties creates a bounty (requires agent auth via API key or human auth)",
+        "GET /api/v1/bounties lists bounties with filters: status, skills_required, budget range, has_deadline",
+        "GET /api/v1/bounties/[id] returns full bounty details including application_count",
+        "POST /api/v1/bounties/[id]/applications creates an application (human auth required)",
+        "GET /api/v1/bounties/[id]/applications lists applications (bounty creator only)",
+        "PATCH /api/v1/bounties/[id]/applications/[appId] to accept or reject (bounty creator only)",
+        "When application is accepted, create a booking automatically",
+        "Bounty status updates: open → in_progress when first application accepted → completed when all spots filled",
+        "Dashboard page at /dashboard/bounties shows bounties the human has applied to or created",
+        "Public bounties page at /bounties or /dashboard/browse shows all open bounties",
+        "Minimum bounty budget: $5 (500 cents)",
+        "Typecheck passes"
       ],
       "priority": 7,
       "passes": true,
-      "notes": "David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/ — David's GitHub: https://github.com/DMontgomery40 — These must be embedded tastefully, not spammy. E-E-A-T signals matter for Google quality scoring."
+      "notes": "Budget stored in cents. Both agents and humans can create bounties (agent via API key, human via session)."
     },
     {
       "id": "US-008",
-      "title": "Netlify SEO headers and redirects",
-      "description": "As a search engine, I need proper HTTP headers and redirects to understand canonical URLs and caching.",
+      "title": "Conversations and realtime messaging",
+      "description": "Agents and humans can have conversations. Messages appear in realtime using Supabase Realtime subscriptions. Dashboard shows conversation list and chat interface.",
       "acceptanceCriteria": [
-        "netlify.toml has redirect from www.analog-research.org to analog-research.org with 301 status",
-        "netlify.toml has redirect from http to https with 301 status (Netlify does this by default but be explicit)",
-        "netlify.toml custom headers include X-Content-Type-Options: nosniff",
-        "netlify.toml custom headers include Strict-Transport-Security with max-age of at least 31536000",
-        "netlify.toml custom headers include Content-Security-Policy that allows inline styles",
-        "netlify.toml has Cache-Control header for HTML files: public, max-age=0, must-revalidate",
-        "netlify.toml has Cache-Control header for static assets: public, max-age=31536000, immutable"
+        "POST /api/v1/conversations creates a conversation between an agent and a human",
+        "GET /api/v1/conversations lists conversations for the authenticated user/agent",
+        "GET /api/v1/conversations/[id] returns conversation with all messages",
+        "POST /api/v1/conversations/[id]/messages sends a message",
+        "Dashboard page at /dashboard/conversations shows conversation list sorted by last_message_at",
+        "Clicking a conversation opens a chat view with message history",
+        "New messages appear in realtime via Supabase Realtime subscription on the messages table",
+        "Unread message count badge shows on conversation list items",
+        "Human can send messages from the dashboard UI",
+        "Agent can send messages via API",
+        "Typecheck passes"
       ],
       "priority": 8,
       "passes": true,
-      "notes": ""
+      "notes": "Realtime is already enabled for the messages table in the migration. Use Supabase channel subscriptions in the React component."
     },
     {
       "id": "US-009",
-      "title": "FAQ section with FAQ schema markup",
-      "description": "As Google Search, I can display FAQ rich results which dramatically increase click-through rates.",
+      "title": "Bookings with escrow and proof submission",
+      "description": "When an application is accepted, a booking is created. Agent funds escrow (Stripe or crypto). Human does the work, submits proof. Agent confirms, funds release minus 3% fee.",
       "acceptanceCriteria": [
-        "FAQ section exists on the page with at least 5 questions and answers",
-        "FAQ questions cover: What is AnalogResearch, How does agentic research work, Who can participate, Is AnalogResearch a nonprofit, How is this different from citizen science",
-        "JSON-LD FAQPage schema markup exists matching the visible FAQ content exactly",
-        "FAQ section uses details/summary HTML elements or equivalent accessible pattern",
-        "FAQ content includes relevant keywords naturally",
-        "FAQ section has an h2 heading"
+        "Booking created automatically when application is accepted (from US-007)",
+        "POST /api/v1/bookings/[id]/fund-escrow initiates Stripe PaymentIntent or records crypto escrow",
+        "Booking status flow: pending → funded → in_progress → submitted → completed",
+        "POST /api/v1/bookings/[id]/proof submits proof (description, hours_worked, photo attachments via Supabase Storage)",
+        "POST /api/v1/bookings/[id]/complete releases escrow: calculates 3% fee, transfers remainder to human",
+        "Auto-complete after 72 hours if agent doesn't respond to proof submission",
+        "Platform fee calculation: fee = amount * 0.03, human_payout = amount - fee",
+        "Transaction records created in transactions table for every money movement",
+        "Dashboard page at /dashboard/bookings shows all bookings with status badges",
+        "Booking detail view shows proof submissions and escrow status",
+        "For Stripe: use Stripe Connect to transfer to human's connected account",
+        "Typecheck passes"
       ],
       "priority": 9,
       "passes": true,
-      "notes": ""
+      "notes": "Stripe Connect requires the human to have stripe_account_id set up via OAuth onboarding flow. For MVP, Stripe escrow is priority. Crypto can be stub/manual for now. The 3% fee is the platform's only revenue."
     },
     {
       "id": "US-010",
-      "title": "OG image generation",
-      "description": "As a social media platform, I need a compelling OG image so link shares look professional.",
+      "title": "Reviews — bidirectional rating system",
+      "description": "After a booking is completed, both the agent and human can leave reviews. Ratings auto-update the averages on the respective profiles.",
       "acceptanceCriteria": [
-        "og-image.html file exists that renders a 1200x630 card with AnalogResearch branding",
-        "og-image.png or og-image.svg exists as a static fallback (can be a simple branded card)",
-        "og:image meta tag points to https://analog-research.org/og-image.png",
-        "og:image:width is 1200",
-        "og:image:height is 630",
-        "twitter:image points to same image",
-        "Image includes: AnalogResearch logo/text, tagline, and visual element"
+        "POST /api/v1/reviews creates a review for a completed booking",
+        "One review per side per booking (enforced by UNIQUE constraint)",
+        "Rating 1-5 stars with optional comment",
+        "Triggers auto-update rating_average and rating_count on humans and agents tables (already in migration)",
+        "GET /api/v1/humans/[id]/reviews returns all reviews for a human",
+        "Reviews are publicly readable",
+        "Review form appears on booking detail page after status = completed",
+        "Typecheck passes"
       ],
       "priority": 10,
       "passes": true,
-      "notes": "For a static site without a build step, create the OG image as an SVG or use an HTML file that can be screenshotted. The simplest approach is a clean SVG with the brand colors."
+      "notes": "Review triggers already exist in the migration SQL. Just need API endpoints and UI."
     },
     {
       "id": "US-011",
-      "title": "Humans.txt and security.txt",
-      "description": "As a thorough SEO audit, every signal matters — including humans.txt for authorship and security.txt for trust.",
+      "title": "Subdomain architecture — api.* for bots, www for humans",
+      "description": "Set up subdomain routing so bots hit api.{domain} which serves only API endpoints and llms.txt (no GUI, no JS bundles, no HTML). Humans use the main domain for the full web app. This prevents bot traffic from impacting the human experience and gives agents a clean, fast endpoint.",
       "acceptanceCriteria": [
-        "humans.txt exists with team info (David Montgomery, founder, link to LinkedIn and GitHub)",
-        "security.txt exists at /.well-known/security.txt with contact email and preferred-languages",
-        "netlify.toml redirects /.well-known/security.txt to /security.txt if needed",
-        "Both files are referenced in HTML comments or link tags where appropriate"
+        "Next.js middleware detects the Host header and routes accordingly",
+        "Requests to api.analoglabor.com/* route ONLY to /api/v1/* endpoints — no pages, no static assets, no HTML",
+        "Requests to api.analoglabor.com/ returns a JSON welcome: {name: 'AnalogLaborAPI', version: '1.0', docs: '/docs'}",
+        "Requests to api.analoglabor.com/llms.txt returns a well-formatted llms.txt file describing all available API endpoints, authentication, and usage examples in plain text optimized for LLM consumption",
+        "Requests to api.analoglabor.com/.well-known/llms.txt returns the same llms.txt",
+        "Main domain serves the full Next.js web app normally",
+        "llms.txt includes: platform description, all REST endpoints with methods/params/examples, authentication instructions (API key format al_live_*), MCP server install instructions, rate limits, escrow flow description, and the npx analoglabor-mcp config block",
+        "netlify.toml updated with redirect rules if needed for subdomain routing",
+        "Typecheck passes"
       ],
       "priority": 11,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Domain is analoglabor.com. In Next.js middleware: check req.headers.get('host'). If it starts with 'api.', rewrite to API routes only. The llms.txt should be comprehensive — it's the bot's equivalent of the MCP docs page. Netlify supports subdomains natively with custom domains. Create the llms.txt as a static file or API route. The MCP server default URL should be https://api.analoglabor.com/v1"
     },
     {
       "id": "US-012",
-      "title": "Final SEO audit and verification",
-      "description": "As a QA engineer, I need to verify all SEO elements are correctly implemented and no regressions exist.",
+      "title": "MCP server — complete and publish to npm",
+      "description": "The MCP server at packages/analoglabor-mcp has a skeleton. Complete all tools to match the REST API, test it, and prepare for npm publish.",
       "acceptanceCriteria": [
-        "All JSON-LD blocks are valid JSON (parse with jq or JSON.parse)",
-        "No duplicate meta tags exist",
-        "No broken internal links (all href values resolve to existing files)",
-        "HTML is valid (no unclosed tags, no duplicate IDs)",
-        "All files referenced in meta tags exist in the repo (og-image, sitemap, robots.txt, etc.)",
-        "Page still renders correctly with dark mode (prefers-color-scheme: dark)",
-        "Contact form still has data-netlify='true' and honeypot attributes",
-        "Total page weight is under 100KB",
-        "Verify in browser using dev-browser skill"
+        "MCP server implements ALL tools: browse_humans, get_human, list_skills, start_conversation, send_message, get_conversation, list_conversations, create_bounty, list_bounties, get_bounty, get_applications, accept_application, reject_application, create_booking, fund_escrow, submit_review, get_reviews",
+        "Each tool maps to the corresponding REST API endpoint",
+        "API key passed via ANALOGLABOR_API_KEY env var",
+        "Base URL configurable via ANALOGLABOR_API_URL env var (defaults to https://api.analoglabor.com/v1)",
+        "npx analoglabor-mcp starts the server without errors",
+        "package.json has correct bin field, name, version, description",
+        "README.md includes installation instructions, config example for Claude/Cursor, and tool descriptions",
+        "TypeScript compiles with zero errors",
+        "Build output exists in dist/ and is valid ESM"
       ],
       "priority": 12,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Existing index.ts has the skeleton with apiRequest helper and some tools defined. Complete the remaining tools. Use tsup for building. The bin field should point to dist/index.js with #!/usr/bin/env node shebang."
+    },
+    {
+      "id": "US-013",
+      "title": "Landing page polish and dark theme",
+      "description": "Polish the landing page with proper dark theme, clear value props vs RentAHuman (free, 3% fee, availability scheduler, rate ranges, profile update API), and CTAs for both humans and agents.",
+      "acceptanceCriteria": [
+        "Dark theme is default with proper contrast and readability",
+        "Hero section: bold tagline, subtitle explaining the value prop, two CTAs (Become Rentable / Integrate Your Agent)",
+        "Feature section highlighting advantages over RentAHuman: free (no $10/mo), 3% transaction fee only, availability scheduling that works, rate ranges not single number, full profile API with PATCH, real escrow with auto-release",
+        "How it works section: 3-4 steps for both humans and agents",
+        "Browse preview showing a few featured humans",
+        "Footer with links to /browse, /bounties, /mcp (docs), /api-docs",
+        "Responsive — works on mobile, tablet, desktop",
+        "Orange/amber accent color (#f59e0b or similar) as primary brand color",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": "Landing page already exists at app/page.tsx. Polish it, don't rewrite from scratch. Use the existing Tailwind config."
+    },
+    {
+      "id": "US-014",
+      "title": "MCP docs page and API docs page",
+      "description": "Create documentation pages that show agents how to integrate. MCP docs page shows npm install, config JSON, and all available tools. API docs page shows REST endpoints.",
+      "acceptanceCriteria": [
+        "MCP docs page at /mcp shows: npm install command, config JSON block for Claude/Cursor, list of all MCP tools with descriptions and parameter schemas, usage examples",
+        "API docs page at /api-docs shows: base URL, authentication (API key format), all REST endpoints with method, path, params, request/response examples",
+        "Both pages have copy buttons for code blocks",
+        "Both pages are publicly accessible (no auth)",
+        "Dark theme consistent with rest of site",
+        "Responsive layout",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": "These are marketing pages as much as docs. Make them look good. Can be static pages, no dynamic data needed."
+    },
+    {
+      "id": "US-015",
+      "title": "Netlify deployment configuration and build verification",
+      "description": "Ensure the project builds and deploys correctly on Netlify. Verify netlify.toml, environment variables, and Next.js SSR functions all work.",
+      "acceptanceCriteria": [
+        "netlify.toml is correctly configured for Next.js with @netlify/plugin-nextjs",
+        "pnpm install && pnpm turbo build --filter=@analoglabor/web succeeds with zero errors",
+        "All API routes work as Netlify Functions (test locally with netlify dev if possible)",
+        "Environment variables documented in .env.local.example with all required keys listed",
+        ".gitignore includes .env, .env.local, node_modules, .next, dist",
+        "README.md has setup instructions: clone, install, env vars, supabase migration, dev server, deploy",
+        "Typecheck passes",
+        "Lint passes",
+        "Build passes"
+      ],
+      "priority": 15,
+      "passes": true,
+      "notes": "netlify.toml already exists. Verify it's correct. The build command in netlify.toml should match the turbo build pipeline. All env vars must be set in Netlify dashboard for production."
     }
   ]
 }

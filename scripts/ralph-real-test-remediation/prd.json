@@ -1,0 +1,157 @@
+{
+  "project": "AnalogLabor Real Test Remediation",
+  "branchName": "codex/real-test-remediation",
+  "description": "Convert every mocked test into real validation against deployed APIs or live integrations. No fake assertions.",
+  "generatedAt": "2026-02-15T15:04:30.973Z",
+  "totals": {
+    "testFilesScanned": 93,
+    "filesWithViolations": 36,
+    "totalViolations": 607,
+    "batchSize": 8,
+    "storyCount": 6
+  },
+  "verificationCommands": {
+    "perStory": "node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\"",
+    "global": "pnpm check:no-mock-tests",
+    "remoteSchema": "pnpm check:remote-schema-parity",
+    "liveMoneyFlow": "pnpm check:live-money-flow",
+    "fullGate": "pnpm verify"
+  },
+  "userStories": [
+    {
+      "id": "US-REAL-001",
+      "title": "Make tests real batch 1",
+      "description": "Replace mocked tests with real assertions in 8 files (281 violations).",
+      "acceptanceCriteria": [
+        "All listed files contain zero mock violations (vi.mock/vi.fn/jest.mock/mockResolvedValue/etc).",
+        "Tests use real-system assertions (deployed API / live service behavior) rather than imported route handlers.",
+        "Batch verification command passes: node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\".",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+      "priority": 1,
+      "passes": true,
+      "files": [
+        "tests/web/api/bookings/complete.invariant.unit.test.ts",
+        "tests/web/api/humans/route.unit.test.ts",
+        "tests/web/api/bookings/proof.unit.test.ts",
+        "tests/web/api/humans/stripe-connect-sync.unit.test.ts",
+        "tests/web/api/bounties/applications.unit.test.ts",
+        "tests/web/api/webhooks/stripe.unit.test.ts",
+        "tests/web/api/bookings/fund-escrow.unit.test.ts",
+        "tests/web/api/bounties/route.patch.unit.test.ts"
+      ],
+      "violationCount": 281
+    },
+    {
+      "id": "US-REAL-002",
+      "title": "Make tests real batch 2",
+      "description": "Replace mocked tests with real assertions in 8 files (172 violations).",
+      "acceptanceCriteria": [
+        "All listed files contain zero mock violations (vi.mock/vi.fn/jest.mock/mockResolvedValue/etc).",
+        "Tests use real-system assertions (deployed API / live service behavior) rather than imported route handlers.",
+        "Batch verification command passes: node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\".",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+      "priority": 2,
+      "passes": true,
+      "files": [
+        "tests/web/api/autopilot/actions.test.ts",
+        "tests/web/api/bookings/complete.unit.test.ts",
+        "tests/web/api/bookings/proof-review.unit.test.ts",
+        "tests/web/api/autopilot/tick.test.ts",
+        "tests/web/api/external-jobs/route.unit.test.ts",
+        "tests/web/api/integrations/provider-route.test.ts",
+        "tests/web/api/humans/id-route.unit.test.ts",
+        "tests/web/api/moderation/preflight.test.ts"
+      ],
+      "violationCount": 172
+    },
+    {
+      "id": "US-REAL-003",
+      "title": "Make tests real batch 3",
+      "description": "Replace mocked tests with real assertions in 8 files (94 violations).",
+      "acceptanceCriteria": [
+        "All listed files contain zero mock violations (vi.mock/vi.fn/jest.mock/mockResolvedValue/etc).",
+        "Tests use real-system assertions (deployed API / live service behavior) rather than imported route handlers.",
+        "Batch verification command passes: node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\".",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+      "priority": 3,
+      "passes": true,
+      "files": [
+        "tests/web/lib/api-auth.oauth.test.ts",
+        "tests/web/lib/stripe-release-and-transfer.test.ts",
+        "tests/web/api/integrations/providers.test.ts",
+        "tests/web/lib/talent-connectors/mcp-tools.test.ts",
+        "tests/web/lib/webhook-idempotency.test.ts",
+        "tests/web/lib/stripe-refund.test.ts",
+        "tests/web/api/mcp/chatgpt-endpoint.test.ts",
+        "tests/web/lib/mcp/dispatcher.test.ts"
+      ],
+      "violationCount": 94
+    },
+    {
+      "id": "US-REAL-004",
+      "title": "Make tests real batch 4",
+      "description": "Replace mocked tests with real assertions in 8 files (49 violations).",
+      "acceptanceCriteria": [
+        "All listed files contain zero mock violations (vi.mock/vi.fn/jest.mock/mockResolvedValue/etc).",
+        "Tests use real-system assertions (deployed API / live service behavior) rather than imported route handlers.",
+        "Batch verification command passes: node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\".",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+      "priority": 4,
+      "passes": true,
+      "files": [
+        "tests/web/api/quality/legitimacy.test.ts",
+        "tests/web/api/mcp/endpoints.test.ts",
+        "tests/web/lib/moderation/observability.test.ts",
+        "tests/web/lib/webhook-url.test.ts",
+        "tests/web/lib/booking-settlement.test.ts",
+        "tests/web/api/admin/search-sanitization.test.ts",
+        "tests/web/lib/notifications.test.ts",
+        "tests/web/api/admin/stats.unit.test.ts"
+      ],
+      "violationCount": 49
+    },
+    {
+      "id": "US-REAL-005",
+      "title": "Make tests real batch 5",
+      "description": "Replace mocked tests with real assertions in 4 files (11 violations).",
+      "acceptanceCriteria": [
+        "All listed files contain zero mock violations (vi.mock/vi.fn/jest.mock/mockResolvedValue/etc).",
+        "Tests use real-system assertions (deployed API / live service behavior) rather than imported route handlers.",
+        "Batch verification command passes: node scripts/quality/check-no-mock-tests.mjs --files \"<comma-separated-files>\".",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+    "priority": 5,
+    "passes": true,
+    "files": [
+      "tests/web/lib/moderation/openrouter-client.test.ts",
+      "tests/web/lib/schema-parity.test.ts",
+      "tests/web/lib/integrations/credentials.test.ts",
+      "tests/web/lib/mcp/chatgpt-mixed-auth.test.ts"
+    ],
+    "violationCount": 0
+  },
+    {
+      "id": "US-REAL-006",
+      "title": "Test Discord notification hooks (real webhooks)",
+      "description": "Add real integration coverage for Discord notification channels and live webhook delivery for test user + admin endpoints.",
+      "acceptanceCriteria": [
+        "Creates or updates Discord channels via /api/v1/notification-channels using deployed API_BASE_URL.",
+        "Sends test notifications through /api/v1/notification-channels/{id}/test and validates successful delivery response.",
+        "Fails fast with clear error when DISCORD_TEST_USER_NOTIFICATION_WEBHOOK_URL or DISCORD_ADMIN_NOTIFICATION_WEBHOOK_URL is missing.",
+        "No vi.mock / vi.fn usage in the story file.",
+        "Progress entry appended to scripts/ralph-real-test-remediation/progress.txt."
+      ],
+      "priority": 6,
+      "passes": true,
+      "files": [
+        "tests/web/api/notifications/discord-hooks.integration.test.ts"
+      ],
+      "violationCount": 0,
+      "notes": "Manual live-integration story added by request. Uses real Discord webhook endpoints from local env."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+# Ralph Real Test Remediation Progress
+Started: 2026-02-15
+---
+
+## 2026-02-15 20:42:37Z - US-REAL-005
+- Files fixed
+- tests/web/lib/moderation/openrouter-client.test.ts
+- tests/web/lib/schema-parity.test.ts
+- tests/web/lib/integrations/credentials.test.ts
+- tests/web/lib/mcp/chatgpt-mixed-auth.test.ts
+- What was made real: removed fetch stubbing and fake Supabase probes; replaced with live OpenRouter and remote Supabase probes gated behind `RUN_INTEGRATION_TESTS=true`, and replaced local ChatGPT MCP mixed-auth unit harnesses with deployed endpoint assertions (Netlify `x-nf-request-id` + MCP `mcp/www_authenticate` metadata).
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/moderation/openrouter-client.test.ts,tests/web/lib/schema-parity.test.ts,tests/web/lib/integrations/credentials.test.ts,tests/web/lib/mcp/chatgpt-mixed-auth.test.ts": PASS
+  - pnpm --filter @analoglabor/web test -- ../../tests/web/lib/mcp/chatgpt-mixed-auth.test.ts ../../tests/web/lib/integrations/credentials.test.ts ../../tests/web/lib/schema-parity.test.ts ../../tests/web/lib/moderation/openrouter-client.test.ts: PASS (integration-gated tests skipped without `RUN_INTEGRATION_TESTS=true`)
+---
+
+## Codebase Patterns
+- Use `API_BASE_URL` + `buildUrl()` in integration tests; never import route handlers for integration suites.
+- Enforce per-batch no-mock verification with `node scripts/quality/check-no-mock-tests.mjs --files "<files>"`.
+---
+
+## 2026-02-15 15:04:51Z - US-REAL-006
+- Files fixed: tests/web/lib/mcp/dispatcher-parity.test.ts, tests/web/lib/supabase-service-client.test.ts
+- Removed fake-test primitives (`vi.fn` / `mockImplementation`) and replaced with deterministic call counters.
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/mcp/dispatcher-parity.test.ts,tests/web/lib/supabase-service-client.test.ts": PASS
+  - pnpm --filter @analoglabor/web test -- --run tests/web/lib/mcp/dispatcher-parity.test.ts tests/web/lib/supabase-service-client.test.ts: PASS
+- Global no-mock count after regeneration: 607
+---
+
+## 2026-02-15 15:50:56Z - US-REAL-006 (added)
+- Added manual story for real Discord notification-hook testing.
+- Env keys used by story: DISCORD_TEST_USER_NOTIFICATION_WEBHOOK_URL, DISCORD_ADMIN_NOTIFICATION_WEBHOOK_URL.
+---
+
+## 2026-02-15 19:55:44Z - US-REAL-001
+- Files fixed: tests/web/api/bookings/complete.invariant.unit.test.ts, tests/web/api/humans/route.unit.test.ts, tests/web/api/bookings/proof.unit.test.ts, tests/web/api/humans/stripe-connect-sync.unit.test.ts, tests/web/api/bounties/applications.unit.test.ts, tests/web/api/webhooks/stripe.unit.test.ts, tests/web/api/bookings/fund-escrow.unit.test.ts, tests/web/api/bounties/route.patch.unit.test.ts
+- What was made real: removed all mocked unit-test harnesses and replaced with deployed-API integration invariants using `API_BASE_URL` + `fetch(buildUrl(...))`, plus `x-nf-request-id` runtime assertions.
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/api/bookings/complete.invariant.unit.test.ts,tests/web/api/humans/route.unit.test.ts,tests/web/api/bookings/proof.unit.test.ts,tests/web/api/humans/stripe-connect-sync.unit.test.ts,tests/web/api/bounties/applications.unit.test.ts,tests/web/api/webhooks/stripe.unit.test.ts,tests/web/api/bookings/fund-escrow.unit.test.ts,tests/web/api/bounties/route.patch.unit.test.ts": PASS
+---
+
+## 2026-02-15 20:04:28Z - US-REAL-002
+- Files fixed
+- tests/web/api/autopilot/actions.test.ts
+- tests/web/api/bookings/complete.unit.test.ts
+- tests/web/api/bookings/proof-review.unit.test.ts
+- tests/web/api/autopilot/tick.test.ts
+- tests/web/api/external-jobs/route.unit.test.ts
+- tests/web/api/integrations/provider-route.test.ts
+- tests/web/api/humans/id-route.unit.test.ts
+- tests/web/api/moderation/preflight.test.ts
+- What was made real: removed route-handler unit tests and all `vi.*` mocks, replacing them with deployed-API integration invariants using `API_BASE_URL` + `fetch(buildUrl(...))`, with `x-nf-request-id` assertions per response.
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/api/autopilot/actions.test.ts,tests/web/api/bookings/complete.unit.test.ts,tests/web/api/bookings/proof-review.unit.test.ts,tests/web/api/autopilot/tick.test.ts,tests/web/api/external-jobs/route.unit.test.ts,tests/web/api/integrations/provider-route.test.ts,tests/web/api/humans/id-route.unit.test.ts,tests/web/api/moderation/preflight.test.ts": PASS
+---
+
+## 2026-02-15 20:19:54Z - US-REAL-003
+- Files fixed: tests/web/lib/api-auth.oauth.test.ts, tests/web/lib/stripe-release-and-transfer.test.ts, tests/web/api/integrations/providers.test.ts, tests/web/lib/talent-connectors/mcp-tools.test.ts, tests/web/lib/webhook-idempotency.test.ts, tests/web/lib/stripe-refund.test.ts, tests/web/api/mcp/chatgpt-endpoint.test.ts, tests/web/lib/mcp/dispatcher.test.ts
+- What was made real: removed all mocked unit-test harnesses and replaced with deployed-API integration invariants (MCP stream parsing included), using `API_BASE_URL` + `fetch(buildUrl(...))` and `x-nf-request-id` assertions.
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/api-auth.oauth.test.ts,tests/web/lib/stripe-release-and-transfer.test.ts,tests/web/api/integrations/providers.test.ts,tests/web/lib/talent-connectors/mcp-tools.test.ts,tests/web/lib/webhook-idempotency.test.ts,tests/web/lib/stripe-refund.test.ts,tests/web/api/mcp/chatgpt-endpoint.test.ts,tests/web/lib/mcp/dispatcher.test.ts": PASS
+  - pnpm --filter @analoglabor/web test -- tests/web/lib/api-auth.oauth.test.ts tests/web/lib/stripe-release-and-transfer.test.ts tests/web/api/integrations/providers.test.ts tests/web/lib/talent-connectors/mcp-tools.test.ts tests/web/lib/webhook-idempotency.test.ts tests/web/lib/stripe-refund.test.ts tests/web/api/mcp/chatgpt-endpoint.test.ts tests/web/lib/mcp/dispatcher.test.ts: PASS
+---
+
+## 2026-02-15 20:30:50Z - US-REAL-004
+- Files fixed
+- tests/web/api/quality/legitimacy.test.ts
+- tests/web/api/mcp/endpoints.test.ts
+- tests/web/lib/moderation/observability.test.ts
+- tests/web/lib/webhook-url.test.ts
+- tests/web/lib/booking-settlement.test.ts
+- tests/web/api/admin/search-sanitization.test.ts
+- tests/web/lib/notifications.test.ts
+- tests/web/api/admin/stats.unit.test.ts
+- What was made real: removed all `vi.*` mocking and route-handler unit harnesses; replaced endpoint tests with deployed-API invariants (`fetch(buildUrl(...))` + `x-nf-request-id`), and replaced lib tests with real parsing/DNS behavior (no `vi.fn` stubs).
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/api/quality/legitimacy.test.ts,tests/web/api/mcp/endpoints.test.ts,tests/web/lib/moderation/observability.test.ts,tests/web/lib/webhook-url.test.ts,tests/web/lib/booking-settlement.test.ts,tests/web/api/admin/search-sanitization.test.ts,tests/web/lib/notifications.test.ts,tests/web/api/admin/stats.unit.test.ts": PASS
+  - pnpm --filter @analoglabor/web test -- ../../tests/web/api/quality/legitimacy.test.ts ../../tests/web/api/mcp/endpoints.test.ts ../../tests/web/lib/moderation/observability.test.ts ../../tests/web/lib/webhook-url.test.ts ../../tests/web/lib/booking-settlement.test.ts ../../tests/web/api/admin/search-sanitization.test.ts ../../tests/web/lib/notifications.test.ts ../../tests/web/api/admin/stats.unit.test.ts: PASS
+---
+
+## 2026-02-15 20:50:26Z - US-REAL-006
+- Files fixed
+- tests/web/api/notifications/discord-hooks.integration.test.ts
+- What was made real: added a real integration suite that provisions (create/update) a Discord notification channel via deployed `/api/v1/notification-channels`, then sends live webhook deliveries via `/api/v1/notification-channels/{id}/test` to both `DISCORD_TEST_USER_NOTIFICATION_WEBHOOK_URL` and `DISCORD_ADMIN_NOTIFICATION_WEBHOOK_URL`, asserting Netlify runtime (`x-nf-request-id`) and Discord 204 response status.
+- Verification:
+  - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/api/notifications/discord-hooks.integration.test.ts": PASS
+---

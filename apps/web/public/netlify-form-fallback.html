@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Netlify Form Fallback</title>
+  </head>
+  <body>
+    <form
+      name="contact"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="contact" />
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="email" />
+      <input name="subject" />
+      <textarea name="message"></textarea>
+    </form>
+
+    <form
+      name="founding_partner_application_v1"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      encType="multipart/form-data"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="founding_partner_application_v1" />
+      <input name="bot-field" />
+      <input name="role_track" />
+      <input name="source" />
+      <input name="full_name" />
+      <input name="email" />
+      <input name="linkedin_url" />
+      <input name="github_url" />
+      <textarea name="why_best_fit"></textarea>
+      <input type="file" name="resume" />
+    </form>
+
+    <form
+      name="quality_score_appeal_v1"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="quality_score_appeal_v1" />
+      <input name="bot-field" />
+      <input name="email" />
+      <input name="score_type" />
+      <input name="entity_type" />
+      <input name="entity_id" />
+      <input name="issue_type" />
+      <textarea name="details"></textarea>
+      <input name="evidence_url" />
+      <textarea name="resolution"></textarea>
+      <input name="source_page" />
+    </form>
+
+    <form
+      name="moderation_appeal_v1"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="moderation_appeal_v1" />
+      <input name="bot-field" />
+      <input name="decision_id" />
+      <input name="content_type" />
+      <input name="content_id" />
+      <input name="email" />
+      <textarea name="appeal_reason"></textarea>
+      <textarea name="freeform_context"></textarea>
+    </form>
+  </body>
+</html>

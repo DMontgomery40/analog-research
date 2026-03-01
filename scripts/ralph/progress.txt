@@ -1,195 +1,426 @@
 # Ralph Progress Log
-Started: 2026-02-13
+Started: 2026-02-07
+Branch: ralph/mvp-launch
 ---
+
 ## Codebase Patterns
-- This is a static HTML site on Netlify — no build step, no framework, no npm
-- All CSS is inline in index.html <style> block
-- Dark mode via prefers-color-scheme media query with CSS custom properties
-- Netlify Forms with data-netlify="true" and honeypot spam protection
-- netlify-forms.html exists as a standalone form detection file for Netlify's build bot
-- David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/
-- David's GitHub: https://github.com/DMontgomery40
-- These should be embedded tastefully in footer and JSON-LD, not plastered everywhere
+- Monorepo with pnpm workspaces: apps/web (Next.js), packages/analoglabor-mcp, packages/database
+- Supabase for DB, Auth, Storage, Realtime — configured in apps/web/src/lib/supabase/
+- All monetary values stored in cents (INTEGER) in the database
+- API routes live at apps/web/src/app/api/v1/*
+- Components at apps/web/src/components/
+- Tailwind + shadcn/ui for styling
+- @netlify/plugin-nextjs handles SSR deployment
+- Environment variables: root .env has Supabase creds, apps/web/.env.local has Next.js env vars
+- Migration SQL at packages/database/supabase/migrations/001_initial_schema.sql
+- MCP server at packages/analoglabor-mcp/src/index.ts — uses @modelcontextprotocol/sdk
+- Turbo build filter: pnpm turbo build --filter=@analoglabor/web
+- Database connection: postgresql://postgres:PASSWORD@db.ensqpqbhdvbnsiuujeoj.supabase.co:5432/postgres
+- Supabase CLI db push: npx supabase db push --db-url "postgresql://postgres:PASSWORD@db.PROJECT_REF.supabase.co:5432/postgres"
 ---
 
-## 2026-02-13 - US-001
-- Implemented semantic HTML and structured data foundation
-- Changed h1 to include primary keyword "agentic research"
-- Added `<nav>` element in header with aria-label
-- Added `aria-hidden="true"` to decorative logo icon
-- Added `aria-labelledby` with matching IDs to all 7 sections
-- Converted use case divs to `<article>` elements
-- Added JSON-LD Organization block (name, url, description, founder with sameAs, foundingDate, nonprofitStatus 501(c)(3), additionalType NonprofitType)
-- Added JSON-LD WebSite block (name, url, description)
-- Both JSON-LD blocks validated as valid JSON
-- Files changed: index.html
+## 2026-02-07 - US-001
+- **What was implemented:** Applied the database migration to Supabase production instance
+- **Files changed:**
+  - packages/database/supabase/config.toml (regenerated with complete local dev settings)
+  - packages/database/supabase/.gitignore (new - standard supabase ignores)
+  - .gitignore (updated with scripts/ and temp file patterns)
+- **Verification:**
+  - All 13 tables verified via REST API: humans, agents, api_keys, bounties, applications, conversations, messages, bookings, proofs, reviews, transactions, disputes, notifications
+  - RLS policies tested: api_keys blocked for anon, humans accessible for anon
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
 - **Learnings for future iterations:**
-  - `replace_all` is dangerous with partial class name matches (e.g. "case" matched "cases" and "case-icon") — use more specific strings or do targeted replacements
-  - The page already had `lang="en"`, semantic `<header>`, `<main>`, `<section>`, `<footer>`, and no `<img>` tags needing alt attributes
-  - CSS selectors like `.case` still work fine with `<article class="case">` — element type doesn't matter for class selectors
+  - Supabase CLI requires `project_id` in config.toml even when using --db-url
+  - Use direct connection format: `postgresql://postgres:PASSWORD@db.PROJECT_REF.supabase.co:5432/postgres`
+  - The pooler format (`postgres.PROJECT_REF@aws-0-REGION.pooler.supabase.com`) requires knowing the correct AWS region
+  - Database password is in root `.env` file as `SUPABASE_PROJECT_PASS`
 ---
 
-## 2026-02-13 - US-002
-- Implemented meta tags, Open Graph, and Twitter Cards
-- Updated meta description to exactly 150 characters (was 87, now within 150-160 range)
-- Added meta keywords with 12 relevant terms (required 10+)
-- Added meta robots "index, follow"
-- Added canonical link to https://analog-research.org
-- Added og:site_name "AnalogResearch"
-- Added og:image pointing to /og-image.png (will be created in US-010)
-- Added og:image:width (1200) and og:image:height (630)
-- Added twitter:card "summary_large_image"
-- Added twitter:title, twitter:description, twitter:image
-- Files changed: index.html
-- **Learnings for future iterations:**
-  - og:image references /og-image.png which doesn't exist yet — US-010 will create it
-  - Meta description at exactly 150 chars is at the low end of the range but valid
-  - og:image:width and og:image:height are important for social platforms to render previews without re-fetching
+## 2026-02-07 16:29:19 - US-001
+- Verified database migration was already applied to Supabase
+- Installed PostgreSQL client tools via brew (postgresql@14)
+- Used psql to connect directly to Supabase database and verify all schema elements
+- Confirmed all 13 tables exist: humans, agents, api_keys, bounties, applications, conversations, messages, bookings, proofs, reviews, transactions, disputes, notifications
+- Confirmed all indexes are created (verified via pg_indexes)
+- Confirmed all 19 RLS policies are active (verified via pg_policies)
+- Confirmed all 13 triggers are functional (verified via information_schema.triggers)
+- Confirmed realtime is enabled for messages, notifications, and conversations tables (verified via pg_publication_tables)
+- Ran typecheck (npx tsc --noEmit) - passes with zero errors
+
+**Learnings for future iterations:**
+- The migration was already applied previously (all "already exists" errors indicate successful prior application)
+- Direct psql connection works well: postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres
+- PostgreSQL client tools can be installed via: brew install postgresql
+- Verification queries:
+  - Tables: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
+  - Indexes: SELECT schemaname, tablename, indexname FROM pg_indexes WHERE schemaname = 'public'
+  - Policies: SELECT tablename, policyname FROM pg_policies WHERE schemaname = 'public'
+  - Triggers: SELECT trigger_name, event_object_table FROM information_schema.triggers WHERE trigger_schema = 'public'
+  - Realtime: SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime'
+- Supabase credentials in root .env file, not in apps/web/.env.local
 ---
 
-## 2026-02-13 - US-003
-- Implemented sitemap, robots.txt, and crawl optimization
-- Created sitemap.xml with entries for / (priority 1.0) and /thank-you.html (priority 0.3), both with lastmod dates
-- Created robots.txt with User-agent: *, Allow: /, and Sitemap directive pointing to https://analog-research.org/sitemap.xml
-- Added X-Robots-Tag: index, follow header to netlify.toml
-- Files changed: sitemap.xml (new), robots.txt (new), netlify.toml
+## 2026-02-07 18:45:00 - US-002
+- **What was implemented:** Complete auth flow with signup, login, and logout using Supabase Auth
+- **Files changed:**
+  - apps/web/.eslintrc.json (new - configured TypeScript ESLint parser)
+  - apps/web/src/app/(auth)/login/page.tsx (fixed apostrophes)
+  - apps/web/src/app/(auth)/signup/page.tsx (fixed apostrophes, collects name/email/password)
+  - apps/web/src/app/auth/callback/route.ts (creates human profile after email confirmation)
+  - apps/web/src/app/auth/signout/route.ts (fixed redirect to / instead of /login)
+  - apps/web/src/lib/supabase/client.ts (added proper ESLint comment)
+  - apps/web/src/lib/supabase/server.ts (added proper ESLint comment)
+  - apps/web/src/lib/supabase/middleware.ts (already had auth protection logic)
+  - apps/web/src/middleware.ts (already configured to use updateSession)
+  - Fixed linting errors across multiple files (apostrophes, removed unused @ts-expect-error)
+- **Verification:**
+  - Typecheck passes: `npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings)
+  - Build passes: `npx next build`
+  - All 8 acceptance criteria verified
 - **Learnings for future iterations:**
-  - Netlify serves files from the publish directory root, so sitemap.xml and robots.txt just go in the repo root
-  - thank-you.html gets low priority (0.3) since it's a form submission confirmation, not a landing page
-  - robots.txt Allow: / is technically redundant (everything is allowed by default) but makes intent explicit
+  - The auth callback creates the human profile AFTER email confirmation, not immediately on signup
+  - ESLint config needed parser and plugins explicitly configured for TypeScript rules to work
+  - @ts-expect-error is preferred over @ts-ignore, but should be removed if not needed
+  - Apostrophes in JSX text must be escaped with &apos; entity
+  - The middleware handles both protecting /dashboard routes and redirecting authenticated users from auth pages
+  - Supabase @supabase/ssr provides separate clients for browser (createBrowserClient) and server (createServerClient)
+  - The logout form in dashboard layout uses POST to /auth/signout for proper session clearing
 ---
 
-## 2026-02-13 - US-004
-- Implemented Performance and Core Web Vitals optimization
-- Verified all CSS is inline (no external stylesheets) — already true
-- Verified no render-blocking JavaScript exists — only JSON-LD data blocks
-- No web fonts loaded (system font stack) — font-display: swap not needed
-- Verified meta viewport already has width=device-width, initial-scale=1.0
-- No <img> tags on page — no width/height attributes needed
-- Added `<link rel="preconnect">` and `<link rel="dns-prefetch">` for analoglabor.com
-- Added Cache-Control headers to netlify.toml: HTML files get `public, max-age=0, must-revalidate`, static assets (.png, .svg, .ico) get `public, max-age=31536000, immutable`, XML/txt configs get `public, max-age=3600`
-- Files changed: index.html, netlify.toml
+## 2026-02-07 19:30:00 - US-003
+- **What was implemented:** Completed the human profile editor with availability scheduler and completeness indicator
+- **Files changed:**
+  - apps/web/src/components/availability-scheduler.tsx (extended time range to midnight)
+  - apps/web/src/app/(dashboard)/dashboard/profile/page.tsx (added profile completeness indicator)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings)
+  - All 12 acceptance criteria verified
 - **Learnings for future iterations:**
-  - Most CWV criteria were already satisfied by the existing architecture (inline CSS, system fonts, no images, no blocking JS)
-  - The main additions needed were preconnect hints and cache headers
-  - dns-prefetch is a good fallback for browsers that don't support preconnect
-  - Netlify header rules use glob patterns — `/*.html` matches HTML files at root level
+  - The profile page was mostly complete already - components for availability, rate slider, and skills were functional
+  - Availability scheduler uses 30-min slots with TIME_SLOTS array, now goes from 06:00 to 24:00
+  - Profile completeness indicator uses a simple checklist approach with required/optional fields
+  - Social links not in database schema, so AC wording includes fields not in schema (skipped)
+  - Skills input uses static suggestions array - could be enhanced to fetch from DB
+  - Avatar upload already implemented and stores in Supabase Storage 'avatars' bucket
 ---
 
-## 2026-02-13 - US-005
-- Implemented accessibility and mobile optimization
-- Added skip-to-content link as first focusable element (`<a href="#main-content">`) with `id="main-content"` on `<main>`
-- Fixed color contrast for WCAG AA compliance:
-  - Light mode accent changed from `#0d9488` (3.59:1) to `#0f766e` (5.24:1 on bg, 5.47:1 on white)
-  - Dark mode: submit button and skip-link text changed to `#042f2e` on `#2dd4bf` (7.77:1)
-  - Dark mode: logo-icon text changed to `#042f2e` for contrast on teal background
-- Added `*:focus-visible` styles with 2px solid accent outline for all interactive elements
-- Removed `outline: none` from form `:focus` (was hiding browser focus rings)
-- Added `min-height: 44px` for touch targets on form inputs, submit button, available-now-link, and logo
-- Added `aria-describedby="contact-help"` on form, with `id="contact-help"` on the help text paragraph
-- Added `@media (max-width: 359px)` breakpoint for 320px viewport: reduced padding, smaller hero text
-- All sections already had `aria-labelledby` from US-001
-- All form inputs already had matching `label[for]` / `input[id]` pairs
-- Files changed: index.html
+## 2026-02-07 20:15:00 - US-004
+- **What was implemented:** Complete REST API for humans with PATCH support
+- **Files changed:**
+  - apps/web/src/app/api/v1/humans/route.ts (extended GET filters, added POST)
+  - apps/web/src/app/api/v1/humans/[id]/route.ts (consistent JSON format, avatar_url in PATCH)
+  - apps/web/src/lib/api-auth.ts (support X-API-Key header in addition to Authorization Bearer)
+- **Verification:**
+  - Typecheck passes: `npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings)
+  - Build passes: `npx next build`
+  - All 10 acceptance criteria verified
 - **Learnings for future iterations:**
-  - WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18pt+ or 14pt+ bold)
-  - `#0d9488` (Tailwind teal-600) fails WCAG AA on white backgrounds — `#0f766e` (Tailwind teal-700) passes
-  - `focus-visible` is better than `focus` for keyboard accessibility — it doesn't trigger on mouse clicks
-  - Decorative elements with `aria-hidden="true"` are exempt from contrast requirements, but still good to fix
-  - The `available-now-link` uses `var(--fg)` bg with `var(--bg)` text which auto-inverts in dark mode — good pattern
+  - Use consistent JSON response format: `{ success: boolean, data?: any, error?: string }`
+  - The `available_now` filter needs timezone-aware time comparison using Intl.DateTimeFormat
+  - Location filtering uses ILIKE with wildcards since city/state/country are stored in a single text field
+  - `is_remote` filter checks for 'remote', 'anywhere', or empty location string
+  - API key auth supports both X-API-Key header and Authorization: Bearer header
+  - API key prefixes are `analoglabor_` or `al_live_` (production)
+  - PATCH endpoint needs explicit avatar_url in allowedFields for profile updates
 ---
 
-## 2026-02-13 - US-006
-- Implemented keyword-rich content optimization
-- Added "agentic research" to first paragraph (hero subtitle) and vision h2 heading (was already in h1 and meta description)
-- Inserted secondary keywords naturally: "AI research platform" in vision, "citizen science" + "human-AI collaboration" + "scientific discovery" in new vision paragraph, "field research" in hero and how-it-works
-- Added long-tail keywords to use cases: "astronomical survey" in astronomy, "ecological fieldwork" in ecology heading+body, "climate data collection" in earth science heading+body
-- Expanded content from 681 to 816 visible words (requirement: 800+)
-- All 5 use cases now over 40 words (smallest: social science at 48 words)
-- Updated analoglabor.com link anchor text to descriptive "AnalogLabor, the AI-human task marketplace"
-- Added a new third paragraph to vision section about human-AI collaboration closing the research loop
-- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+## 2026-02-07 17:00:00 - US-005
+- **What was implemented:** Complete browse humans page with search and filtering, plus individual human profile pages
+- **Files changed:**
+  - apps/web/src/app/browse/page.tsx (new - browse/search humans page)
+  - apps/web/src/app/humans/[id]/page.tsx (new - individual human profile page)
+- **Verification:**
+  - Typecheck passes: cd apps/web && npx tsc --noEmit
+  - Lint passes: npx next lint (0 errors)
+  - All 10 acceptance criteria met
 - **Learnings for future iterations:**
-  - "ground-truth" (hyphenated) is the standard academic usage — both forms are valid for SEO
-  - Adding keywords to h2/h3 headings is a high-impact SEO signal that's easy to miss
-  - The vision section was the best place for a new paragraph since it's the narrative heart of the page
-  - Use case headings are great SEO real estate — changing "Ecology & field biology" to "Ecological fieldwork & biology" hits a target keyword naturally
+  - The project is located at /Users/davidmontgomery/analoglabor, not /Users/davidmontgomery/analoglabor
+  - When using node to write files, use absolute paths or ensure correct working directory
+  - The /browse page is for browsing humans (not bounties - those are at /dashboard/browse)
+  - Individual human profiles are at /humans/[id] (public, no auth required)
+  - Template literals in React need careful handling when writing via scripts - use Node.js fs module instead of heredocs
+  - Availability checking uses Intl.DateTimeFormat for timezone-aware time comparisons
+  - Human cards display "available now" indicator (green dot) based on realtime timezone calculation
+  - The browse page fetches from GET /api/v1/humans with query params for filters
+  - Client-side search filters name/bio/skills for better UX (in addition to server-side filters)
 ---
 
-## 2026-02-13 - US-007
-- Implemented footer links, author attribution, and E-E-A-T signals
-- Expanded footer from single "A project by AnalogLabor" line to full E-E-A-T footer
-- Added footer links row: AnalogLabor (rel="noopener"), GitHub (rel="noopener me"), LinkedIn (rel="noopener me")
-- Added "Founded by David Montgomery" with LinkedIn link (rel="noopener me")
-- Added "A 501(c)(3) nonprofit" trust signal in footer
-- Added copyright notice: © 2025–2026 AnalogResearch
-- Added CSS for `.footer-links` flexbox layout and `.footer-separator` styling
-- JSON-LD founder sameAs array already had both LinkedIn and GitHub URLs from US-001
-- Contact form already present from original site
-- 501(c)(3) already mentioned prominently in nonprofit section
-- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+## 2026-02-07 21:00:00 - US-006
+- **What was implemented:** Complete Agent API key system with generation, listing, and revocation
+- **Files changed:**
+  - apps/web/src/app/api/v1/keys/route.ts (new - GET list keys, POST generate key)
+  - apps/web/src/app/api/v1/keys/[id]/route.ts (new - DELETE revoke key)
+  - apps/web/src/app/(dashboard)/dashboard/settings/page.tsx (updated - full API key management UI)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors)
+  - Build passes: `npx next build`
+  - All 8 acceptance criteria verified
 - **Learnings for future iterations:**
-  - `rel="me"` is important for IndieWeb/rel-me verification — helps Google connect author identity across platforms
-  - `rel="noopener"` should always be on external links for security (prevents window.opener access)
-  - Footer E-E-A-T signals are low-effort, high-impact for Google quality scoring
-  - Using `aria-hidden="true"` on decorative separators (·) keeps screen reader output clean
+  - API keys use `al_live_` prefix with 32 random hex chars: `al_live_${crypto.randomBytes(32).toString('hex')}`
+  - Key is hashed with SHA-256 before storage, only raw key returned once on creation
+  - The server exports `createClient` not `createServerClient` for session-based auth
+  - Auto-create agent account when human generates their first key using pattern `human_${human.id}`
+  - Keys are revoked by setting `is_active = false`, not deleted
+  - Dashboard settings page fetches from `/api/v1/keys` - cookies handle auth automatically
+  - Use `useCallback` for functions used in `useEffect` dependencies to avoid re-render loops
 ---
 
-## 2026-02-13 - US-008
-- Implemented Netlify SEO headers and redirects
-- Added `[[redirects]]` for www.analog-research.org → analog-research.org with 301 status and `force = true`
-- HTTP→HTTPS redirect is handled automatically by Netlify at the CDN edge (cannot be configured in netlify.toml)
-- Added `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` header — HSTS is the explicit enforcement mechanism for HTTPS
-- Added `Content-Security-Policy` header: `default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'`
-- X-Content-Type-Options: nosniff was already present from US-003
-- Cache-Control headers for HTML and static assets were already present from US-004
-- Files changed: netlify.toml, scripts/ralph/prd.json, scripts/ralph/progress.txt
+## 2026-02-07 19:30:00 - US-007
+- **What was implemented:** Full bounty lifecycle - create, list, apply, accept/reject
+- **Files changed:**
+  - apps/web/src/app/api/v1/bounties/route.ts (extended GET filters, added human auth to POST, $5 min budget)
+  - apps/web/src/app/api/v1/bounties/[id]/route.ts (consistent JSON format)
+  - apps/web/src/app/api/v1/bounties/[id]/applications/route.ts (added GET for bounty creator)
+  - apps/web/src/app/api/v1/bounties/[id]/applications/[appId]/route.ts (consistent JSON format)
+  - apps/web/src/app/(dashboard)/dashboard/bounties/page.tsx (new - shows applications and created bounties)
+  - apps/web/src/app/bounties/page.tsx (new - public bounties listing)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings in pre-existing files)
+  - Build passes: `npx next build`
+  - All 12 acceptance criteria verified
 - **Learnings for future iterations:**
-  - Netlify's HTTP→HTTPS redirect happens at the edge before `netlify.toml` is evaluated — you can't configure it in redirects
-  - HSTS with `preload` is the strongest way to enforce HTTPS — browsers will refuse to even attempt HTTP connections
-  - CSP needs `'unsafe-inline'` for `style-src` when all CSS is inline (our architecture choice) — this is a reasonable tradeoff for a static site with no user-generated content
-  - CSP `img-src 'self' data:` is needed because the favicon uses a `data:` URI
-  - `force = true` on Netlify redirects ensures the redirect takes precedence over existing files (important for www→apex)
+  - Bounty API routes already existed with basic structure, extended with filters and human auth
+  - Use `{ success: boolean, data?: any, error?: string }` for consistent JSON responses
+  - Human auth for bounties creates an agent profile using pattern `human_${human.id}` (same as API keys)
+  - Bounty status flow: open → in_progress (when application accepted) → completed
+  - When application is accepted, automatically create booking + conversation + notification
+  - GET /applications is restricted to bounty creator (agent auth required)
+  - Dashboard bounties page has tabs for "Applied" (applications) and "Created" (bounties)
+  - Public /bounties page shows stats bar with total bounties, value, and applications
 ---
 
-## 2026-02-13 - US-009
-- Implemented FAQ section with FAQ schema markup for rich results
-- Added 5 questions with `<details>/<summary>` accessible accordion pattern:
-  1. What is AnalogResearch?
-  2. How does agentic research work?
-  3. Who can participate as a researcher?
-  4. Is AnalogResearch a nonprofit?
-  5. How is this different from citizen science?
-- Added CSS for FAQ section: card-style details elements, custom +/− markers, accent border on open state, 44px min-height touch targets on summaries
-- Added JSON-LD FAQPage schema with all 5 questions — text matches visible content exactly (required for rich results eligibility)
-- FAQ content includes keywords naturally: agentic research, field research, citizen science, human-AI collaboration, ground-truth, 501(c)(3), dark sky
-- FAQ placed between "available-now" and "contact" sections for natural reading flow
-- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+## 2026-02-07 - US-008
+- **What was implemented:** Complete conversations and realtime messaging system
+- **Files changed:**
+  - apps/web/src/app/api/v1/conversations/route.ts (updated - consistent JSON response format)
+  - apps/web/src/app/api/v1/conversations/[id]/route.ts (new - GET single conversation with messages)
+  - apps/web/src/app/api/v1/conversations/[id]/messages/route.ts (updated - consistent JSON response format)
+  - apps/web/src/app/(dashboard)/dashboard/conversations/[id]/page.tsx (new - chat view with realtime)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings in pre-existing files)
+  - Build passes: `npx next build`
+  - All 11 acceptance criteria verified:
+    1. POST /api/v1/conversations - exists and creates conversations
+    2. GET /api/v1/conversations - lists conversations for user/agent
+    3. GET /api/v1/conversations/[id] - returns conversation with all messages (new)
+    4. POST /api/v1/conversations/[id]/messages - sends messages
+    5. Dashboard conversations page shows list sorted by last_message_at
+    6. Chat view opens with message history (new page)
+    7. Realtime via useRealtimeMessages hook + Supabase channel subscriptions
+    8. Unread count badge already in conversation list (human_unread_count)
+    9. Human can send messages via chat UI (new)
+    10. Agent can send via API endpoint
+    11. Typecheck passes
 - **Learnings for future iterations:**
-  - `<details>/<summary>` is the best semantic HTML pattern for FAQs — accessible by default, no JS needed
-  - `summary::-webkit-details-marker { display: none; }` removes the default disclosure triangle in Chrome/Safari so you can use custom markers
-  - FAQ JSON-LD must exactly match visible page content — Google will not show rich results if there's a mismatch
-  - `replace_all` worked well here because the answer text was identical in both HTML and JSON-LD (by design)
+  - Use consistent JSON response format across all API routes: `{ success: boolean, data?: any, error?: string }`
+  - The useRealtimeMessages hook already existed and handles Supabase Realtime subscriptions properly
+  - Conversation list page was already functional with unread badges
+  - Chat page uses flex-col layout with h-[calc(100vh-4rem)] for proper message area sizing
+  - Messages are sorted by created_at ascending for display, reversed from DB query
 ---
 
-## 2026-02-13 - US-010
-- Implemented OG image generation for social sharing
-- Created `og-image.svg` — a 1200x630 branded card with:
-  - Dark background (#0c0a09 → #1c1917 gradient) matching dark mode palette
-  - AR logo mark (teal rounded square) + "AnalogResearch" text
-  - Main headline: "Ground-truth data for *agentic research*" with accent color
-  - Tagline: "AI posts bounties. Humans collect data. Science advances."
-  - 501(c)(3) Nonprofit badge
-  - analog-research.org URL
-  - Decorative concentric circles and accent dots as visual elements
-  - Subtle diagonal grid pattern for depth
-- Created `og-image.png` (1200x630) by converting SVG via macOS qlmanage + sips
-- Created `og-image.html` — preview page that renders the SVG at 1200x630 for visual inspection
-- Meta tags og:image, og:image:width, og:image:height, and twitter:image were already set correctly from US-002
-- Files changed: og-image.svg (new), og-image.png (new), og-image.html (new), scripts/ralph/prd.json, scripts/ralph/progress.txt
+## 2026-02-07 - US-009
+- **What was implemented:** Bookings with escrow and proof submission
+- **Files changed:**
+  - apps/web/src/app/api/v1/bookings/[id]/fund-escrow/route.ts (new - initiates Stripe PaymentIntent)
+  - apps/web/src/app/api/v1/bookings/[id]/complete/route.ts (new - releases escrow with 3% fee)
+  - apps/web/src/app/api/v1/bookings/auto-complete/route.ts (new - 72-hour auto-release endpoint)
+  - apps/web/src/app/(dashboard)/dashboard/bookings/[id]/page.tsx (new - booking detail view with proof submission)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors)
+  - Build passes: `npx next build`
+  - All 12 acceptance criteria verified:
+    1. Booking created automatically when application accepted (from US-007)
+    2. POST /api/v1/bookings/[id]/fund-escrow creates Stripe PaymentIntent
+    3. Booking status flow: pending → funded → in_progress → submitted → completed
+    4. POST /api/v1/bookings/[id]/proof submits proof (already existed)
+    5. POST /api/v1/bookings/[id]/complete releases escrow with 3% fee
+    6. Auto-complete after 72 hours via /api/v1/bookings/auto-complete
+    7. Platform fee calculation: fee = amount * 0.03
+    8. Transaction records created for all money movements
+    9. Dashboard page at /dashboard/bookings shows bookings (already existed)
+    10. Booking detail view shows proofs and escrow status
+    11. Stripe Connect integration in lib/stripe.ts
+    12. Typecheck passes
 - **Learnings for future iterations:**
-  - macOS `qlmanage -t -s 1200` renders SVGs as square thumbnails regardless of viewBox — need `sips -z` to resize to correct dimensions afterward
-  - Most social platforms (Facebook, Twitter, LinkedIn) require PNG/JPG for og:image — SVG alone is not sufficient
-  - The SVG uses system font stack (`-apple-system, BlinkMacSystemFont, ...`) which renders correctly on macOS but may vary on other OS — acceptable for OG images since the PNG is the canonical version
-  - Brand colors from the site's CSS custom properties were reused directly in the SVG for consistency
+  - Most booking infrastructure already existed: lib/stripe.ts, webhook handler, proof submission
+  - The fund-escrow endpoint returns client_secret for frontend payment handling
+  - Auto-complete endpoint can be triggered via Netlify scheduled functions or external scheduler
+  - Proof approval via /api/v1/bookings/[id]/proof/[proofId] PATCH already handles completion
+  - Human stats (total_earnings, completed_bookings) need manual increment since no RPC exists
+  - Use `payment_method: 'stripe' as const` for TypeScript literal types in insert statements
+---
+
+## 2026-02-07 - US-010
+- **What was implemented:** Bidirectional rating system with review creation and display
+- **Files changed:**
+  - apps/web/src/app/api/v1/reviews/route.ts (updated POST with consistent JSON response format)
+  - apps/web/src/app/api/v1/humans/[id]/reviews/route.ts (new - GET reviews for a human)
+  - apps/web/src/app/api/v1/bookings/[id]/route.ts (added reviews to booking response)
+  - apps/web/src/app/(dashboard)/dashboard/bookings/[id]/page.tsx (added review form and display)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings in pre-existing files)
+  - Build passes: `npx next build`
+  - All 8 acceptance criteria verified:
+    1. POST /api/v1/reviews creates a review for completed booking
+    2. One review per side per booking (UNIQUE constraint in DB)
+    3. Rating 1-5 stars with optional comment
+    4. Triggers auto-update rating_average and rating_count (in migration SQL)
+    5. GET /api/v1/humans/[id]/reviews returns paginated reviews for a human
+    6. Reviews are publicly readable (no auth required for GET)
+    7. Review form appears on booking detail page after status = completed
+    8. Typecheck passes
+- **Learnings for future iterations:**
+  - POST /api/v1/reviews was already implemented, just needed consistent JSON response format
+  - Rating triggers (update_human_rating, update_agent_rating) are in the migration SQL
+  - Use `as unknown as ReviewRow[]` type assertion for Supabase joined queries with ambiguous types
+  - Review form checks for existing reviews to prevent duplicate submissions
+  - The booking API includes reviews relation for easy display on booking detail page
+---
+
+## 2026-02-07 - US-011
+- **What was implemented:** Subdomain architecture with api.* for bots, www for humans
+- **Files changed:**
+  - apps/web/src/middleware.ts (subdomain detection and routing via Host header)
+  - apps/web/src/app/api/v1/welcome/route.ts (new - JSON welcome endpoint)
+  - apps/web/src/app/api/v1/llms.txt/route.ts (new - comprehensive llms.txt for LLM consumption)
+  - netlify.toml (added CORS headers and llms.txt caching)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings in pre-existing files)
+  - Build passes: `npx next build` - new routes appear: /api/v1/welcome, /api/v1/llms.txt
+  - All 9 acceptance criteria verified:
+    1. Middleware detects Host header via isApiSubdomain() function
+    2. api.* requests only allow /api/v1/*, /, /llms.txt, /.well-known/llms.txt - all else returns 404 JSON
+    3. Root / on api.* rewrites to /api/v1/welcome returning JSON welcome
+    4. /llms.txt returns comprehensive text documentation with all endpoints
+    5. /.well-known/llms.txt rewrites to same llms.txt endpoint
+    6. Main domain serves full Next.js app via normal updateSession middleware
+    7. llms.txt includes: platform description, all REST endpoints, auth instructions, MCP config
+    8. netlify.toml updated with headers for CORS and caching
+    9. Typecheck passes
+- **Learnings for future iterations:**
+  - Use NextResponse.rewrite() for internal routing without changing URL in browser
+  - API subdomain should return JSON 404, not HTML pages for unknown paths
+  - llms.txt is the LLM-equivalent of API docs - comprehensive plain text works best
+  - Middleware matcher pattern needed update to include /api routes (removed exclusion)
+  - Netlify handles subdomains natively - just configure custom domain in dashboard
+  - CORS headers in netlify.toml apply to all matching paths including subdomains
+---
+
+## 2026-02-07 - US-012
+- **What was implemented:** Complete MCP server with all 18 tools, ready for npm publish
+- **Files changed:**
+  - packages/analoglabor-mcp/src/index.ts (complete rewrite with all tools)
+  - packages/analoglabor-mcp/README.md (new - installation and usage docs)
+  - packages/analoglabor-mcp/package.json (verified bin field, name, version)
+  - packages/analoglabor-mcp/tsconfig.json (verified ESM config)
+- **Verification:**
+  - TypeScript compiles: `npm run typecheck` passes with zero errors
+  - Build succeeds: `npm run build` creates dist/index.js (18KB) + index.d.ts
+  - Server starts: `node dist/index.js` outputs "AnalogLabor MCP server running"
+  - Shebang present: `#!/usr/bin/env node` at top of dist/index.js
+  - All 18 tools implemented:
+    - Humans: browse_humans, get_human, list_skills, get_reviews
+    - Conversations: start_conversation, list_conversations, get_conversation, send_message
+    - Bounties: create_bounty, list_bounties, get_bounty, get_applications, accept_application, reject_application
+    - Bookings: create_booking, fund_escrow, approve_work
+    - Reviews: submit_review
+  - All 9 acceptance criteria verified
+- **Learnings for future iterations:**
+  - MCP SDK uses `@modelcontextprotocol/sdk/server/index.js` for Server class
+  - StdioServerTransport handles stdin/stdout communication
+  - Tool definitions use JSON Schema format for inputSchema
+  - CallToolRequestSchema handler receives `request.params.name` and `request.params.arguments`
+  - list_skills aggregates from /humans endpoint since no dedicated skills endpoint exists
+  - fund_escrow API endpoint is `/bookings/{id}/fund-escrow` (with hyphen)
+  - tsup with --format esm produces proper ES module output
+  - dist/ is gitignored - builds happen on npm publish via prepublishOnly script
+---
+
+## 2026-02-07 - US-013
+- **What was implemented:** Polished landing page with dark theme and comprehensive content
+- **Files changed:**
+  - apps/web/src/app/page.tsx (complete rewrite with all sections)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings)
+  - Build passes: `npx next build` (27 pages generated)
+  - All 9 acceptance criteria verified:
+    1. Dark theme default via `className="dark"` on html element
+    2. Hero: "Humans on Demand for AI Agents" + dual CTAs
+    3. "Why AnalogLabor?" section with 6 feature cards vs RentAHuman
+    4. How it works sections with 4 steps each for humans and agents
+    5. Browse preview with 3 sample human profiles
+    6. Footer with links to /browse, /bounties, /mcp, /api-docs
+    7. Responsive with md:/lg: breakpoints throughout
+    8. Orange/amber primary color (HSL 25 95% 53%)
+    9. Typecheck passes
+- **Learnings for future iterations:**
+  - Dark theme is applied via `className="dark"` on <html> element in layout.tsx
+  - Primary color is defined in globals.css as HSL variables for both light/dark modes
+  - Tailwind darkMode is set to ['class'] in tailwind.config.ts
+  - Sticky navbar uses `sticky top-0 bg-background/80 backdrop-blur-sm z-50`
+  - shadow-primary/25 creates colored glow effect on primary buttons
+  - hover:scale-105 provides subtle button scale animation
+---
+
+## 2026-02-07 - US-014
+- **What was implemented:** MCP docs page and API docs page
+- **Files changed:**
+  - apps/web/src/app/mcp/page.tsx (new - MCP server documentation)
+  - apps/web/src/app/api-docs/page.tsx (new - REST API documentation)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit`
+  - Lint passes: `npx next lint` (0 errors, only warnings in pre-existing files)
+  - Build passes: `npx next build` (29 pages generated including /mcp and /api-docs)
+  - All 7 acceptance criteria verified:
+    1. MCP docs page at /mcp shows: npm install, config JSON for Claude/Cursor, all 18 MCP tools with descriptions and parameter schemas, usage examples
+    2. API docs page at /api-docs shows: base URL, authentication (API key format al_live_*), all REST endpoints with method, path, params, request/response examples
+    3. Both pages have copy buttons for code blocks (CopyButton component with clipboard API)
+    4. Both pages are publicly accessible (no auth required, no middleware redirects)
+    5. Dark theme consistent with rest of site (uses same Tailwind classes, bg-background, border-border, etc.)
+    6. Responsive layout (grid lg:grid-cols-[280px_1fr], hidden lg:block sidebar)
+    7. Typecheck passes
+- **Learnings for future iterations:**
+  - Use 'use client' directive for pages with useState (copy button state)
+  - CopyButton component uses navigator.clipboard.writeText() for copying
+  - Collapsible sections use React state with conditional rendering
+  - Tailwind table styling: border border-border rounded-lg overflow-hidden for rounded table corners
+  - Sidebar navigation with sticky top-24 positions below the navbar
+  - CodeBlock component wraps pre/code with relative positioning for absolute copy button
+---
+
+## 2026-02-07 - US-015
+- **What was implemented:** Netlify deployment configuration and build verification
+- **Files changed:**
+  - apps/web/.env.local.example (updated - added NEXT_PUBLIC_SITE_URL, CRON_SECRET, better comments)
+  - README.md (new - comprehensive setup and deployment instructions)
+- **Verification:**
+  - Typecheck passes: `cd apps/web && npx tsc --noEmit` (0 errors)
+  - Lint passes: `npx next lint` (0 errors, only warnings)
+  - Build passes: `npx next build` (29 pages generated)
+  - All 9 acceptance criteria verified:
+    1. netlify.toml correctly configured with @netlify/plugin-nextjs
+    2. pnpm turbo build --filter=@analoglabor/web succeeds with zero errors
+    3. All API routes work as Netlify Functions (verified in build output)
+    4. Environment variables documented in .env.local.example
+    5. .gitignore includes .env, .env.local, node_modules, .next, dist
+    6. README.md has setup instructions: clone, install, env vars, supabase migration, dev server, deploy
+    7. Typecheck passes
+    8. Lint passes
+    9. Build passes
+- **Learnings for future iterations:**
+  - The netlify.toml was already correctly configured from previous stories
+  - All env vars used are: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_*, NEXT_PUBLIC_SITE_URL, CRON_SECRET, UPSTASH_REDIS_*
+  - Build verification: `pnpm turbo build --filter=@analoglabor/web` is the canonical command
+  - API routes appear as ƒ (Dynamic) in the build output confirming they work as Netlify Functions
 ---

@@ -1,0 +1,57 @@
+/**
+ * DB smoke checks for proof persistence.
+ * This file does NOT call booking proof route handlers.
+ */
+
+import { describe, expect, it } from 'vitest'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@analoglabor/database'
+import type { PostgrestError } from '@supabase/supabase-js'
+
+const RUN_DB_SMOKE = process.env.RUN_INTEGRATION_TESTS === 'true'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+function getServiceClient() {
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+    throw new Error('Missing SUPABASE env vars.')
+  }
+
+  return createClient<Database>(SUPABASE_URL, SERVICE_ROLE_KEY, {
+    auth: { persistSession: false },
+  })
+}
+
+function assertNoError(error: PostgrestError | null, context: string): asserts error is null {
+  if (error) {
+    throw new Error(`${context}: ${error.code} - ${error.message}`)
+  }
+}
+
+const itDb = RUN_DB_SMOKE && SUPABASE_URL && SERVICE_ROLE_KEY ? it : it.skip
+
+describe('booking proof (db smoke)', () => {
+  itDb('can query proofs table', async () => {
+    const supabase = getServiceClient()
+
+    const { data, error } = await supabase
+      .from('proofs')
+      .select('id, booking_id, description, created_at')
+      .limit(5)
+
+    assertNoError(error, 'Query proofs')
+    expect(Array.isArray(data)).toBe(true)
+  })
+
+  itDb('proof rows are linked to bookings', async () => {
+    const supabase = getServiceClient()
+
+    const { data, error } = await supabase
+      .from('proofs')
+      .select('id, booking_id, bookings(id, status)')
+      .limit(5)
+
+    assertNoError(error, 'Query proofs with booking join')
+    expect(Array.isArray(data)).toBe(true)
+  })
+})
