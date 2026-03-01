@@ -20,7 +20,7 @@
         "lang='en' attribute exists on html element"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -44,7 +44,7 @@
         "meta robots content is 'index, follow'"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -59,7 +59,7 @@
         "netlify.toml includes custom header for X-Robots-Tag: index, follow"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -77,7 +77,7 @@
         "HTML is minified or at minimum has no unnecessary whitespace in production-critical areas"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -95,7 +95,7 @@
         "Page is fully usable at 320px viewport width"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -112,7 +112,7 @@
         "No keyword stuffing — keywords read naturally in context"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -130,7 +130,7 @@
         "Copyright notice exists with current year"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "David's LinkedIn: https://www.linkedin.com/in/david-montgomery-5a07656b/ — David's GitHub: https://github.com/DMontgomery40 — These must be embedded tastefully, not spammy. E-E-A-T signals matter for Google quality scoring."
     },
     {
@@ -147,7 +147,7 @@
         "netlify.toml has Cache-Control header for static assets: public, max-age=31536000, immutable"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -163,7 +163,7 @@
         "FAQ section has an h2 heading"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {
@@ -180,7 +180,7 @@
         "Image includes: AnalogResearch logo/text, tagline, and visual element"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "For a static site without a build step, create the OG image as an SVG or use an HTML file that can be screenshotted. The simplest approach is a clean SVG with the brand colors."
     },
     {

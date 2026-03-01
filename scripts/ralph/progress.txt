@@ -11,3 +11,185 @@ Started: 2026-02-13
 - David's GitHub: https://github.com/DMontgomery40
 - These should be embedded tastefully in footer and JSON-LD, not plastered everywhere
 ---
+
+## 2026-02-13 - US-001
+- Implemented semantic HTML and structured data foundation
+- Changed h1 to include primary keyword "agentic research"
+- Added `<nav>` element in header with aria-label
+- Added `aria-hidden="true"` to decorative logo icon
+- Added `aria-labelledby` with matching IDs to all 7 sections
+- Converted use case divs to `<article>` elements
+- Added JSON-LD Organization block (name, url, description, founder with sameAs, foundingDate, nonprofitStatus 501(c)(3), additionalType NonprofitType)
+- Added JSON-LD WebSite block (name, url, description)
+- Both JSON-LD blocks validated as valid JSON
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - `replace_all` is dangerous with partial class name matches (e.g. "case" matched "cases" and "case-icon") — use more specific strings or do targeted replacements
+  - The page already had `lang="en"`, semantic `<header>`, `<main>`, `<section>`, `<footer>`, and no `<img>` tags needing alt attributes
+  - CSS selectors like `.case` still work fine with `<article class="case">` — element type doesn't matter for class selectors
+---
+
+## 2026-02-13 - US-002
+- Implemented meta tags, Open Graph, and Twitter Cards
+- Updated meta description to exactly 150 characters (was 87, now within 150-160 range)
+- Added meta keywords with 12 relevant terms (required 10+)
+- Added meta robots "index, follow"
+- Added canonical link to https://analog-research.org
+- Added og:site_name "AnalogResearch"
+- Added og:image pointing to /og-image.png (will be created in US-010)
+- Added og:image:width (1200) and og:image:height (630)
+- Added twitter:card "summary_large_image"
+- Added twitter:title, twitter:description, twitter:image
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - og:image references /og-image.png which doesn't exist yet — US-010 will create it
+  - Meta description at exactly 150 chars is at the low end of the range but valid
+  - og:image:width and og:image:height are important for social platforms to render previews without re-fetching
+---
+
+## 2026-02-13 - US-003
+- Implemented sitemap, robots.txt, and crawl optimization
+- Created sitemap.xml with entries for / (priority 1.0) and /thank-you.html (priority 0.3), both with lastmod dates
+- Created robots.txt with User-agent: *, Allow: /, and Sitemap directive pointing to https://analog-research.org/sitemap.xml
+- Added X-Robots-Tag: index, follow header to netlify.toml
+- Files changed: sitemap.xml (new), robots.txt (new), netlify.toml
+- **Learnings for future iterations:**
+  - Netlify serves files from the publish directory root, so sitemap.xml and robots.txt just go in the repo root
+  - thank-you.html gets low priority (0.3) since it's a form submission confirmation, not a landing page
+  - robots.txt Allow: / is technically redundant (everything is allowed by default) but makes intent explicit
+---
+
+## 2026-02-13 - US-004
+- Implemented Performance and Core Web Vitals optimization
+- Verified all CSS is inline (no external stylesheets) — already true
+- Verified no render-blocking JavaScript exists — only JSON-LD data blocks
+- No web fonts loaded (system font stack) — font-display: swap not needed
+- Verified meta viewport already has width=device-width, initial-scale=1.0
+- No <img> tags on page — no width/height attributes needed
+- Added `<link rel="preconnect">` and `<link rel="dns-prefetch">` for analoglabor.com
+- Added Cache-Control headers to netlify.toml: HTML files get `public, max-age=0, must-revalidate`, static assets (.png, .svg, .ico) get `public, max-age=31536000, immutable`, XML/txt configs get `public, max-age=3600`
+- Files changed: index.html, netlify.toml
+- **Learnings for future iterations:**
+  - Most CWV criteria were already satisfied by the existing architecture (inline CSS, system fonts, no images, no blocking JS)
+  - The main additions needed were preconnect hints and cache headers
+  - dns-prefetch is a good fallback for browsers that don't support preconnect
+  - Netlify header rules use glob patterns — `/*.html` matches HTML files at root level
+---
+
+## 2026-02-13 - US-005
+- Implemented accessibility and mobile optimization
+- Added skip-to-content link as first focusable element (`<a href="#main-content">`) with `id="main-content"` on `<main>`
+- Fixed color contrast for WCAG AA compliance:
+  - Light mode accent changed from `#0d9488` (3.59:1) to `#0f766e` (5.24:1 on bg, 5.47:1 on white)
+  - Dark mode: submit button and skip-link text changed to `#042f2e` on `#2dd4bf` (7.77:1)
+  - Dark mode: logo-icon text changed to `#042f2e` for contrast on teal background
+- Added `*:focus-visible` styles with 2px solid accent outline for all interactive elements
+- Removed `outline: none` from form `:focus` (was hiding browser focus rings)
+- Added `min-height: 44px` for touch targets on form inputs, submit button, available-now-link, and logo
+- Added `aria-describedby="contact-help"` on form, with `id="contact-help"` on the help text paragraph
+- Added `@media (max-width: 359px)` breakpoint for 320px viewport: reduced padding, smaller hero text
+- All sections already had `aria-labelledby` from US-001
+- All form inputs already had matching `label[for]` / `input[id]` pairs
+- Files changed: index.html
+- **Learnings for future iterations:**
+  - WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18pt+ or 14pt+ bold)
+  - `#0d9488` (Tailwind teal-600) fails WCAG AA on white backgrounds — `#0f766e` (Tailwind teal-700) passes
+  - `focus-visible` is better than `focus` for keyboard accessibility — it doesn't trigger on mouse clicks
+  - Decorative elements with `aria-hidden="true"` are exempt from contrast requirements, but still good to fix
+  - The `available-now-link` uses `var(--fg)` bg with `var(--bg)` text which auto-inverts in dark mode — good pattern
+---
+
+## 2026-02-13 - US-006
+- Implemented keyword-rich content optimization
+- Added "agentic research" to first paragraph (hero subtitle) and vision h2 heading (was already in h1 and meta description)
+- Inserted secondary keywords naturally: "AI research platform" in vision, "citizen science" + "human-AI collaboration" + "scientific discovery" in new vision paragraph, "field research" in hero and how-it-works
+- Added long-tail keywords to use cases: "astronomical survey" in astronomy, "ecological fieldwork" in ecology heading+body, "climate data collection" in earth science heading+body
+- Expanded content from 681 to 816 visible words (requirement: 800+)
+- All 5 use cases now over 40 words (smallest: social science at 48 words)
+- Updated analoglabor.com link anchor text to descriptive "AnalogLabor, the AI-human task marketplace"
+- Added a new third paragraph to vision section about human-AI collaboration closing the research loop
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - "ground-truth" (hyphenated) is the standard academic usage — both forms are valid for SEO
+  - Adding keywords to h2/h3 headings is a high-impact SEO signal that's easy to miss
+  - The vision section was the best place for a new paragraph since it's the narrative heart of the page
+  - Use case headings are great SEO real estate — changing "Ecology & field biology" to "Ecological fieldwork & biology" hits a target keyword naturally
+---
+
+## 2026-02-13 - US-007
+- Implemented footer links, author attribution, and E-E-A-T signals
+- Expanded footer from single "A project by AnalogLabor" line to full E-E-A-T footer
+- Added footer links row: AnalogLabor (rel="noopener"), GitHub (rel="noopener me"), LinkedIn (rel="noopener me")
+- Added "Founded by David Montgomery" with LinkedIn link (rel="noopener me")
+- Added "A 501(c)(3) nonprofit" trust signal in footer
+- Added copyright notice: © 2025–2026 AnalogResearch
+- Added CSS for `.footer-links` flexbox layout and `.footer-separator` styling
+- JSON-LD founder sameAs array already had both LinkedIn and GitHub URLs from US-001
+- Contact form already present from original site
+- 501(c)(3) already mentioned prominently in nonprofit section
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - `rel="me"` is important for IndieWeb/rel-me verification — helps Google connect author identity across platforms
+  - `rel="noopener"` should always be on external links for security (prevents window.opener access)
+  - Footer E-E-A-T signals are low-effort, high-impact for Google quality scoring
+  - Using `aria-hidden="true"` on decorative separators (·) keeps screen reader output clean
+---
+
+## 2026-02-13 - US-008
+- Implemented Netlify SEO headers and redirects
+- Added `[[redirects]]` for www.analog-research.org → analog-research.org with 301 status and `force = true`
+- HTTP→HTTPS redirect is handled automatically by Netlify at the CDN edge (cannot be configured in netlify.toml)
+- Added `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` header — HSTS is the explicit enforcement mechanism for HTTPS
+- Added `Content-Security-Policy` header: `default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'`
+- X-Content-Type-Options: nosniff was already present from US-003
+- Cache-Control headers for HTML and static assets were already present from US-004
+- Files changed: netlify.toml, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Netlify's HTTP→HTTPS redirect happens at the edge before `netlify.toml` is evaluated — you can't configure it in redirects
+  - HSTS with `preload` is the strongest way to enforce HTTPS — browsers will refuse to even attempt HTTP connections
+  - CSP needs `'unsafe-inline'` for `style-src` when all CSS is inline (our architecture choice) — this is a reasonable tradeoff for a static site with no user-generated content
+  - CSP `img-src 'self' data:` is needed because the favicon uses a `data:` URI
+  - `force = true` on Netlify redirects ensures the redirect takes precedence over existing files (important for www→apex)
+---
+
+## 2026-02-13 - US-009
+- Implemented FAQ section with FAQ schema markup for rich results
+- Added 5 questions with `<details>/<summary>` accessible accordion pattern:
+  1. What is AnalogResearch?
+  2. How does agentic research work?
+  3. Who can participate as a researcher?
+  4. Is AnalogResearch a nonprofit?
+  5. How is this different from citizen science?
+- Added CSS for FAQ section: card-style details elements, custom +/− markers, accent border on open state, 44px min-height touch targets on summaries
+- Added JSON-LD FAQPage schema with all 5 questions — text matches visible content exactly (required for rich results eligibility)
+- FAQ content includes keywords naturally: agentic research, field research, citizen science, human-AI collaboration, ground-truth, 501(c)(3), dark sky
+- FAQ placed between "available-now" and "contact" sections for natural reading flow
+- Files changed: index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - `<details>/<summary>` is the best semantic HTML pattern for FAQs — accessible by default, no JS needed
+  - `summary::-webkit-details-marker { display: none; }` removes the default disclosure triangle in Chrome/Safari so you can use custom markers
+  - FAQ JSON-LD must exactly match visible page content — Google will not show rich results if there's a mismatch
+  - `replace_all` worked well here because the answer text was identical in both HTML and JSON-LD (by design)
+---
+
+## 2026-02-13 - US-010
+- Implemented OG image generation for social sharing
+- Created `og-image.svg` — a 1200x630 branded card with:
+  - Dark background (#0c0a09 → #1c1917 gradient) matching dark mode palette
+  - AR logo mark (teal rounded square) + "AnalogResearch" text
+  - Main headline: "Ground-truth data for *agentic research*" with accent color
+  - Tagline: "AI posts bounties. Humans collect data. Science advances."
+  - 501(c)(3) Nonprofit badge
+  - analog-research.org URL
+  - Decorative concentric circles and accent dots as visual elements
+  - Subtle diagonal grid pattern for depth
+- Created `og-image.png` (1200x630) by converting SVG via macOS qlmanage + sips
+- Created `og-image.html` — preview page that renders the SVG at 1200x630 for visual inspection
+- Meta tags og:image, og:image:width, og:image:height, and twitter:image were already set correctly from US-002
+- Files changed: og-image.svg (new), og-image.png (new), og-image.html (new), scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - macOS `qlmanage -t -s 1200` renders SVGs as square thumbnails regardless of viewBox — need `sips -z` to resize to correct dimensions afterward
+  - Most social platforms (Facebook, Twitter, LinkedIn) require PNG/JPG for og:image — SVG alone is not sufficient
+  - The SVG uses system font stack (`-apple-system, BlinkMacSystemFont, ...`) which renders correctly on macOS but may vary on other OS — acceptable for OG images since the PNG is the canonical version
+  - Brand colors from the site's CSS custom properties were reused directly in the SVG for consistency
+---
