@@ -19,17 +19,15 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 14,
+          borderRadius: 16,
           position: 'relative',
         }}
       >
         <div
           style={{
-            width: '64%',
-            height: '64%',
-            borderRadius: '9999px',
-            border: '8px solid white',
-            boxSizing: 'border-box',
+            width: '62%',
+            height: '72%',
+            position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -37,25 +35,47 @@ export default function Icon() {
         >
           <div
             style={{
-              width: '42%',
-              height: '42%',
+              width: '30%',
+              height: '100%',
+              background: '#f8fafc',
+              borderRadius: 6,
+              transform: 'skewX(-19deg)',
+            }}
+          />
+          <div
+            style={{
+              width: '30%',
+              height: '100%',
+              background: '#f8fafc',
+              borderRadius: 6,
+              transform: 'skewX(19deg)',
+              marginLeft: '-6%',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: '54%',
+              height: '16%',
+              borderRadius: 5,
+              background: '#f8fafc',
+              top: '52%',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              right: '-5%',
+              top: '-7%',
+              width: '18%',
+              height: '18%',
               borderRadius: '9999px',
-              border: '8px solid white',
-              boxSizing: 'border-box',
+              background: '#7dd3fc',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
-          >
-            <div
-              style={{
-                width: '34%',
-                height: '34%',
-                borderRadius: '9999px',
-                background: 'white',
-              }}
-            />
-          </div>
+          />
         </div>
       </div>
     ),
