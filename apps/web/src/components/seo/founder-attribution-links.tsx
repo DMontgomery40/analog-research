@@ -21,12 +21,12 @@ export function FounderAttributionLinks({
       </a>
       <span className={separatorClassName}>•</span>
       <a
-        href="https://github.com/DMontgomery40"
+        href="https://github.com/DMontgomery40/analog-research"
         target="_blank"
         rel="noopener me"
         className={linkClassName}
       >
-        GitHub
+        GitHub Repo
       </a>
     </>
   )

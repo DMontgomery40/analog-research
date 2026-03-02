@@ -286,6 +286,12 @@ function BrowseHumansPageInner() {
             {TESTING_DATA_NOTICE}
           </p>
           <QualityFormulaLinks className="mt-2" />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Full endpoints + parameters:{' '}
+            <Link href="/api-docs#humans" className="text-primary hover:underline">REST</Link>
+            {' · '}
+            <Link href="/mcp#tools" className="text-primary hover:underline">MCP tools</Link>
+          </p>
         </div>
 
         <div className="clinical-panel p-6 mb-6">

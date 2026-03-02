@@ -8,6 +8,7 @@ import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
 import { QualityScoreBadge } from '@/components/quality-score-badge'
 import { BRAND_NAME, SITE_URL, TESTING_DATA_NOTICE } from '@/lib/brand'
+import { getPublicShowcaseConfig, isBountyPubliclyVisible } from '@/lib/public-showcase'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 import { isMissingColumnError } from '@/lib/supabase/errors'
 
@@ -44,6 +45,11 @@ function serializeJsonLd(data: unknown): string {
 }
 
 async function getBounty(id: string): Promise<BountyDetails | null> {
+  const showcaseConfig = getPublicShowcaseConfig()
+  if (!isBountyPubliclyVisible(id, showcaseConfig)) {
+    return null
+  }
+
   const supabase = await createServiceClient()
 
   const publicSelectPreferred = 'id, title, description, skills_required, budget_min, budget_max, currency, preferred_payment_method, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
@@ -194,6 +200,12 @@ export default async function PublicBountyDetailsPage(
           )}
           <p className="mt-4 rounded-md border border-amber-300/50 bg-amber-100/70 px-3 py-2 text-sm text-amber-950">
             {TESTING_DATA_NOTICE}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Full endpoints + parameters:{' '}
+            <Link href="/api-docs#bounties" className="text-primary hover:underline">REST</Link>
+            {' · '}
+            <Link href="/mcp#tools" className="text-primary hover:underline">MCP tools</Link>
           </p>
         </header>
 

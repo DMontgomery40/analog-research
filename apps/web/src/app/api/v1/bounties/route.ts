@@ -4,6 +4,11 @@ import { authenticateAgent, hasAgentScope } from '@/lib/api-auth'
 import { createBountySchema, createBountyWithModeration } from '@/lib/bounties/create-bounty'
 import { parseBoundedIntegerParam } from '@/lib/request-params'
 import { logger } from '@/lib/logger'
+import {
+  getPublicShowcaseConfig,
+  isPublicShowcaseCuratedMode,
+  shouldFailClosedPublicBounties,
+} from '@/lib/public-showcase'
 import { handleSingleResult, isMissingColumnError } from '@/lib/supabase/errors'
 import { enforceApiKeyRateLimitOrResponse } from '@/lib/api-key-rate-limit'
 import { resolveOrCreateSessionOwnerAgent } from '@/lib/session-owner-agent'
@@ -31,6 +36,7 @@ function parseIntegerParam(value: string | null): number | null {
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
+  const showcaseConfig = getPublicShowcaseConfig()
   const status = searchParams.get('status')
   const skills = searchParams.get('skills')?.split(',').filter(Boolean)
   const budgetMin = parseIntegerParam(searchParams.get('budget_min'))
@@ -89,6 +95,18 @@ export async function GET(request: NextRequest) {
     if (rateLimitResponse) return rateLimitResponse
   }
 
+  if (!agent && shouldFailClosedPublicBounties(showcaseConfig)) {
+    return NextResponse.json({
+      success: true,
+      data: [],
+      pagination: {
+        offset,
+        limit,
+        total: 0,
+      },
+    })
+  }
+
   // Public bounty feeds should not depend on anon RLS joins. Use service reads and
   // explicitly control the selected fields in this handler.
   const supabase = await createServiceClient()
@@ -121,6 +139,9 @@ export async function GET(request: NextRequest) {
     if (!agent) {
       // Keep suppressed spam out of public feeds while being null-safe during rollout.
       query = query.or('is_spam_suppressed.is.false,is_spam_suppressed.is.null')
+      if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+        query = query.in('id', showcaseConfig.bountyIds)
+      }
     }
 
     if (status) {

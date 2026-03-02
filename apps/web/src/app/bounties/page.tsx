@@ -9,6 +9,11 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { SimpleSiteFooter } from '@/components/seo/simple-site-footer'
 import { TESTING_DATA_NOTICE } from '@/lib/brand'
 import { formatDate } from '@/lib/format-date'
+import {
+  getPublicShowcaseConfig,
+  isPublicShowcaseCuratedMode,
+  shouldFailClosedPublicBounties,
+} from '@/lib/public-showcase'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 
 export const metadata: Metadata = {
@@ -40,15 +45,26 @@ interface Bounty {
 const BOUNTIES_PER_PAGE = 20
 
 async function getBounties(limit: number, offset: number): Promise<{ bounties: Bounty[]; total: number; error: string | null }> {
+  const showcaseConfig = getPublicShowcaseConfig()
+  if (shouldFailClosedPublicBounties(showcaseConfig)) {
+    return { bounties: [], total: 0, error: null }
+  }
+
   const supabase = await createServiceClient()
 
-  const { data, error, count } = await supabase
+  let query = supabase
     .from('bounties')
     .select('id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)', { count: 'exact' })
     .or('is_spam_suppressed.is.false,is_spam_suppressed.is.null')
     .eq('status', 'open')
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
+
+  if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+    query = query.in('id', showcaseConfig.bountyIds)
+  }
+
+  const { data, error, count } = await query
 
   if (error) {
     console.error('Failed to fetch bounties:', error.message)
@@ -94,6 +110,12 @@ export default async function PublicBountiesPage({
             {TESTING_DATA_NOTICE}
           </p>
           <QualityFormulaLinks className="mt-2" />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Full endpoints + parameters:{' '}
+            <Link href="/api-docs#bounties" className="text-primary hover:underline">REST</Link>
+            {' · '}
+            <Link href="/mcp#tools" className="text-primary hover:underline">MCP tools</Link>
+          </p>
         </div>
 
         {/* Stats bar */}

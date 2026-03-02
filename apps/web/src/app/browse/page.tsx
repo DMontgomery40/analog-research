@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import { createServiceClient } from '@/lib/supabase/server'
 import { parseBoundedIntegerParam } from '@/lib/request-params'
+import {
+  getPublicShowcaseConfig,
+  isPublicShowcaseCuratedMode,
+  shouldFailClosedPublicHumans,
+} from '@/lib/public-showcase'
 import BrowseHumansPage from './browse-humans-client'
 
 const BROWSE_DESCRIPTION =
@@ -54,6 +59,11 @@ async function getBrowseTotalCount(args: {
   rawSearch: string | null
   rawSkills: string | null
 }): Promise<number | null> {
+  const showcaseConfig = getPublicShowcaseConfig()
+  if (shouldFailClosedPublicHumans(showcaseConfig)) {
+    return 0
+  }
+
   const normalizedSearch = normalizeSearchTerm(args.rawSearch)
   const skills = (args.rawSkills || '').split(',').map(s => s.trim()).filter(Boolean)
 
@@ -63,6 +73,10 @@ async function getBrowseTotalCount(args: {
     let query = supabase
       .from('humans')
       .select('id', { count: 'exact', head: true })
+
+    if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+      query = query.in('id', showcaseConfig.humanIds)
+    }
 
     if (skills.length > 0) {
       query = query.overlaps('skills', skills)

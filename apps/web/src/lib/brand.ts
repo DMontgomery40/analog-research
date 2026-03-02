@@ -6,9 +6,9 @@ export const DEFAULT_SITE_URL = 'https://analog-research.org'
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '')
 
 export const PRELAUNCH_NOTICE =
-  'Pre-launch preview: core workflows are being finalized before public launch.'
+  'Pre-launch preview: browse is live with a curated scientific showcase while full launch controls are finalized.'
 export const TESTING_DATA_NOTICE =
-  'Public profiles and bounties are testing records used to validate UI and database workflows. We do not publish generated fake personas.'
+  'Public browse is currently limited to a curated showcase of scientific humans and bounties while launch operations are finalized.'
 
 export const ROLE_TERMS = {
   worker: 'Human',

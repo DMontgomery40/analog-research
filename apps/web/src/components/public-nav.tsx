@@ -9,6 +9,21 @@ import { PrelaunchBanner } from '@/components/prelaunch-banner'
 import { BRAND_NAME } from '@/lib/brand'
 
 type AuthUser = { id: string; email?: string } | null
+const GITHUB_REPO_URL = 'https://github.com/DMontgomery40/analog-research'
+
+function GitHubNavLink({ className, onClick }: { className: string; onClick?: () => void }) {
+  return (
+    <a
+      href={GITHUB_REPO_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={onClick}
+      className={className}
+    >
+      GitHub
+    </a>
+  )
+}
 
 /**
  * Public navigation bar with auth-aware Login/Dashboard toggle.
@@ -77,6 +92,7 @@ export function PublicNav() {
           <Link href="/mcp" className="text-muted-foreground transition-colors hover:text-foreground">
             ResearchAgent API
           </Link>
+          <GitHubNavLink className="text-muted-foreground transition-colors hover:text-foreground" />
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -155,6 +171,10 @@ export function PublicNav() {
           <Link href="/mcp" onClick={() => setMobileOpen(false)} className="block rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-accent">
             ResearchAgent API
           </Link>
+          <GitHubNavLink
+            onClick={() => setMobileOpen(false)}
+            className="block rounded-sm px-3 py-2 text-sm font-medium text-foreground hover:bg-accent"
+          />
         </div>
 
         <div className="mt-5 border-t border-border pt-5">

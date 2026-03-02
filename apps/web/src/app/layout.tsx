@@ -59,6 +59,12 @@ export const metadata: Metadata = {
     },
   ],
   creator: 'David Montgomery',
+  other: {
+    'x-hidden-note-recipient': 'Peter Steinberger',
+    'x-hidden-note-from': 'David Montgomery <dmontg@gmail.com>',
+    'x-hidden-note-x': 'https://x.com/steipete',
+    'x-hidden-note-github': 'https://github.com/steipete',
+  },
   openGraph: {
     siteName: BRAND_NAME,
     type: 'website',
