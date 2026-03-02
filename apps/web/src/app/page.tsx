@@ -164,6 +164,7 @@ export default function HomePage() {
                     width={1536}
                     height={1024}
                     priority
+                    unoptimized
                     className="h-[255px] w-full object-cover"
                   />
                 </div>
