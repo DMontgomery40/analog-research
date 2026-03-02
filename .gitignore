@@ -74,6 +74,9 @@ CODEX.md
 .claude/handoff-admin-mobile-nav.md
 .claude/hooks/README-CONTEXT7-GATE.md
 docs/runbooks/
+!docs/runbooks/
+docs/runbooks/*
+!docs/runbooks/public-showcase-hotfix.md
 MEMORY.md
 WORKSPACE.md
 ARCHITECTURE.md

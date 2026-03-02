@@ -2,7 +2,7 @@
 
 import type { ComponentType, ReactNode } from 'react'
 import Link from 'next/link'
-import { Database, BriefcaseBusiness, Users, ShieldCheck } from 'lucide-react'
+import { Database, BriefcaseBusiness, Users } from 'lucide-react'
 import { BRAND_NAME, BRAND_TAGLINE, TESTING_DATA_NOTICE } from '@/lib/brand'
 
 type PublicSection = 'overview' | 'humans' | 'bounties'
@@ -55,11 +55,13 @@ export function PublicResearchShell({ children, section }: PublicResearchShellPr
           </nav>
 
           <div className="rounded-md border border-amber-300/50 bg-amber-100/70 p-4 text-xs text-amber-950 shadow-sm">
-            <p className="font-semibold uppercase tracking-[0.1em]">Curated Showcase Notice</p>
+            <p className="font-semibold uppercase tracking-[0.1em]">Testing Data Notice</p>
             <p className="mt-2 leading-relaxed">{TESTING_DATA_NOTICE}</p>
-            <p className="mt-3 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em]">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Press-safe public feed
+            <p className="mt-2 leading-relaxed">
+              All paid workflows are pre-launch and may be temporarily disabled while production payment provisioning is finalized.
+            </p>
+            <p className="mt-2 leading-relaxed">
+              Preferred: GitHub for public discussion. Use the contact form below for press or private inquiries.
             </p>
           </div>
         </div>

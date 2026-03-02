@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { loadLocalEnv } from '../founding-bounties/env.mjs'
 import {
   PURGE_BOUNTY_TITLE_PATTERNS,
+  PURGE_HUMAN_NAME_PATTERNS,
   SHOWCASE_BOUNTIES,
   SHOWCASE_HUMANS,
 } from './showcase-payloads.mjs'
@@ -162,6 +163,32 @@ async function listPurgeCandidates() {
   return Array.from(candidatesById.values())
 }
 
+async function listHumanPurgeCandidates() {
+  const candidatesById = new Map()
+
+  for (const pattern of PURGE_HUMAN_NAME_PATTERNS) {
+    const params = new URLSearchParams({
+      select: 'id,name',
+      name: `ilike.${pattern}`,
+      limit: '1000',
+    })
+
+    const result = await http(restUrl('humans', params), {
+      headers: authHeaders(),
+    })
+
+    if (!result.ok) {
+      throw formatError(result, `List human purge candidates for pattern "${pattern}"`)
+    }
+
+    for (const row of result.body || []) {
+      candidatesById.set(row.id, row)
+    }
+  }
+
+  return Array.from(candidatesById.values())
+}
+
 async function deleteBountiesById(bountyIds) {
   let deleted = 0
   for (const bountyId of bountyIds) {
@@ -176,6 +203,28 @@ async function deleteBountiesById(bountyIds) {
 
     if (!result.ok) {
       throw formatError(result, `Delete bounty ${bountyId}`)
+    }
+
+    deleted += 1
+  }
+
+  return deleted
+}
+
+async function deleteHumansById(humanIds) {
+  let deleted = 0
+  for (const humanId of humanIds) {
+    const params = new URLSearchParams({ id: `eq.${humanId}` })
+    const result = await http(restUrl('humans', params), {
+      method: 'DELETE',
+      headers: {
+        ...authHeaders(),
+        Prefer: 'return=minimal',
+      },
+    })
+
+    if (!result.ok) {
+      throw formatError(result, `Delete human ${humanId}`)
     }
 
     deleted += 1
@@ -449,6 +498,7 @@ function buildBountyWritePayload(bounty, agentId) {
     fixed_spot_amount: bounty.fixed_spot_amount,
     preferred_payment_method: bounty.preferred_payment_method,
     proof_review_mode: bounty.proof_review_mode,
+    proof_review_prompt: bounty.proof_review_prompt ?? null,
     spots_available: bounty.spots_available,
     spots_filled: bounty.spots_filled,
     status: bounty.status,
@@ -561,6 +611,9 @@ async function main() {
   const purgeCandidates = await listPurgeCandidates()
   const purgeIds = purgeCandidates.map((row) => row.id)
   const deletedCount = apply ? await deleteBountiesById(purgeIds) : 0
+  const humanPurgeCandidates = await listHumanPurgeCandidates()
+  const humanPurgeIds = humanPurgeCandidates.map((row) => row.id)
+  const deletedHumansCount = apply ? await deleteHumansById(humanPurgeIds) : 0
 
   const humanOperations = []
   for (const human of SHOWCASE_HUMANS) {
@@ -592,6 +645,11 @@ async function main() {
       matched_count: purgeCandidates.length,
       matched_titles: purgeCandidates.map((row) => row.title),
       deleted_count: deletedCount,
+    },
+    human_purge: {
+      matched_count: humanPurgeCandidates.length,
+      matched_names: humanPurgeCandidates.map((row) => row.name),
+      deleted_count: deletedHumansCount,
     },
     showcase_agent: showcaseAgent,
     humans: humanOperations,

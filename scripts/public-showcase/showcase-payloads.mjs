@@ -5,6 +5,13 @@ export const PURGE_BOUNTY_TITLE_PATTERNS = [
   'Boulder Menu Capture Sample %',
 ]
 
+export const PURGE_HUMAN_NAME_PATTERNS = [
+  'Sample Human Alpha %',
+  'Sample Human Beta %',
+  'Maya Ortiz %',
+  'Ethan Park %',
+]
+
 export const SHOWCASE_HUMANS = [
   {
     key: 'coastal-biogeochemistry',
@@ -195,7 +202,8 @@ Acceptance criteria:
     pricing_mode: 'fixed_per_spot',
     fixed_spot_amount: 24000,
     preferred_payment_method: 'crypto',
-    proof_review_mode: 'manual',
+    proof_review_mode: 'llm_assisted',
+    proof_review_prompt: 'Assess whether observation rows include spectral condition, confidence tag, and coherent timing for each site window. Flag inconsistencies and missing QA notes.',
     spots_available: 3,
     spots_filled: 0,
     status: 'open',
@@ -236,6 +244,7 @@ Acceptance criteria:
     fixed_spot_amount: null,
     preferred_payment_method: 'stripe',
     proof_review_mode: 'manual',
+    proof_review_prompt: null,
     spots_available: 2,
     spots_filled: 0,
     status: 'open',

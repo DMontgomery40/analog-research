@@ -1,4 +1,5 @@
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const REQUIRED_CURATED_COUNT = 3
 
 export type PublicShowcaseMode = 'curated' | 'open'
 
@@ -43,22 +44,30 @@ export function isPublicShowcaseCuratedMode(config = getPublicShowcaseConfig()):
   return config.mode === 'curated'
 }
 
+export function hasExactCuratedHumanIds(config = getPublicShowcaseConfig()): boolean {
+  return config.humanIds.length === REQUIRED_CURATED_COUNT
+}
+
+export function hasExactCuratedBountyIds(config = getPublicShowcaseConfig()): boolean {
+  return config.bountyIds.length === REQUIRED_CURATED_COUNT
+}
+
 export function shouldFailClosedPublicHumans(config = getPublicShowcaseConfig()): boolean {
-  return isPublicShowcaseCuratedMode(config) && config.humanIds.length === 0
+  return isPublicShowcaseCuratedMode(config) && !hasExactCuratedHumanIds(config)
 }
 
 export function shouldFailClosedPublicBounties(config = getPublicShowcaseConfig()): boolean {
-  return isPublicShowcaseCuratedMode(config) && config.bountyIds.length === 0
+  return isPublicShowcaseCuratedMode(config) && !hasExactCuratedBountyIds(config)
 }
 
 export function isHumanPubliclyVisible(humanId: string, config = getPublicShowcaseConfig()): boolean {
   if (!isPublicShowcaseCuratedMode(config)) return true
-  if (config.humanIds.length === 0) return false
+  if (!hasExactCuratedHumanIds(config)) return false
   return config.humanIds.includes(humanId)
 }
 
 export function isBountyPubliclyVisible(bountyId: string, config = getPublicShowcaseConfig()): boolean {
   if (!isPublicShowcaseCuratedMode(config)) return true
-  if (config.bountyIds.length === 0) return false
+  if (!hasExactCuratedBountyIds(config)) return false
   return config.bountyIds.includes(bountyId)
 }
