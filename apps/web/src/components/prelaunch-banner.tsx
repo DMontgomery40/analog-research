@@ -20,7 +20,7 @@ export function PrelaunchBanner({ compact = false, className = '' }: PrelaunchBa
           {!compact && (
             <span className="hidden items-center gap-1 text-[11px] font-medium uppercase tracking-[0.08em] sm:inline-flex">
               <ShieldAlert className="h-3.5 w-3.5" />
-              Browse-only mode
+              Curated public mode
             </span>
           )}
         </div>

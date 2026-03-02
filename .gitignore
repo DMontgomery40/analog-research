@@ -27,6 +27,8 @@ scripts/*
 !scripts/quality/**
 !scripts/ralph-real-test-remediation/
 !scripts/ralph-real-test-remediation/**
+!scripts/public-showcase/
+!scripts/public-showcase/**
 # Ralph loop state (must never be committed)
 scripts/ralph-real-test-remediation/.last-story
 scripts/ralph-real-test-remediation/.story-attempts

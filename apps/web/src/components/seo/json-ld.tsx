@@ -2,7 +2,7 @@ import { BRAND_NAME, SITE_URL } from '@/lib/brand'
 
 const FOUNDER_LINKEDIN_URL =
   'https://www.linkedin.com/in/david-montgomery-5a07656b/'
-const FOUNDER_GITHUB_URL = 'https://github.com/DMontgomery40'
+const FOUNDER_GITHUB_URL = 'https://github.com/DMontgomery40/analog-research'
 
 export function JsonLdOrganizationAndWebsite() {
   const description =

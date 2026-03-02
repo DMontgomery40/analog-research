@@ -11,6 +11,11 @@ import {
   parseOptionalBoundedIntegerParam,
 } from '@/lib/request-params'
 import { logger } from '@/lib/logger'
+import {
+  getPublicShowcaseConfig,
+  isPublicShowcaseCuratedMode,
+  shouldFailClosedPublicHumans,
+} from '@/lib/public-showcase'
 import { isMissingColumnError } from '@/lib/supabase/errors'
 import { z } from 'zod'
 
@@ -133,6 +138,7 @@ function isHumanAvailableNow(human: { timezone: string | null; availability: unk
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
+  const showcaseConfig = getPublicShowcaseConfig()
 
   // Parse filters
   const skill = searchParams.get('skill')
@@ -249,6 +255,18 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createServiceClient()
 
+  if (shouldFailClosedPublicHumans(showcaseConfig)) {
+    return NextResponse.json({
+      success: true,
+      data: [],
+      pagination: {
+        offset,
+        limit,
+        total: 0,
+      },
+    })
+  }
+
   const hasPostFilters = Boolean(availableDay || availableNow === 'true' || isRemote === 'true')
   // Availability filters are applied in-process (timezone + JSON schedule), so we must paginate after filtering.
   const MAX_POST_FILTER_SCAN = 10_000
@@ -265,6 +283,10 @@ export async function GET(request: NextRequest) {
       .order('human_legitimacy_score', { ascending: false })
       .order('rating_average', { ascending: false })
       .range(scanStart, scanEnd)
+
+    if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+      query = query.in('id', showcaseConfig.humanIds)
+    }
 
     // Apply filters
     if (skills?.length) {

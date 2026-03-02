@@ -11,6 +11,7 @@ import {
 } from '@/lib/moderation'
 import { recomputeQualityForBountyBestEffort } from '@/lib/quality-score-recompute'
 import { logger } from '@/lib/logger'
+import { getPublicShowcaseConfig, isBountyPubliclyVisible } from '@/lib/public-showcase'
 import { handleSingleResult, isMissingColumnError, logOnError } from '@/lib/supabase/errors'
 import { z } from 'zod'
 import { enforceApiKeyRateLimitOrResponse } from '@/lib/api-key-rate-limit'
@@ -51,10 +52,15 @@ export async function GET(
   const log = logger.withContext('api/v1/bounties/[id]/route.ts', 'GET')
   const { id } = await params
   const agent = await authenticateAgent(request)
+  const showcaseConfig = getPublicShowcaseConfig()
 
   if (agent) {
     const rateLimitResponse = await enforceApiKeyRateLimitOrResponse(agent)
     if (rateLimitResponse) return rateLimitResponse
+  }
+
+  if (!agent && !isBountyPubliclyVisible(id, showcaseConfig)) {
+    return NextResponse.json({ success: false, error: 'Bounty not found' }, { status: 404 })
   }
 
   // Public read: use anon client so RLS applies and avoid service-role reads of suppressed rows.

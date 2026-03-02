@@ -1,6 +1,11 @@
 import type { MetadataRoute } from 'next'
 
 import { createServiceClient } from '@/lib/supabase/server'
+import {
+  getPublicShowcaseConfig,
+  isPublicShowcaseCuratedMode,
+  shouldFailClosedPublicHumans,
+} from '@/lib/public-showcase'
 
 export const revalidate = 3600
 
@@ -19,6 +24,7 @@ function toAbsoluteUrl(pathname: string): string {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
+  const showcaseConfig = getPublicShowcaseConfig()
 
   const staticEntries: MetadataRoute.Sitemap = [
     {
@@ -78,11 +84,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
+    if (shouldFailClosedPublicHumans(showcaseConfig)) {
+      return staticEntries
+    }
+
     const supabase = await createServiceClient()
-    const { data, error } = await supabase
+    let query = supabase
       .from('humans')
       .select('id, updated_at, created_at')
-      .eq('is_verified', true)
+
+    if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+      query = query.in('id', showcaseConfig.humanIds)
+    } else {
+      query = query.eq('is_verified', true)
+    }
+
+    const { data, error } = await query
 
     if (error || !data) {
       return staticEntries
