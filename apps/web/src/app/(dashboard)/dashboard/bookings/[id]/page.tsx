@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateHumanPayoutCents, calculatePlatformFeeCents } from '@/lib/payments/pricing'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 import { logger } from '@/lib/logger'
 
 interface Review {

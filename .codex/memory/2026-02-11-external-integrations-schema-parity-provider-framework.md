@@ -162,8 +162,8 @@ Agent-facing MCP surfaces were further updated so external jobs are usable as fi
 
 Files touched:
 
-- `packages/analoglabor-mcp/src/tools.ts`
-- `packages/analoglabor-mcp/src/index.ts`
+- `packages/analogresearch-mcp/src/tools.ts`
+- `packages/analogresearch-mcp/src/index.ts`
 - `apps/web/src/lib/mcp/dispatcher.ts`
 - `tests/web/lib/mcp/dispatcher.test.ts`
 
@@ -201,7 +201,7 @@ Added stronger parity tests specifically to prevent MCP drift:
   - fails if any tool returns unknown/unsupported path in dispatcher
 - Standalone source parity:
   - `tests/web/docs/mcp-standalone-parity.test.ts`
-  - compares canonical tool names from `packages/analoglabor-mcp/src/tools.ts` against `case` handlers in `packages/analoglabor-mcp/src/index.ts`
+  - compares canonical tool names from `packages/analogresearch-mcp/src/tools.ts` against `case` handlers in `packages/analogresearch-mcp/src/index.ts`
   - catches missing handlers and stale handlers
 
 Intent: prevent “fake green” where docs look aligned but one runtime path silently drifts.

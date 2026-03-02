@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     let linkType: 'account_onboarding' | 'account_update' = human.stripe_onboarding_complete
       ? 'account_update'
       : 'account_onboarding'
-    const fallbackEmail = `human-${human.id}@users.analoglabor.invalid`
+    const fallbackEmail = `human-${human.id}@users.analogresearch.invalid`
 
     async function createAndPersistConnectAccount() {
       const connectAccount = await createConnectAccount(authenticatedUser.email || fallbackEmail, human.id)

@@ -11,7 +11,7 @@ describe('GET /api/v1/mcp/oauth-protected-resource', () => {
   it('returns 404 when MCP OAuth is disabled', async () => {
     vi.stubEnv('MCP_OAUTH_ENABLED', 'false')
 
-    const response = await GET(new NextRequest('https://api.analoglabor.com/api/v1/mcp/oauth-protected-resource'))
+    const response = await GET(new NextRequest('https://api.analog-research.org/api/v1/mcp/oauth-protected-resource'))
     const json = await response.json()
 
     expect(response.status).toBe(404)
@@ -24,20 +24,20 @@ describe('GET /api/v1/mcp/oauth-protected-resource', () => {
   it('returns RFC9728 metadata when enabled', async () => {
     vi.stubEnv('MCP_OAUTH_ENABLED', 'true')
     vi.stubEnv('MCP_OAUTH_ISSUER', 'https://auth.example.com')
-    vi.stubEnv('MCP_OAUTH_AUDIENCE', 'https://api.analoglabor.com')
-    vi.stubEnv('MCP_OAUTH_RESOURCE', 'https://api.analoglabor.com/api/v1/mcp')
-    vi.stubEnv('MCP_OAUTH_SCOPES_READ', 'analoglabor.read')
-    vi.stubEnv('MCP_OAUTH_SCOPES_WRITE', 'analoglabor.write')
+    vi.stubEnv('MCP_OAUTH_AUDIENCE', 'https://api.analog-research.org')
+    vi.stubEnv('MCP_OAUTH_RESOURCE', 'https://api.analog-research.org/api/v1/mcp')
+    vi.stubEnv('MCP_OAUTH_SCOPES_READ', 'analogresearch.read')
+    vi.stubEnv('MCP_OAUTH_SCOPES_WRITE', 'analogresearch.write')
 
-    const response = await GET(new NextRequest('https://api.analoglabor.com/api/v1/mcp/oauth-protected-resource'))
+    const response = await GET(new NextRequest('https://api.analog-research.org/api/v1/mcp/oauth-protected-resource'))
     const json = await response.json()
 
     expect(response.status).toBe(200)
     expect(json).toEqual({
-      resource: 'https://api.analoglabor.com/api/v1/mcp',
+      resource: 'https://api.analog-research.org/api/v1/mcp',
       authorization_servers: ['https://auth.example.com'],
-      scopes_supported: ['analoglabor.read', 'analoglabor.write'],
-      resource_documentation: 'https://analoglabor.com/mcp',
+      scopes_supported: ['analogresearch.read', 'analogresearch.write'],
+      resource_documentation: 'https://analog-research.org/mcp',
     })
   })
 })

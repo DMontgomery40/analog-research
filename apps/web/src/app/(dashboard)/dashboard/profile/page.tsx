@@ -8,7 +8,7 @@ import { RateRangeSlider } from '@/components/rate-range-slider'
 import { SkillsInput } from '@/components/skills-input'
 import { Save, Upload, ExternalLink, CheckCircle2, Circle, CircleHelp } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
-import type { Human, AvailabilitySchedule } from '@analoglabor/database/types'
+import type { Human, AvailabilitySchedule } from '@analogresearch/database/types'
 import { coerceSocialLinksFromRow, type SocialLinks } from '@/lib/social-links'
 import { logger } from '@/lib/logger'
 

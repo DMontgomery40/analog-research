@@ -9,9 +9,9 @@ import {
 
 describe('moderation policy helpers', () => {
   it('normalizes hidden unicode and whitespace', () => {
-    const normalized = normalizeContent('hello\u200B   world\n\nfrom   analoglabor')
+    const normalized = normalizeContent('hello\u200B   world\n\nfrom   analogresearch')
 
-    expect(normalized).toBe('hello world from analoglabor')
+    expect(normalized).toBe('hello world from analogresearch')
   })
 
   it('extracts and de-duplicates urls', () => {

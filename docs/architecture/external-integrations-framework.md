@@ -60,7 +60,7 @@ ProxyPics is active; WeGoLook is scaffolded and marked planned.
 - `application_id`
 - `conversation_id`
 
-DB trigger `validate_external_job_links` enforces same-molty ownership and cross-link consistency.
+DB trigger `validate_external_job_links` enforces same-researchagent ownership and cross-link consistency.
 
 ## API Surface
 
@@ -79,7 +79,7 @@ Backward-compatible v1 is preserved.
 
 - `GET /api/v1/integrations/providers`
 
-Returns provider descriptors plus configured env status per Molty.
+Returns provider descriptors plus configured env status per ResearchAgent.
 
 ### Extended payloads
 
@@ -183,13 +183,13 @@ External worker-network integrations must follow one product invariant:
 
 ### Connector onboarding stages
 
-- `live`: production connector available in AnalogLabor workflows.
+- `live`: production connector available in Analog Research workflows.
 - `partner_onboarding`: official API path exists, but partner/legal onboarding is required.
 - `researching`: official API/program is still being validated for policy-safe integration.
 
 ### Current connector map (2026-02-11 snapshot)
 
-- AnalogLabor Marketplace: `live`
+- Analog Research Marketplace: `live`
 - Upwork: `partner_onboarding`
 - Thumbtack: `partner_onboarding`
 - Taskrabbit: `partner_onboarding`

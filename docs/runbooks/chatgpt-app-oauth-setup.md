@@ -1,7 +1,7 @@
-# ChatGPT App (Developer Mode) OAuth Setup — AnalogLabor
+# ChatGPT App (Developer Mode) OAuth Setup — Analog Research
 
 ## Purpose
-Ship a working ChatGPT Developer Mode app backed by the AnalogLabor MCP server, using OAuth with Auth0 (or another OIDC provider) and avoiding the common DCR/OAuth misconfigurations.
+Ship a working ChatGPT Developer Mode app backed by the Analog Research MCP server, using OAuth with Auth0 (or another OIDC provider) and avoiding the common DCR/OAuth misconfigurations.
 
 ## Related memory
 - `../../.codex/memory/2026-02-14-chatgpt-app-oauth-setup.md`
@@ -18,17 +18,17 @@ Ship a working ChatGPT Developer Mode app backed by the AnalogLabor MCP server, 
 - Authentication modes: `OAuth`, `No Auth`, and `Mixed`. Mixed enables unauthenticated `initialize`/`tools/list` while requiring OAuth for tool calls based on `securitySchemes`.
 
 ## Production endpoints and identifiers
-- MCP server URL: `https://api.analoglabor.com/v1/mcp/chatgpt`
-- Protected resource metadata: `https://api.analoglabor.com/.well-known/oauth-protected-resource`
-- OAuth resource/audience identifier: `https://api.analoglabor.com`
+- MCP server URL: `https://api.analog-research.org/v1/mcp/chatgpt`
+- Protected resource metadata: `https://api.analog-research.org/.well-known/oauth-protected-resource`
+- OAuth resource/audience identifier: `https://api.analog-research.org`
 - Auth0 issuer: `https://dev-f65x1znz7f020u4k.us.auth0.com`
 
 ## Auth0 configuration
 1. Allowlist the ChatGPT redirect URIs listed above in the Auth0 application.
-2. Ensure the API identifier (audience) matches `https://api.analoglabor.com`.
+2. Ensure the API identifier (audience) matches `https://api.analog-research.org`.
 3. If you are **not** using DCR, use the Auth0 client ID/secret as static credentials in ChatGPT.
 
-## Dashboard OAuth link prerequisites (owner → Molty)
+## Dashboard OAuth link prerequisites (owner → ResearchAgent)
 - Production migrations applied:
   - `packages/database/supabase/migrations/037_owner_identity_payment_preferences_and_proof_mode.sql`
   - `packages/database/supabase/migrations/039_mcp_oauth_identity_linking.sql`
@@ -39,13 +39,13 @@ Ship a working ChatGPT Developer Mode app backed by the AnalogLabor MCP server, 
 - Netlify env (production) includes:
   - `MCP_OAUTH_ENABLED=true`
   - `MCP_OAUTH_ISSUER=https://dev-f65x1znz7f020u4k.us.auth0.com`
-  - `MCP_OAUTH_AUDIENCE=https://api.analoglabor.com`
-  - `MCP_OAUTH_RESOURCE=https://api.analoglabor.com`
+  - `MCP_OAUTH_AUDIENCE=https://api.analog-research.org`
+  - `MCP_OAUTH_RESOURCE=https://api.analog-research.org`
   - `AUTH0_MCP_LINK_CLIENT_ID` + `AUTH0_MCP_LINK_CLIENT_SECRET`
   - `ADMIN_EMAILS` includes the dashboard owner email (e.g. `dmontg@gmail.com`)
 
-## Dashboard OAuth link flow (owner → Molty)
-1. Go to `https://analoglabor.com/dashboard/settings`.
+## Dashboard OAuth link flow (owner → ResearchAgent)
+1. Go to `https://analog-research.org/dashboard/settings`.
 2. In **ChatGPT App OAuth Link**, click **Link in Auth0**.
 3. Complete Auth0 login/consent.
 4. Status flips to **Linked** and the OAuth identity is stored in `mcp_oauth_identities`.
@@ -54,22 +54,22 @@ Ship a working ChatGPT Developer Mode app backed by the AnalogLabor MCP server, 
 1. Settings → Apps → Advanced settings → enable Developer mode.
 2. Click **Create app**.
 3. Fill:
-   - Name: `AnalogLabor`
-   - MCP Server URL: `https://api.analoglabor.com/v1/mcp/chatgpt`
+   - Name: `Analog Research`
+   - MCP Server URL: `https://api.analog-research.org/v1/mcp/chatgpt`
    - Authentication: `Mixed`
 4. If you select `OAuth` and your IdP does **not** support DCR, paste the static **client ID** and **client secret**.
 5. Acknowledge the risk checkbox and click **Create**.
 
 ## OAuth link verification
 1. Open a ChatGPT conversation.
-2. Select **Developer mode** and choose the AnalogLabor app.
+2. Select **Developer mode** and choose the Analog Research app.
 3. Call a protected tool (e.g. `list_bounties`) to trigger OAuth.
 4. Complete the OAuth prompt and verify you can call tools successfully.
 5. Optional: confirm the link in the dashboard settings.
 
 ## Troubleshooting
 - **“MCP server does not implement OAuth”**
-  - `https://api.analoglabor.com/.well-known/oauth-protected-resource` must return JSON.
+  - `https://api.analog-research.org/.well-known/oauth-protected-resource` must return JSON.
   - Ensure `MCP_OAUTH_ENABLED=true` and redeploy.
 - **“server doesn’t support RFC 7591 Dynamic Client Registration”**
   - Provide **static client ID/secret** in ChatGPT, or enable DCR in your IdP.
@@ -83,12 +83,12 @@ Ship a working ChatGPT Developer Mode app backed by the AnalogLabor MCP server, 
 
 ## Verification commands
 ```bash
-curl -sS https://api.analoglabor.com/.well-known/oauth-protected-resource | jq
+curl -sS https://api.analog-research.org/.well-known/oauth-protected-resource | jq
 ```
-Expected: `resource` is `https://api.analoglabor.com` and `authorization_servers` includes the Auth0 issuer.
+Expected: `resource` is `https://api.analog-research.org` and `authorization_servers` includes the Auth0 issuer.
 
 ```bash
-curl -sS -X POST https://api.analoglabor.com/v1/mcp/chatgpt \
+curl -sS -X POST https://api.analog-research.org/v1/mcp/chatgpt \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":"smoke-auth","method":"tools/call","params":{"name":"list_bounties","arguments":{"limit":1}}}' | jq
@@ -96,6 +96,6 @@ curl -sS -X POST https://api.analoglabor.com/v1/mcp/chatgpt \
 Expected: 401-style tool error with `_meta["mcp/www_authenticate"]` pointing to the protected-resource metadata URL.
 
 ```bash
-curl -sS https://analoglabor.com/api/v1/mcp/oauth/link | jq
+curl -sS https://analog-research.org/api/v1/mcp/oauth/link | jq
 ```
 Expected: `success=true` and `data.linked=true` after the dashboard OAuth link completes.

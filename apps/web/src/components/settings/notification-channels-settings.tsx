@@ -295,7 +295,7 @@ export function NotificationChannelsSettings() {
                 value={form.webhookUrl}
                 onChange={(e) => setForm((prev) => ({ ...prev, webhookUrl: e.target.value }))}
                 className="w-full px-3 py-2 bg-background border border-input rounded-md"
-                placeholder="https://example.com/webhooks/analoglabor"
+                placeholder="https://example.com/webhooks/analogresearch"
               />
             </label>
             <label className="text-sm">

@@ -40,7 +40,7 @@ Implementation reflection:
 
 ### Live
 
-- AnalogLabor Marketplace
+- Analog Research Marketplace
   - Status: `live`
   - Path: REST API + MCP
   - Signal: Humans explicitly publish profile/skills/rates/availability.

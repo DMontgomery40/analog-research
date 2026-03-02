@@ -8,7 +8,7 @@
 - Added local-only fallback in `apps/web/src/lib/mcp/chatgpt-server.ts`.
 - If a request to `/api/v1/mcp/chatgpt` has no `Authorization` or `X-API-Key`, the server now tries:
   1. `MCP_CHATGPT_ADMIN_API_KEY`
-  2. `ANALOGLABOR_API_KEY`
+  2. `ANALOG_RESEARCH_API_KEY`
 - Fallback is disabled in `production` (`NODE_ENV === 'production'`), preserving normal OAuth/API-key behavior for live traffic.
 
 ## Why

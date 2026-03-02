@@ -8,11 +8,11 @@ export interface McpToolDefinition {
 }
 
 export const MCP_UI_RESOURCE_URIS = {
-  generic: 'ui://analoglabor/result-shell/v1',
-  humans: 'ui://analoglabor/humans/browse/v1',
-  bounties: 'ui://analoglabor/bounties/list/v1',
-  conversations: 'ui://analoglabor/conversations/thread/v1',
-  bookings: 'ui://analoglabor/bookings/overview/v1',
+  generic: 'ui://analogresearch/result-shell/v1',
+  humans: 'ui://analogresearch/humans/browse/v1',
+  bounties: 'ui://analogresearch/bounties/list/v1',
+  conversations: 'ui://analogresearch/conversations/thread/v1',
+  bookings: 'ui://analogresearch/bookings/overview/v1',
 } as const
 
 export type McpUiResourceUri = (typeof MCP_UI_RESOURCE_URIS)[keyof typeof MCP_UI_RESOURCE_URIS]
@@ -59,8 +59,8 @@ type OAuthSecurityScheme = {
   scopes: string[]
 }
 
-const READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analoglabor.read').trim() || 'analoglabor.read'
-const WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analoglabor.write').trim() || 'analoglabor.write'
+const READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analogresearch.read').trim() || 'analogresearch.read'
+const WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analogresearch.write').trim() || 'analogresearch.write'
 
 const readSecuritySchemes: OAuthSecurityScheme[] = [{ type: 'oauth2', scopes: [READ_SCOPE] }]
 const writeSecuritySchemes: OAuthSecurityScheme[] = [{ type: 'oauth2', scopes: [WRITE_SCOPE] }]
@@ -630,7 +630,7 @@ export const MCP_TOOL_DEFINITIONS: McpToolDefinition[] = [
   // ============ FIELD CHECKS (EXTERNAL JOBS) ============
   withReadOnly({
     name: 'list_integration_providers',
-    description: 'List external integration providers, capabilities, and configured environments for this Molty.',
+    description: 'List external integration providers, capabilities, and configured environments for this ResearchAgent.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1194,7 +1194,7 @@ export const MCP_TOOL_DEFINITIONS: McpToolDefinition[] = [
   }),
   withReadOnly({
     name: 'list_notification_channels',
-    description: 'List notification delivery channels configured for the authenticated Molty',
+    description: 'List notification delivery channels configured for the authenticated ResearchAgent',
     inputSchema: {
       type: 'object',
       properties: {},

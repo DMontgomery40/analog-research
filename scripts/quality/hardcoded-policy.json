@@ -24,12 +24,12 @@
       "regex": "\\brk_live_[A-Za-z0-9]{16,}\\b"
     },
     {
-      "name": "AnalogLabor live API key literal",
-      "regex": "\\bal_live_[a-z0-9]{20,}\\b"
+      "name": "Analog Research live API key literal",
+      "regex": "\\bar_live_[a-z0-9]{20,}\\b"
     },
     {
-      "name": "Legacy AnalogLabor API key literal",
-      "regex": "\\banaloglabor_[a-f0-9]{20,}\\b"
+      "name": "Legacy Analog Research API key literal",
+      "regex": "\\bar_live_[a-f0-9]{20,}\\b"
     },
     {
       "name": "AWS access key",

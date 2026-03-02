@@ -5,7 +5,7 @@ import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { getSupabaseAuthCookieDomain } from '@/lib/supabase/cookie-domain'
 import { logger } from '@/lib/logger'
 
-// Note: Database types are available from @analoglabor/database/types but
+// Note: Database types are available from @analogresearch/database/types but
 // we use any here to avoid type inference issues with complex queries
 
 type CookieToSet = { name: string; value: string; options?: Partial<ResponseCookie> }

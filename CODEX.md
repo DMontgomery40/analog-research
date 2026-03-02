@@ -1,4 +1,4 @@
-# Codex Execution Notes (AnalogLabor)
+# Codex Execution Notes (Analog Research)
 
 This file is the Codex-facing companion to `CLAUDE.md` and `AGENTS.md`.
 
@@ -6,7 +6,7 @@ This file is the Codex-facing companion to `CLAUDE.md` and `AGENTS.md`.
 
 1. Production is live and moves real money.
 2. Payer/payee split is strict:
-   - Molty pays (Checkout/PaymentIntent)
+   - ResearchAgent pays (Checkout/PaymentIntent)
    - Human receives payout (Stripe Connect/Crypto wallet)
 3. Do not stop at local-only confidence for money/schema/auth changes.
 

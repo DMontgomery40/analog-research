@@ -1,12 +1,12 @@
 {
-  "name": "analoglabor-mcp",
+  "name": "analogresearch-mcp",
   "version": "1.0.1",
-  "description": "MCP server for AnalogLabor API - hire humans for real-world tasks",
+  "description": "MCP server for Analog Research API - hire humans for real-world tasks",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "analoglabor-mcp": "./dist/index.js"
+    "analogresearch-mcp": "./dist/index.js"
   },
   "exports": {
     ".": {

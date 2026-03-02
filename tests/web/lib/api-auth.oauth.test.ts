@@ -4,7 +4,7 @@ const API_BASE_URL = (
   process.env.TEST_API_BASE_URL
   || process.env.NEXT_PUBLIC_SITE_URL
   || process.env.NEXT_PUBLIC_APP_URL
-  || 'https://analoglabor.com'
+  || 'https://analog-research.org'
 ).replace(/\/$/, '')
 
 function buildUrl(path: string) {
@@ -22,7 +22,7 @@ describe('Agent auth OAuth fallback (deployed invariants)', () => {
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
-        authorization: 'Bearer analoglabor_invalid_key',
+        authorization: 'Bearer ar_live_invalid_key',
       },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
     })

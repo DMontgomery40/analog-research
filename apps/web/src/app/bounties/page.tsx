@@ -9,7 +9,7 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { SimpleSiteFooter } from '@/components/seo/simple-site-footer'
 import { TESTING_DATA_NOTICE } from '@/lib/brand'
 import { formatDate } from '@/lib/format-date'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 
 export const metadata: Metadata = {
   title: 'Open Bounties | Analog Research',

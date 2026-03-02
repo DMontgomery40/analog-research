@@ -159,7 +159,7 @@ describe('spam-engine', () => {
       actorType: 'agent',
       actorId: 'agent-a',
       normalizedContent: 'Need someone near Austin to do a product pickup and photo verification.',
-      urls: ['https://analoglabor.com/task-details'],
+      urls: ['https://analog-research.org/task-details'],
       contentHash: buildHash('high-velocity'),
     })
 

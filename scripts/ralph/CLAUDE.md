@@ -4,7 +4,7 @@
 
 ## ⛔️ CRITICAL: PRODUCTION SYSTEM ⛔️
 
-**AnalogLabor.com is LIVE IN PRODUCTION** handling **real humans**, **real money (USD)**, and **real cryptocurrency**. Any bug you introduce can cause financial harm to real workers. Read `/CLAUDE.md` and understand the payment flows before making ANY changes.
+**Analog Research.com is LIVE IN PRODUCTION** handling **real humans**, **real money (USD)**, and **real cryptocurrency**. Any bug you introduce can cause financial harm to real workers. Read `/CLAUDE.md` and understand the payment flows before making ANY changes.
 
 ---
 

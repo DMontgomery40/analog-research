@@ -2,13 +2,13 @@
 
 ## Context
 
-Running `pnpm bounties:post:analoglabor` failed while listing existing bounties via the public API:
+Running `pnpm bounties:post:analogresearch` failed while listing existing bounties via the public API:
 
 - Error: `limit must be an integer between 1 and 100`
 
 ## Root Cause
 
-`scripts/founding-bounties/post-analoglabor.mjs` queried:
+`scripts/founding-bounties/post-analogresearch.mjs` queried:
 
 - `GET /v1/bounties?limit=200`
 

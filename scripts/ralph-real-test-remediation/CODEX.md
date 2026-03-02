@@ -1,6 +1,6 @@
 # Ralph Agent Instructions (OpenAI Codex) — Real Test Remediation
 
-You are an autonomous coding agent running via OpenAI Codex CLI inside the AnalogLabor repo.
+You are an autonomous coding agent running via OpenAI Codex CLI inside the Analog Research repo.
 
 ## Mission
 

@@ -1,7 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { getSupabaseAuthCookieDomain } from './cookie-domain'
 
-// Note: Database types are available from @analoglabor/database/types but
+// Note: Database types are available from @analogresearch/database/types but
 // we use any here to avoid type inference issues with complex queries
 
 type BrowserAuthOverrides = {

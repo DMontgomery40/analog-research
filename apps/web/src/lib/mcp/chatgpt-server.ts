@@ -26,14 +26,14 @@ import {
 } from '@/lib/mcp/tools'
 
 const SERVER_INFO = {
-  name: 'analoglabor-mcp-chatgpt',
+  name: 'analogresearch-mcp-chatgpt',
   version: '1.0.0',
 }
 
 const CHATGPT_ADMIN_API_KEY_ENV = 'MCP_CHATGPT_ADMIN_API_KEY'
 
-const DEFAULT_READ_SCOPE = 'analoglabor.read'
-const DEFAULT_WRITE_SCOPE = 'analoglabor.write'
+const DEFAULT_READ_SCOPE = 'analogresearch.read'
+const DEFAULT_WRITE_SCOPE = 'analogresearch.write'
 
 export interface ChatGptMcpRequestContext {
   agent: AgentAuth | null
@@ -66,7 +66,7 @@ function resolveChatGptAdminFallbackApiKey(): string | null {
     return explicit
   }
 
-  const generic = (process.env.ANALOGLABOR_API_KEY || '').trim()
+  const generic = (process.env.ANALOG_RESEARCH_API_KEY || '').trim()
   if (generic) {
     return generic
   }

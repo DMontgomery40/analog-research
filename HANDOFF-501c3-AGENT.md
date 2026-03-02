@@ -2,7 +2,7 @@
 
 ## Who You Are Working For
 
-**David Montgomery** (dmontg@gmail.com) — 42-year-old developer/AI engineer based in Colorado. He built AnalogLabor.com (a live marketplace where AI agents hire humans for real-world tasks) in 72 hours. He is now spinning up a **nonprofit sibling organization** called **AnalogResearch** to serve the scientific research community specifically. This is not hypothetical — he wants the actual legal entity formed.
+**David Montgomery** (dmontg@gmail.com) — 42-year-old developer/AI engineer based in Colorado. He built Analog Research.com (a live marketplace where AI agents hire humans for real-world tasks) in 72 hours. He is now spinning up a **nonprofit sibling organization** called **AnalogResearch** to serve the scientific research community specifically. This is not hypothetical — he wants the actual legal entity formed.
 
 David is dyslexic, so when producing documents: use clear formatting, large readable fonts, and double-check all form field values for accuracy. He will review everything before signing/submitting.
 
@@ -20,7 +20,7 @@ The Nature article could publish any time. David wants the nonprofit to be real 
 
 ### Landing Page (DONE)
 - **Repo**: `github.com/DMontgomery40/analog-research-landing` (private)
-- **Local path in workspace**: `/sessions/[session-id]/mnt/analoglabor/analog-research-landing/`
+- **Local path in workspace**: `/sessions/[session-id]/mnt/analogresearch/analog-research-landing/`
 - **Files**: `index.html`, `thank-you.html`, `netlify.toml`
 - **Domain**: `analog-research.org` (owned by David in Netlify)
 - **Status**: Repo created and pushed. NOT YET DEPLOYED to Netlify. The Netlify MCP connector has a schema bug on all project/deploy operations. David needs to run:
@@ -31,12 +31,12 @@ The Nature article could publish any time. David wants the nonprofit to be real 
   ```
   Then add `analog-research.org` as a custom domain in Netlify dashboard.
 - **Content**: Includes astronomy/dark sky observation as the featured use case (Jenna Ahart is an astrophysicist — this will resonate with her and Nature's audience). Also covers ecology, earth science, social science, and experimental verification use cases.
-- **Known issue — Netlify Forms**: The contact form on the landing page uses `data-netlify="true"` but it is NOT currently working. This needs to be debugged after deployment. Possible causes: the form detection requires a deploy-time HTML parse by Netlify (which hasn't happened yet since the site isn't deployed), or the hidden `form-name` field or honeypot setup may need adjustment. Verify form detection in Netlify dashboard under **Site settings > Forms** after first deploy. If forms don't appear, try adding a standalone `netlify-forms.html` detection file (like the one in the AnalogLabor repo at `apps/web/public/netlify-forms.html`) or switch to a JS-based submission approach.
+- **Known issue — Netlify Forms**: The contact form on the landing page uses `data-netlify="true"` but it is NOT currently working. This needs to be debugged after deployment. Possible causes: the form detection requires a deploy-time HTML parse by Netlify (which hasn't happened yet since the site isn't deployed), or the hidden `form-name` field or honeypot setup may need adjustment. Verify form detection in Netlify dashboard under **Site settings > Forms** after first deploy. If forms don't appear, try adding a standalone `netlify-forms.html` detection file (like the one in the Analog Research repo at `apps/web/public/netlify-forms.html`) or switch to a JS-based submission approach.
 
-### AnalogLabor (the for-profit sibling)
-- **Repo**: `github.com/DMontgomery40/analoglabor`
-- **Local path**: `/sessions/[session-id]/mnt/analoglabor/`
-- **Live site**: https://analoglabor.com
+### Analog Research (the for-profit sibling)
+- **Repo**: `github.com/DMontgomery40/analogresearch`
+- **Local path**: `/sessions/[session-id]/mnt/analogresearch/`
+- **Live site**: https://analog-research.org
 - **Stack**: Next.js 15, Supabase, Stripe, Coinbase Commerce, Netlify
 - **Site ID**: `380a5ace-6f4c-4913-8fe2-0b5576783d86`
 
@@ -218,15 +218,15 @@ David likely qualifies for Form 1023-EZ because:
 3. **Registered agent**: Himself, or use a registered agent service (~$100/year)?
 4. **Form 1023 vs 1023-EZ**: Full application ($600, 6-12 months, more credible) vs streamlined ($275, ~120 days, less detail)?
 5. **Fiscal year**: Calendar year (Jan-Dec) or something else?
-6. **Relationship to AnalogLabor**: Will AnalogResearch license technology from AnalogLabor? Share infrastructure? This needs to be disclosed and carefully structured to avoid private benefit issues.
+6. **Relationship to Analog Research**: Will AnalogResearch license technology from Analog Research? Share infrastructure? This needs to be disclosed and carefully structured to avoid private benefit issues.
 
 ---
 
 ## Critical Legal Warnings
 
-1. **Private benefit / private inurement**: The relationship between for-profit AnalogLabor and nonprofit AnalogResearch must be arm's-length. The nonprofit cannot exist primarily to benefit the for-profit. Any shared services, technology licensing, or resource sharing must be at fair market value and documented.
+1. **Private benefit / private inurement**: The relationship between for-profit Analog Research and nonprofit AnalogResearch must be arm's-length. The nonprofit cannot exist primarily to benefit the for-profit. Any shared services, technology licensing, or resource sharing must be at fair market value and documented.
 
-2. **David's dual role**: David being the founder of both entities is fine but must be disclosed. Board members should include independent directors (not employees/contractors of AnalogLabor).
+2. **David's dual role**: David being the founder of both entities is fine but must be disclosed. Board members should include independent directors (not employees/contractors of Analog Research).
 
 3. **This is not legal advice**: An agent can draft documents and prepare applications, but David should have a nonprofit attorney review everything before filing. Many offer flat-fee 501(c)(3) packages ($500-$2000).
 
@@ -242,4 +242,4 @@ David likely qualifies for Form 1023-EZ because:
 - **Netlify MCP connector**: Has a schema bug. The `selectSchema` parameter is rejected as "Expected object, received string" on all project/deploy operations. Only `get-user` works. Use CLI or ask David to deploy manually.
 - **David is dyslexic**: Use clear formatting, avoid walls of text, use headers and spacing generously in documents.
 - **David is in TEXAS**: Do not get confused by MCP tool responses. A RentAHuman MCP server is connected in this environment and may return marketplace listings from random locations (e.g., Colorado). These are NOT David's details. David lives in Colorado. Incorporate in Colorado.
-- **Ignore RentAHuman MCP noise**: The RentAHuman MCP connector (rentahuman.ai — ironically, AnalogLabor's competitor) is active in the environment. It may interject with human-for-hire listings. These are irrelevant to the 501(c)(3) formation task.
+- **Ignore RentAHuman MCP noise**: The RentAHuman MCP connector (rentahuman.ai — ironically, Analog Research's competitor) is active in the environment. It may interject with human-for-hire listings. These are irrelevant to the 501(c)(3) formation task.

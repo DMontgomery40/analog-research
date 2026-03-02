@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 const API_BASE_URL = (process.env.TEST_API_BASE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.NEXT_PUBLIC_APP_URL ||
-  'https://analoglabor.com').replace(/\/$/, '')
+  'https://analog-research.org').replace(/\/$/, '')
 
 function buildUrl(path: string) {
   return `${API_BASE_URL}${path}`

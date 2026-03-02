@@ -10,7 +10,7 @@ describe('raised-hand marketplace connectors', () => {
   it('includes the current connector roadmap set', () => {
     const ids = RAISED_HAND_MARKETPLACE_CONNECTORS.map((connector) => connector.id)
 
-    expect(ids).toEqual(['analoglabor', 'proxypics', 'upwork', 'thumbtack', 'taskrabbit', 'fiverr'])
+    expect(ids).toEqual(['analogresearch', 'proxypics', 'upwork', 'thumbtack', 'taskrabbit', 'fiverr'])
   })
 
   it('enforces no cold outreach semantics for every connector', () => {

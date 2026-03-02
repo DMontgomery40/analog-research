@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@analoglabor/ui'
+import { cn } from '@analogresearch/ui'
 import { ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from 'lucide-react'
 
 export interface Column<T> {

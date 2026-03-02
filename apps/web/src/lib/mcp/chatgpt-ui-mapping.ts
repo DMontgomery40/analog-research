@@ -3,7 +3,7 @@ import {
   MCP_UI_RESOURCE_URIS,
   getMcpToolUiResourceUri,
   type McpUiResourceUri,
-} from 'analoglabor-mcp/tools'
+} from 'analogresearch-mcp/tools'
 
 export { MCP_UI_RESOURCE_URIS as CHATGPT_UI_RESOURCE_URIS }
 

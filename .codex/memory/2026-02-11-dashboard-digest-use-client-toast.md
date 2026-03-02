@@ -16,7 +16,7 @@ with the same digest `2736549632`.
 
 ## Root cause
 
-`apps/web/src/app/(dashboard)/layout.tsx` is a server component that imports `Toaster` from `@analoglabor/ui`.
+`apps/web/src/app/(dashboard)/layout.tsx` is a server component that imports `Toaster` from `@analogresearch/ui`.
 
 In `packages/ui`, toast modules contained React hook/client logic but lacked client boundaries:
 

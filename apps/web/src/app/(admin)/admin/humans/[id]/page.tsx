@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { StatusBadge, mapBookingStatus } from '@/components/admin/StatusBadge'
 import { AuditTrail } from '@/components/admin/AuditTrail'
-import { Button } from '@analoglabor/ui'
+import { Button } from '@analogresearch/ui'
 import {
   ArrowLeft,
   ShieldCheck,

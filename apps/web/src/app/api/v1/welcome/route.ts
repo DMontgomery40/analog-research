@@ -18,7 +18,7 @@ export async function GET() {
     authentication: {
       type: 'API Key',
       header: 'X-API-Key',
-      prefix: 'al_live_',
+      prefix: 'ar_live_',
       generate: '/v1/keys/generate',
     },
     fee: '3% transaction fee only - no monthly subscription',
@@ -28,8 +28,8 @@ export async function GET() {
       pricing_modes: ['bid', 'fixed_per_spot'],
     },
     mcp: {
-      package: 'analoglabor-mcp',
-      install: 'npx analoglabor-mcp',
+      package: 'analogresearch-mcp',
+      install: 'npx analogresearch-mcp',
     },
   })
 }

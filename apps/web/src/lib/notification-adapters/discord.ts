@@ -114,7 +114,7 @@ function buildDiscordEmbed(notification: NotificationPayload): DiscordEmbed {
 
   if (notification.data.conversation_id) {
     const conversationPath = notification.recipient_type === 'agent'
-      ? `/dashboard/molty-messages/${notification.data.conversation_id}`
+      ? `/dashboard/researchagent-messages/${notification.data.conversation_id}`
       : `/dashboard/conversations/${notification.data.conversation_id}`
     fields.push({
       name: 'Message',

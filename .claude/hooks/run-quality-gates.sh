@@ -90,9 +90,9 @@ run_step "ai-slop" "pnpm check:ai-slop $MODE"
 run_step "risk-tests" "pnpm check:risk-tests $MODE"
 run_step "migration-prefix" "pnpm check:migration-prefix"
 run_step "realness-triad" "pnpm check:realness"
-# Note: `pnpm --filter @analoglabor/web` executes inside `apps/web`, so a relative
+# Note: `pnpm --filter @analogresearch/web` executes inside `apps/web`, so a relative
 # `VITEST_INTEGRATION_ENV_FILE=apps/web/.env.local` would not resolve correctly.
-run_step "integration-tests-live" "RUN_INTEGRATION_TESTS=true VITEST_INTEGRATION_ENV_FILE=\"$ROOT_DIR/apps/web/.env.local\" pnpm --filter @analoglabor/web test"
+run_step "integration-tests-live" "RUN_INTEGRATION_TESTS=true VITEST_INTEGRATION_ENV_FILE=\"$ROOT_DIR/apps/web/.env.local\" pnpm --filter @analogresearch/web test"
 run_step "tests" "pnpm test"
 
 if [[ "$should_run_build" == true ]]; then

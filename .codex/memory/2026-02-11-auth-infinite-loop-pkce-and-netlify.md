@@ -53,7 +53,7 @@ When the server-side exchange fails to find the verifier, the likely cause is **
 
 | Location | Source | Example |
 |----------|--------|---------|
-| Client (`client.ts`) | `window.location.hostname` | `analoglabor.com` or `www.analoglabor.com` |
+| Client (`client.ts`) | `window.location.hostname` | `analog-research.org` or `www.analog-research.org` |
 | Server (`server.ts`) | `x-forwarded-host` ?? `host` | May differ (e.g. load balancer rewriting) |
 
 If `window.location.hostname ≠ x-forwarded-host`, cookies are set with different domains or names. The verifier cookie written by the client may not be visible to the server.
@@ -93,15 +93,15 @@ Use `window.location.replace(redirect)` instead of `router.push(redirect)` after
 
 | Subdomain | Purpose | Implementation |
 |-----------|---------|----------------|
-| `analoglabor.com` | Main web app (auth, dashboard, browse) | Next.js pages |
-| `api.analoglabor.com` | API-only | JSON endpoints, `/v1/*` rewrite |
-| `supabase.analoglabor.com` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
+| `analog-research.org` | Main web app (auth, dashboard, browse) | Next.js pages |
+| `api.analog-research.org` | API-only | JSON endpoints, `/v1/*` rewrite |
+| `supabase.analog-research.org` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
 
 All routing is handled in `apps/web/src/proxy.ts`. **Netlify redirects with Host conditions do not work with the Next.js runtime** (see `netlify.toml`). The proxy runs at the edge before any Netlify redirects; the `Host` header is preserved.
 
 ### Auth Flow and Subdomains
 
-Human auth (login, signup, dashboard) runs on the **main domain** (`analoglabor.com` / `www.analoglabor.com`). Supabase auth endpoints are reached via `supabase.analoglabor.com` when configured, but the auth **flow** (callback, redirect, cookies) happens on the main domain.
+Human auth (login, signup, dashboard) runs on the **main domain** (`analog-research.org` / `www.analog-research.org`). Supabase auth endpoints are reached via `supabase.analog-research.org` when configured, but the auth **flow** (callback, redirect, cookies) happens on the main domain.
 
 The subdomain setup is **not** the primary cause of the auth bugs we fixed. The issues were:
 
@@ -113,7 +113,7 @@ The subdomain setup is **not** the primary cause of the auth bugs we fixed. The 
 
 ## 5. Cookie Domain
 
-`getSupabaseAuthCookieDomain()` in `@/lib/supabase/cookie-domain.ts` sets `domain: '.analoglabor.com'` so sessions persist across `www.analoglabor.com` and `analoglabor.com`. Without this, moving between apex and www would make users appear logged out.
+`getSupabaseAuthCookieDomain()` in `@/lib/supabase/cookie-domain.ts` sets `domain: '.analog-research.org'` so sessions persist across `www.analog-research.org` and `analog-research.org`. Without this, moving between apex and www would make users appear logged out.
 
 ---
 
@@ -150,7 +150,7 @@ The subdomain setup is **not** the primary cause of the auth bugs we fixed. The 
 
 ### Verification
 
-1. `pnpm --filter @analoglabor/web build` — Build succeeds
+1. `pnpm --filter @analogresearch/web build` — Build succeeds
 2. `pnpm verify` — All quality gates pass
 3. Manual: Google OAuth → `/auth/callback` → `/auth/callback/complete` → dashboard (no PKCE error)
 4. Manual: Email/password sign-in → dashboard (no server error)

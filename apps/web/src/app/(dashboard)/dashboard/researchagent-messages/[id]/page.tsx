@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Send, Loader2, AlertTriangle, ShieldAlert, Paperclip, X } from 'lucide-react'
-import type { Message } from '@analoglabor/database/types'
+import type { Message } from '@analogresearch/database/types'
 import { createClient } from '@/lib/supabase/client'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
@@ -104,7 +104,7 @@ export default function ResearchAgentChatPage() {
     let channel: RealtimeChannel | null = null
 
     channel = supabase
-      .channel(`molty-conversation:${conversationId}`)
+      .channel(`researchagent-conversation:${conversationId}`)
       .on(
         'postgres_changes',
         {
@@ -217,7 +217,7 @@ export default function ResearchAgentChatPage() {
           {error}
         </div>
         <Link
-          href="/dashboard/molty-messages"
+          href="/dashboard/researchagent-messages"
           className="inline-flex items-center gap-2 mt-4 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -238,7 +238,7 @@ export default function ResearchAgentChatPage() {
       {/* Header */}
       <div className="flex items-center gap-4 p-4 border-b border-border bg-card">
         <Link
-          href="/dashboard/molty-messages"
+          href="/dashboard/researchagent-messages"
           className="p-2 hover:bg-muted rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -391,7 +391,7 @@ export default function ResearchAgentChatPage() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <input
-              id="molty-conversation-attachments"
+              id="researchagent-conversation-attachments"
               type="file"
               multiple
               className="hidden"
@@ -405,7 +405,7 @@ export default function ResearchAgentChatPage() {
               disabled={sending}
             />
             <label
-              htmlFor="molty-conversation-attachments"
+              htmlFor="researchagent-conversation-attachments"
               className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-border p-2 hover:bg-muted"
             >
               <Paperclip className="h-5 w-5" />

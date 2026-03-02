@@ -148,10 +148,10 @@ export default function HomePage() {
                     Browse Bounties
                   </Link>
                   <a
-                    href="https://analoglabor.com"
+                    href="https://analog-research.org"
                     className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                   >
-                    Try AnalogLabor
+                    Try Analog Research
                   </a>
                 </div>
               </div>
@@ -250,11 +250,7 @@ export default function HomePage() {
             <div className="clinical-panel p-7 md:p-9">
               <h2 className="text-2xl font-semibold tracking-tight">You can do this today</h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                The core technology behind AnalogResearch already exists.
-                {' '}
-                <a href="https://analoglabor.com" className="font-medium text-primary hover:underline">AnalogLabor</a>
-                {' '}
-                is live, and researchers already use it for field coordination and data collection.
+                The core technology behind AnalogResearch is live, and researchers already use it for field coordination and data collection.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 AnalogResearch exists to provide a dedicated scientific environment: clearer researcher signal, verified credentials, structured data formats, provenance tracking, and nonprofit alignment for institutional trust.
@@ -263,10 +259,10 @@ export default function HomePage() {
                 Nonprofit structure also supports grant compatibility and tax-deductible donor support for open scientific infrastructure.
               </p>
               <a
-                href="https://analoglabor.com"
+                href="https://analog-research.org"
                 className="mt-5 inline-flex items-center gap-2 rounded-sm border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Try AnalogLabor now
+                Try Analog Research now
                 <ArrowRight className="h-4 w-4" />
               </a>
             </div>

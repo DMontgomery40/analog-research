@@ -52,7 +52,7 @@ This installs:
 
 - `.git/hooks/pre-commit` -> `run-quality-gates.sh --changed`
 - `.git/hooks/pre-push` -> `run-quality-gates.sh --full`
-- `.claude/hooks/verify-analoglabor.sh` (plus `.claude/settings.json` if missing)
+- `.claude/hooks/verify-analogresearch.sh` (plus `.claude/settings.json` if missing)
 - Context7 MCP in Cursor (`.cursor/mcp.json`) and Codex (`~/.codex/config.toml`)
 
 ## Claude Stop Hook
@@ -60,7 +60,7 @@ This installs:
 Hook entrypoint:
 
 ```bash
-.claude/hooks/verify-analoglabor.sh
+.claude/hooks/verify-analogresearch.sh
 ```
 
 This delegates to:
@@ -83,7 +83,7 @@ If a JSON payload is provided (Codex notify hooks), non-terminal events are igno
 
 ## Notes
 
-- `pnpm test` currently targets `@analoglabor/web` tests through Turbo.
+- `pnpm test` currently targets `@analogresearch/web` tests through Turbo.
 - Unit/integration tests are centralized under `tests/web/**/*.test.ts`.
 - Add `ai-slop-ok` in a file only when a flagged pattern is intentional and reviewed.
 - Local-only or mock-only checks are not sufficient for production money/schema changes.

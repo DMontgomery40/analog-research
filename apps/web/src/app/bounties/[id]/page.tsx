@@ -8,7 +8,7 @@ import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
 import { QualityScoreBadge } from '@/components/quality-score-badge'
 import { BRAND_NAME, SITE_URL, TESTING_DATA_NOTICE } from '@/lib/brand'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 import { isMissingColumnError } from '@/lib/supabase/errors'
 
 interface BountyDetails {
