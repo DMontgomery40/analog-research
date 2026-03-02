@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Home, User, Briefcase, MessageSquare, Settings, LogOut, Search, Inbox, Users, Camera } from 'lucide-react'
+import { Home, User, Briefcase, MessageSquare, Settings, LogOut, Search, Inbox, Users, Camera, PlusCircle } from 'lucide-react'
 import { BrandMark } from '@/components/brand-mark'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
-import { Toaster } from '@analoglabor/ui'
+import { Toaster } from '@analogresearch/ui'
 import { DashboardNavLink } from '@/components/dashboard/NavLink'
 import { DashboardMobileNav } from '@/components/dashboard/MobileNav'
+
+export const dynamic = 'force-dynamic'
 
 async function getUser() {
   const supabase = await createClient()
@@ -70,6 +72,9 @@ export default async function DashboardLayout({
           <DashboardNavLink href="/dashboard/browse" icon={<Search className="w-5 h-5" />}>
             Browse Bounties
           </DashboardNavLink>
+          <DashboardNavLink href="/dashboard/bounties/new" icon={<PlusCircle className="w-5 h-5" />}>
+            Create Bounty
+          </DashboardNavLink>
           <DashboardNavLink href="/dashboard/bookings" icon={<Briefcase className="w-5 h-5" />}>
             My Bookings
           </DashboardNavLink>
@@ -79,7 +84,7 @@ export default async function DashboardLayout({
           <DashboardNavLink href="/dashboard/conversations" icon={<MessageSquare className="w-5 h-5" />}>
             Messages
           </DashboardNavLink>
-          <DashboardNavLink href="/dashboard/molty-messages" icon={<Inbox className="w-5 h-5" />}>
+          <DashboardNavLink href="/dashboard/researchagent-messages" icon={<Inbox className="w-5 h-5" />}>
             ResearchAgent Messages
           </DashboardNavLink>
           <DashboardNavLink href="/dashboard/profile" icon={<User className="w-5 h-5" />}>

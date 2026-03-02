@@ -189,7 +189,7 @@ if (keyMode === 'test') {
       // Destination charge: funds to connected account, fee retained by platform.
       application_fee_amount: String(Math.min(fee, amount - 1)),
       'transfer_data[destination]': destinationAccount,
-      description: `AnalogLabor stripe canary destination_charge ${canaryTag}`,
+      description: `Analog Research stripe canary destination_charge ${canaryTag}`,
       'metadata[canary_tag]': canaryTag,
       'metadata[source]': 'codex_quality_gate',
     },
@@ -228,7 +228,7 @@ async function createTransfer() {
       amount: String(amount),
       currency,
       destination: destinationAccount,
-      description: `AnalogLabor stripe canary ${canaryTag}`,
+      description: `Analog Research stripe canary ${canaryTag}`,
       'metadata[canary_tag]': canaryTag,
       'metadata[source]': 'codex_quality_gate',
     },
@@ -250,7 +250,7 @@ const reversal = await stripePost(
   `/v1/transfers/${transferId}/reversals`,
   {
     amount: String(amount),
-    description: `AnalogLabor live money canary reversal ${canaryTag}`,
+    description: `Analog Research live money canary reversal ${canaryTag}`,
     'metadata[canary_tag]': canaryTag,
     'metadata[source]': 'codex_quality_gate',
   },

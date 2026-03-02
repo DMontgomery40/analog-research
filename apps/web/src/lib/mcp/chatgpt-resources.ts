@@ -2,7 +2,7 @@ import type {
   Resource,
   TextResourceContents,
 } from '@modelcontextprotocol/sdk/types.js'
-import type { McpUiResourceUri } from 'analoglabor-mcp/tools'
+import type { McpUiResourceUri } from 'analogresearch-mcp/tools'
 
 import { CHATGPT_UI_RESOURCE_URIS } from '@/lib/mcp/chatgpt-ui-mapping'
 

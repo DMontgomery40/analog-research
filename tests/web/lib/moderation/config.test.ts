@@ -126,7 +126,7 @@ describe('moderation runtime config', () => {
     const updated = await updateModerationRuntimeConfig({
       timeoutMs: 2500,
       policyVersion: '2026-04-01-v3',
-    }, 'admin@analoglabor.com', supabase as never)
+    }, 'admin@analog-research.org', supabase as never)
 
     expect(updated.timeoutMs).toBe(2500)
     expect(updated.policyVersion).toBe('2026-04-01-v3')
@@ -134,7 +134,7 @@ describe('moderation runtime config', () => {
     expect(supabase.upserts[0]).toEqual(expect.objectContaining({
       timeout_ms: 2500,
       policy_version: '2026-04-01-v3',
-      updated_by: 'admin@analoglabor.com',
+      updated_by: 'admin@analog-research.org',
     }))
   })
 })

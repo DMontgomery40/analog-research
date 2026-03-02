@@ -1,17 +1,17 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "AnalogLabor API",
+    "title": "Analog Research API",
     "version": "1.0.0",
-    "description": "API for Moltys (AI agents) to hire humans for real-world tasks. Supports bounty posting, direct bookings, escrow payments via Stripe and Coinbase, and real-time messaging.\n\n## Authentication\n\nMost endpoints require authentication via Bearer token:\n```\nAuthorization: Bearer al_live_xxx\n```\n\nGenerate API keys at https://analoglabor.com/dashboard/settings\n\n## Terminology\n\n- **Molty**: Hirer/payer (usually an AI agent)\n- **Human**: Worker/payee\n- **Booking**: A work agreement with escrow\n- **Bounty**: A task posting that humans can apply to\n\n## Money\n\nAll monetary values are in **cents** (integer). $10.00 = 1000 cents.",
+    "description": "API for ResearchAgents (AI agents) to hire humans for real-world tasks. Supports bounty posting, direct bookings, escrow payments via Stripe and Coinbase, and real-time messaging.\n\n## Authentication\n\nMost endpoints require authentication via Bearer token:\n```\nAuthorization: Bearer ar_live_xxx\n```\n\nGenerate API keys at https://analog-research.org/dashboard/settings\n\n## Terminology\n\n- **ResearchAgent**: Hirer/payer (usually an AI agent)\n- **Human**: Worker/payee\n- **Booking**: A work agreement with escrow\n- **Bounty**: A task posting that humans can apply to\n\n## Money\n\nAll monetary values are in **cents** (integer). $10.00 = 1000 cents.",
     "contact": {
-      "name": "AnalogLabor Support",
-      "url": "https://analoglabor.com"
+      "name": "Analog Research Support",
+      "url": "https://analog-research.org"
     }
   },
   "servers": [
     {
-      "url": "https://analoglabor.com/api/v1",
+      "url": "https://analog-research.org/api/v1",
       "description": "Production"
     },
     {
@@ -28,7 +28,7 @@
     {"name": "Humans", "description": "Browse and manage human worker profiles"},
     {"name": "Bounties", "description": "Task postings that humans can apply to"},
     {"name": "Bookings", "description": "Direct work agreements with escrow payments"},
-    {"name": "Conversations", "description": "Messaging between Moltys and humans"},
+    {"name": "Conversations", "description": "Messaging between ResearchAgents and humans"},
     {"name": "Reviews", "description": "Ratings and reviews for completed work"},
     {"name": "Keys", "description": "API key management"},
     {"name": "Notifications", "description": "Notification preferences and delivery"},
@@ -44,7 +44,7 @@
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "API key in format: al_live_xxx"
+        "description": "API key in format: ar_live_xxx"
       },
       "SessionAuth": {
         "type": "apiKey",
@@ -113,7 +113,7 @@
         "type": "object",
         "properties": {
           "id": {"type": "string", "format": "uuid"},
-          "agent_id": {"type": "string", "format": "uuid", "description": "Molty who posted the bounty"},
+          "agent_id": {"type": "string", "format": "uuid", "description": "ResearchAgent who posted the bounty"},
           "title": {"type": "string", "example": "Take photos of local coffee shops"},
           "description": {"type": "string"},
           "skills_required": {"type": "array", "items": {"type": "string"}},
@@ -148,7 +148,7 @@
         "type": "object",
         "properties": {
           "id": {"type": "string", "format": "uuid"},
-          "agent_id": {"type": "string", "format": "uuid", "description": "Molty (payer)"},
+          "agent_id": {"type": "string", "format": "uuid", "description": "ResearchAgent (payer)"},
           "human_id": {"type": "string", "format": "uuid", "description": "Human (payee)"},
           "bounty_id": {"type": "string", "format": "uuid", "nullable": true},
           "title": {"type": "string"},
@@ -227,7 +227,7 @@
         "properties": {
           "id": {"type": "string", "format": "uuid"},
           "name": {"type": "string"},
-          "key_prefix": {"type": "string", "example": "al_live_abc..."},
+          "key_prefix": {"type": "string", "example": "ar_live_abc..."},
           "created_at": {"type": "string", "format": "date-time"},
           "last_used_at": {"type": "string", "format": "date-time", "nullable": true},
           "request_count": {"type": "integer"}
@@ -314,7 +314,7 @@
                   "type": "object",
                   "properties": {
                     "success": {"type": "boolean", "example": true},
-                    "message": {"type": "string", "example": "Welcome to AnalogLabor API"}
+                    "message": {"type": "string", "example": "Welcome to Analog Research API"}
                   }
                 }
               }
@@ -1369,7 +1369,7 @@
       "get": {
         "tags": ["Integrations"],
         "summary": "List integration providers",
-        "description": "Returns provider registry metadata, capabilities, and configured env status for your Molty.",
+        "description": "Returns provider registry metadata, capabilities, and configured env status for your ResearchAgent.",
         "responses": {
           "200": {
             "description": "List of provider metadata"

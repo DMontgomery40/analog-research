@@ -12,8 +12,8 @@ type ToolSecurityScheme = {
   scopes?: string[]
 }
 
-const EXPECTED_READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analoglabor.read').trim() || 'analoglabor.read'
-const EXPECTED_WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analoglabor.write').trim() || 'analoglabor.write'
+const EXPECTED_READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analogresearch.read').trim() || 'analogresearch.read'
+const EXPECTED_WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analogresearch.write').trim() || 'analogresearch.write'
 
 describe('MCP tool metadata parity', () => {
   it('ensures every canonical tool has complete annotations', () => {

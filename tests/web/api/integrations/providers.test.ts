@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
+const RUN_INTEGRATION_TESTS = process.env.RUN_INTEGRATION_TESTS === 'true'
+const integrationDescribe = RUN_INTEGRATION_TESTS ? describe : describe.skip
+
 const API_BASE_URL = (
   process.env.TEST_API_BASE_URL
   || process.env.NEXT_PUBLIC_SITE_URL
   || process.env.NEXT_PUBLIC_APP_URL
-  || 'https://analoglabor.com'
+  || 'https://analog-research.org'
 ).replace(/\/$/, '')
 
 function buildUrl(path: string) {
@@ -15,7 +18,7 @@ function expectNetlifyRuntime(response: Response) {
   expect(response.headers.get('x-nf-request-id')).toBeTruthy()
 }
 
-describe('GET /api/v1/integrations/providers (integration invariant)', () => {
+integrationDescribe('GET /api/v1/integrations/providers (integration invariant)', () => {
   it('fails closed without owner auth (Netlify runtime)', async () => {
     const response = await fetch(buildUrl('/api/v1/integrations/providers'))
 

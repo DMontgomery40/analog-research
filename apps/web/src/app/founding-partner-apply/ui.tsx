@@ -43,7 +43,7 @@ const ROLE_DESCRIPTIONS: Record<RoleTrack, { icon: typeof Scale; title: string; 
   },
 }
 
-const SOURCE_OPTIONS = new Set(['analoglabor', 'rentahuman', 'direct'])
+const SOURCE_OPTIONS = new Set(['analogresearch', 'rentahuman', 'direct'])
 
 function sanitizeRoleTrack(value: string | null): RoleTrack {
   if (!value) return 'multi'

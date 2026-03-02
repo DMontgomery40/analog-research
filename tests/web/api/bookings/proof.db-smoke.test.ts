@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@analoglabor/database'
+import type { Database } from '@analogresearch/database'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const RUN_DB_SMOKE = process.env.RUN_INTEGRATION_TESTS === 'true'

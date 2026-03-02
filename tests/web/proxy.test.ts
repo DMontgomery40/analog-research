@@ -206,9 +206,9 @@ describe('Critical static files existence', () => {
 
 describe('Proxy rewrite behavior', () => {
   it('rewrites well-known OAuth protected resource to MCP metadata endpoint', async () => {
-    const request = new NextRequest('https://api.analoglabor.com/.well-known/oauth-protected-resource', {
+    const request = new NextRequest('https://api.analog-research.org/.well-known/oauth-protected-resource', {
       headers: {
-        host: 'api.analoglabor.com',
+        host: 'api.analog-research.org',
       },
     })
 
@@ -219,9 +219,9 @@ describe('Proxy rewrite behavior', () => {
   })
 
   it('rewrites /v1/mcp/chatgpt to /api/v1/mcp/chatgpt on API subdomain', async () => {
-    const request = new NextRequest('https://api.analoglabor.com/v1/mcp/chatgpt', {
+    const request = new NextRequest('https://api.analog-research.org/v1/mcp/chatgpt', {
       headers: {
-        host: 'api.analoglabor.com',
+        host: 'api.analog-research.org',
       },
     })
 

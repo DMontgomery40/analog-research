@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Plus, Clock, DollarSign, Users, Eye, ChevronRight, Briefcase, Send } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 
 interface Bounty {
   id: string
@@ -209,13 +209,21 @@ export default function MyBountiesPage() {
           <p className="text-muted-foreground">Track your applications and created bounties</p>
           <QualityFormulaLinks className="mt-2" />
         </div>
-        <Link
-          href="/dashboard/browse"
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Find Bounties
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/bounties/new"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Create Bounty
+          </Link>
+          <Link
+            href="/dashboard/browse"
+            className="inline-flex items-center gap-2 border border-border px-4 py-2 rounded-md font-medium hover:bg-accent transition-colors"
+          >
+            Find Bounties
+          </Link>
+        </div>
       </div>
 
       {/* Tabs */}

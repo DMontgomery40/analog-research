@@ -50,11 +50,11 @@ test('new user can confirm email and generate an API key', async ({ page, reques
 
     await page.getByRole('button', { name: /Generate Key/i }).click()
 
-    const rawKeyLocator = page.locator('code', { hasText: /^al_live_/ }).first()
+    const rawKeyLocator = page.locator('code', { hasText: /^ar_live_/ }).first()
     await expect(rawKeyLocator).toBeVisible()
 
     const rawKey = (await rawKeyLocator.innerText()).trim()
-    expect(rawKey).toMatch(/^al_live_[a-f0-9]{64}$/)
+    expect(rawKey).toMatch(/^ar_live_[a-f0-9]{64}$/)
 
     const notificationsResponse = await request.get('/api/v1/agent/notifications', {
       headers: {

@@ -5,10 +5,10 @@ import type { AgentAuth } from '@/lib/api-auth'
 import { logger } from '@/lib/logger'
 import { createServiceClient } from '@/lib/supabase/server'
 
-const API_KEY_PREFIXES = ['analoglabor_', 'al_live_']
+const API_KEY_PREFIXES = ['ar_live_']
 const DEFAULT_PROVIDER = 'auth0'
-const DEFAULT_READ_SCOPE = 'analoglabor.read'
-const DEFAULT_WRITE_SCOPE = 'analoglabor.write'
+const DEFAULT_READ_SCOPE = 'analogresearch.read'
+const DEFAULT_WRITE_SCOPE = 'analogresearch.write'
 
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>()
 

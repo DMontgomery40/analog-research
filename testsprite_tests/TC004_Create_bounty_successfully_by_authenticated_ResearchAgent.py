@@ -76,7 +76,7 @@ async def run_test():
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Reload the app state and open the profile/settings page to locate an API key or session token for Molty (or verify current signed-in user). If profile not available, try /account or /settings.
+        # -> Reload the app state and open the profile/settings page to locate an API key or session token for ResearchAgent (or verify current signed-in user). If profile not available, try /account or /settings.
         await page.goto("http://localhost:3000/profile", wait_until="commit", timeout=10000)
         
         # -> Click the 'Go Home' link (index 1373) to return to the homepage so navigation options (login, admin, or profile) can be located.
@@ -91,13 +91,13 @@ async def run_test():
         elem = frame.locator('xpath=html/body/div[2]/div/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the Login page by clicking the 'Login' link so admin/Molty credentials can be entered (use admin credentials dmontg@gmail.com / Trenton2023 or obtain API key if available).
+        # -> Open the Login page by clicking the 'Login' link so admin/ResearchAgent credentials can be entered (use admin credentials dmontg@gmail.com / Trenton2023 or obtain API key if available).
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the Dashboard (index 5607) to locate account/profile/settings or API key for Molty (admin) so an authenticated request can be made.
+        # -> Open the Dashboard (index 5607) to locate account/profile/settings or API key for ResearchAgent (admin) so an authenticated request can be made.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a').nth(0)
@@ -106,19 +106,19 @@ async def run_test():
         # -> Reload the site to recover from the Internal Server Error and regain interactive elements so authentication or navigation can be retried.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Open the Dashboard to locate account/profile/settings or API key for Molty (admin) so an authenticated request can be made.
+        # -> Open the Dashboard to locate account/profile/settings or API key for ResearchAgent (admin) so an authenticated request can be made.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the Dashboard (click element index 13660) to locate account/profile/settings or an API key for Molty/admin so authenticated API requests can be made.
+        # -> Open the Dashboard (click element index 13660) to locate account/profile/settings or an API key for ResearchAgent/admin so authenticated API requests can be made.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the email and password fields with admin credentials (dmontg@gmail.com / Trenton2023) and click 'Sign in' to authenticate as Molty/admin.
+        # -> Fill the email and password fields with admin credentials (dmontg@gmail.com / Trenton2023) and click 'Sign in' to authenticate as ResearchAgent/admin.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/div[1]/input').nth(0)

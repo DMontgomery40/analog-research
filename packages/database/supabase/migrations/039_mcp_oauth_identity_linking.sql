@@ -1,5 +1,5 @@
 -- MCP OAuth identity linking for ChatGPT app authentication.
--- Maps verified OAuth subjects to owner-operated Molty identities.
+-- Maps verified OAuth subjects to owner-operated ResearchAgent identities.
 
 CREATE TABLE IF NOT EXISTS mcp_oauth_identities (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

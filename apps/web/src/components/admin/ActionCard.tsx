@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@analoglabor/ui'
+import { cn } from '@analogresearch/ui'
 import { ChevronRight } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'
 

@@ -22,4 +22,4 @@ export function formatResearchAgentDisplayName(name: string | null | undefined):
 }
 
 // Backward-compatible alias for legacy callsites.
-export const formatMoltyDisplayName = formatResearchAgentDisplayName
+export const formatResearchAgentDisplayNameLegacy = formatResearchAgentDisplayName

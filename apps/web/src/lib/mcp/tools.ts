@@ -3,7 +3,7 @@ import {
   MCP_TOOL_BY_NAME,
   MCP_TOOL_DEFINITIONS,
   type McpToolDefinition,
-} from 'analoglabor-mcp/tools'
+} from 'analogresearch-mcp/tools'
 
 import { hasAgentScope, type AgentAuth } from '@/lib/api-auth'
 

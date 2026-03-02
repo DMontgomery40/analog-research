@@ -11,7 +11,7 @@ Started: 2026-02-15
 - What was made real: removed fetch stubbing and fake Supabase probes; replaced with live OpenRouter and remote Supabase probes gated behind `RUN_INTEGRATION_TESTS=true`, and replaced local ChatGPT MCP mixed-auth unit harnesses with deployed endpoint assertions (Netlify `x-nf-request-id` + MCP `mcp/www_authenticate` metadata).
 - Verification:
   - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/moderation/openrouter-client.test.ts,tests/web/lib/schema-parity.test.ts,tests/web/lib/integrations/credentials.test.ts,tests/web/lib/mcp/chatgpt-mixed-auth.test.ts": PASS
-  - pnpm --filter @analoglabor/web test -- ../../tests/web/lib/mcp/chatgpt-mixed-auth.test.ts ../../tests/web/lib/integrations/credentials.test.ts ../../tests/web/lib/schema-parity.test.ts ../../tests/web/lib/moderation/openrouter-client.test.ts: PASS (integration-gated tests skipped without `RUN_INTEGRATION_TESTS=true`)
+  - pnpm --filter @analogresearch/web test -- ../../tests/web/lib/mcp/chatgpt-mixed-auth.test.ts ../../tests/web/lib/integrations/credentials.test.ts ../../tests/web/lib/schema-parity.test.ts ../../tests/web/lib/moderation/openrouter-client.test.ts: PASS (integration-gated tests skipped without `RUN_INTEGRATION_TESTS=true`)
 ---
 
 ## Codebase Patterns
@@ -24,7 +24,7 @@ Started: 2026-02-15
 - Removed fake-test primitives (`vi.fn` / `mockImplementation`) and replaced with deterministic call counters.
 - Verification:
   - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/mcp/dispatcher-parity.test.ts,tests/web/lib/supabase-service-client.test.ts": PASS
-  - pnpm --filter @analoglabor/web test -- --run tests/web/lib/mcp/dispatcher-parity.test.ts tests/web/lib/supabase-service-client.test.ts: PASS
+  - pnpm --filter @analogresearch/web test -- --run tests/web/lib/mcp/dispatcher-parity.test.ts tests/web/lib/supabase-service-client.test.ts: PASS
 - Global no-mock count after regeneration: 607
 ---
 
@@ -60,7 +60,7 @@ Started: 2026-02-15
 - What was made real: removed all mocked unit-test harnesses and replaced with deployed-API integration invariants (MCP stream parsing included), using `API_BASE_URL` + `fetch(buildUrl(...))` and `x-nf-request-id` assertions.
 - Verification:
   - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/lib/api-auth.oauth.test.ts,tests/web/lib/stripe-release-and-transfer.test.ts,tests/web/api/integrations/providers.test.ts,tests/web/lib/talent-connectors/mcp-tools.test.ts,tests/web/lib/webhook-idempotency.test.ts,tests/web/lib/stripe-refund.test.ts,tests/web/api/mcp/chatgpt-endpoint.test.ts,tests/web/lib/mcp/dispatcher.test.ts": PASS
-  - pnpm --filter @analoglabor/web test -- tests/web/lib/api-auth.oauth.test.ts tests/web/lib/stripe-release-and-transfer.test.ts tests/web/api/integrations/providers.test.ts tests/web/lib/talent-connectors/mcp-tools.test.ts tests/web/lib/webhook-idempotency.test.ts tests/web/lib/stripe-refund.test.ts tests/web/api/mcp/chatgpt-endpoint.test.ts tests/web/lib/mcp/dispatcher.test.ts: PASS
+  - pnpm --filter @analogresearch/web test -- tests/web/lib/api-auth.oauth.test.ts tests/web/lib/stripe-release-and-transfer.test.ts tests/web/api/integrations/providers.test.ts tests/web/lib/talent-connectors/mcp-tools.test.ts tests/web/lib/webhook-idempotency.test.ts tests/web/lib/stripe-refund.test.ts tests/web/api/mcp/chatgpt-endpoint.test.ts tests/web/lib/mcp/dispatcher.test.ts: PASS
 ---
 
 ## 2026-02-15 20:30:50Z - US-REAL-004
@@ -76,7 +76,7 @@ Started: 2026-02-15
 - What was made real: removed all `vi.*` mocking and route-handler unit harnesses; replaced endpoint tests with deployed-API invariants (`fetch(buildUrl(...))` + `x-nf-request-id`), and replaced lib tests with real parsing/DNS behavior (no `vi.fn` stubs).
 - Verification:
   - node scripts/quality/check-no-mock-tests.mjs --files "tests/web/api/quality/legitimacy.test.ts,tests/web/api/mcp/endpoints.test.ts,tests/web/lib/moderation/observability.test.ts,tests/web/lib/webhook-url.test.ts,tests/web/lib/booking-settlement.test.ts,tests/web/api/admin/search-sanitization.test.ts,tests/web/lib/notifications.test.ts,tests/web/api/admin/stats.unit.test.ts": PASS
-  - pnpm --filter @analoglabor/web test -- ../../tests/web/api/quality/legitimacy.test.ts ../../tests/web/api/mcp/endpoints.test.ts ../../tests/web/lib/moderation/observability.test.ts ../../tests/web/lib/webhook-url.test.ts ../../tests/web/lib/booking-settlement.test.ts ../../tests/web/api/admin/search-sanitization.test.ts ../../tests/web/lib/notifications.test.ts ../../tests/web/api/admin/stats.unit.test.ts: PASS
+  - pnpm --filter @analogresearch/web test -- ../../tests/web/api/quality/legitimacy.test.ts ../../tests/web/api/mcp/endpoints.test.ts ../../tests/web/lib/moderation/observability.test.ts ../../tests/web/lib/webhook-url.test.ts ../../tests/web/lib/booking-settlement.test.ts ../../tests/web/api/admin/search-sanitization.test.ts ../../tests/web/lib/notifications.test.ts ../../tests/web/api/admin/stats.unit.test.ts: PASS
 ---
 
 ## 2026-02-15 20:50:26Z - US-REAL-006

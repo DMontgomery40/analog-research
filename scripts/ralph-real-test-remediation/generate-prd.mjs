@@ -62,7 +62,7 @@ for (let start = 0; start < filesWithViolations.length; start += batchSize) {
 }
 
 const prd = {
-  project: 'AnalogLabor Real Test Remediation',
+  project: 'Analog Research Real Test Remediation',
   branchName: 'codex/real-test-remediation',
   description: 'Convert every mocked test into real validation against deployed APIs or live integrations. No fake assertions.',
   generatedAt: new Date().toISOString(),

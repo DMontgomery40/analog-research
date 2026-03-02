@@ -4,7 +4,7 @@ Branch: ralph/mvp-launch
 ---
 
 ## Codebase Patterns
-- Monorepo with pnpm workspaces: apps/web (Next.js), packages/analoglabor-mcp, packages/database
+- Monorepo with pnpm workspaces: apps/web (Next.js), packages/analogresearch-mcp, packages/database
 - Supabase for DB, Auth, Storage, Realtime — configured in apps/web/src/lib/supabase/
 - All monetary values stored in cents (INTEGER) in the database
 - API routes live at apps/web/src/app/api/v1/*
@@ -13,8 +13,8 @@ Branch: ralph/mvp-launch
 - @netlify/plugin-nextjs handles SSR deployment
 - Environment variables: root .env has Supabase creds, apps/web/.env.local has Next.js env vars
 - Migration SQL at packages/database/supabase/migrations/001_initial_schema.sql
-- MCP server at packages/analoglabor-mcp/src/index.ts — uses @modelcontextprotocol/sdk
-- Turbo build filter: pnpm turbo build --filter=@analoglabor/web
+- MCP server at packages/analogresearch-mcp/src/index.ts — uses @modelcontextprotocol/sdk
+- Turbo build filter: pnpm turbo build --filter=@analogresearch/web
 - Database connection: postgresql://postgres:PASSWORD@db.ensqpqbhdvbnsiuujeoj.supabase.co:5432/postgres
 - Supabase CLI db push: npx supabase db push --db-url "postgresql://postgres:PASSWORD@db.PROJECT_REF.supabase.co:5432/postgres"
 ---
@@ -123,7 +123,7 @@ Branch: ralph/mvp-launch
   - Location filtering uses ILIKE with wildcards since city/state/country are stored in a single text field
   - `is_remote` filter checks for 'remote', 'anywhere', or empty location string
   - API key auth supports both X-API-Key header and Authorization: Bearer header
-  - API key prefixes are `analoglabor_` or `al_live_` (production)
+  - API key prefixes are `ar_live_` or `ar_live_` (production)
   - PATCH endpoint needs explicit avatar_url in allowedFields for profile updates
 ---
 
@@ -137,7 +137,7 @@ Branch: ralph/mvp-launch
   - Lint passes: npx next lint (0 errors)
   - All 10 acceptance criteria met
 - **Learnings for future iterations:**
-  - The project is located at /Users/davidmontgomery/analoglabor, not /Users/davidmontgomery/analoglabor
+  - The project is located at /Users/davidmontgomery/analogresearch, not /Users/davidmontgomery/analogresearch
   - When using node to write files, use absolute paths or ensure correct working directory
   - The /browse page is for browsing humans (not bounties - those are at /dashboard/browse)
   - Individual human profiles are at /humans/[id] (public, no auth required)
@@ -160,7 +160,7 @@ Branch: ralph/mvp-launch
   - Build passes: `npx next build`
   - All 8 acceptance criteria verified
 - **Learnings for future iterations:**
-  - API keys use `al_live_` prefix with 32 random hex chars: `al_live_${crypto.randomBytes(32).toString('hex')}`
+  - API keys use `ar_live_` prefix with 32 random hex chars: `ar_live_${crypto.randomBytes(32).toString('hex')}`
   - Key is hashed with SHA-256 before storage, only raw key returned once on creation
   - The server exports `createClient` not `createServerClient` for session-based auth
   - Auto-create agent account when human generates their first key using pattern `human_${human.id}`
@@ -319,14 +319,14 @@ Branch: ralph/mvp-launch
 ## 2026-02-07 - US-012
 - **What was implemented:** Complete MCP server with all 18 tools, ready for npm publish
 - **Files changed:**
-  - packages/analoglabor-mcp/src/index.ts (complete rewrite with all tools)
-  - packages/analoglabor-mcp/README.md (new - installation and usage docs)
-  - packages/analoglabor-mcp/package.json (verified bin field, name, version)
-  - packages/analoglabor-mcp/tsconfig.json (verified ESM config)
+  - packages/analogresearch-mcp/src/index.ts (complete rewrite with all tools)
+  - packages/analogresearch-mcp/README.md (new - installation and usage docs)
+  - packages/analogresearch-mcp/package.json (verified bin field, name, version)
+  - packages/analogresearch-mcp/tsconfig.json (verified ESM config)
 - **Verification:**
   - TypeScript compiles: `npm run typecheck` passes with zero errors
   - Build succeeds: `npm run build` creates dist/index.js (18KB) + index.d.ts
-  - Server starts: `node dist/index.js` outputs "AnalogLabor MCP server running"
+  - Server starts: `node dist/index.js` outputs "Analog Research MCP server running"
   - Shebang present: `#!/usr/bin/env node` at top of dist/index.js
   - All 18 tools implemented:
     - Humans: browse_humans, get_human, list_skills, get_reviews
@@ -357,7 +357,7 @@ Branch: ralph/mvp-launch
   - All 9 acceptance criteria verified:
     1. Dark theme default via `className="dark"` on html element
     2. Hero: "Humans on Demand for AI Agents" + dual CTAs
-    3. "Why AnalogLabor?" section with 6 feature cards vs RentAHuman
+    3. "Why Analog Research?" section with 6 feature cards vs RentAHuman
     4. How it works sections with 4 steps each for humans and agents
     5. Browse preview with 3 sample human profiles
     6. Footer with links to /browse, /bounties, /mcp, /api-docs
@@ -384,7 +384,7 @@ Branch: ralph/mvp-launch
   - Build passes: `npx next build` (29 pages generated including /mcp and /api-docs)
   - All 7 acceptance criteria verified:
     1. MCP docs page at /mcp shows: npm install, config JSON for Claude/Cursor, all 18 MCP tools with descriptions and parameter schemas, usage examples
-    2. API docs page at /api-docs shows: base URL, authentication (API key format al_live_*), all REST endpoints with method, path, params, request/response examples
+    2. API docs page at /api-docs shows: base URL, authentication (API key format ar_live_*), all REST endpoints with method, path, params, request/response examples
     3. Both pages have copy buttons for code blocks (CopyButton component with clipboard API)
     4. Both pages are publicly accessible (no auth required, no middleware redirects)
     5. Dark theme consistent with rest of site (uses same Tailwind classes, bg-background, border-border, etc.)
@@ -410,7 +410,7 @@ Branch: ralph/mvp-launch
   - Build passes: `npx next build` (29 pages generated)
   - All 9 acceptance criteria verified:
     1. netlify.toml correctly configured with @netlify/plugin-nextjs
-    2. pnpm turbo build --filter=@analoglabor/web succeeds with zero errors
+    2. pnpm turbo build --filter=@analogresearch/web succeeds with zero errors
     3. All API routes work as Netlify Functions (verified in build output)
     4. Environment variables documented in .env.local.example
     5. .gitignore includes .env, .env.local, node_modules, .next, dist
@@ -421,6 +421,6 @@ Branch: ralph/mvp-launch
 - **Learnings for future iterations:**
   - The netlify.toml was already correctly configured from previous stories
   - All env vars used are: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_*, NEXT_PUBLIC_SITE_URL, CRON_SECRET, UPSTASH_REDIS_*
-  - Build verification: `pnpm turbo build --filter=@analoglabor/web` is the canonical command
+  - Build verification: `pnpm turbo build --filter=@analogresearch/web` is the canonical command
   - API routes appear as ƒ (Dynamic) in the build output confirming they work as Netlify Functions
 ---

@@ -5,7 +5,7 @@ import path from 'node:path'
 const repoRoot = path.resolve(__dirname, '../../..')
 
 function extractCanonicalToolNames(): string[] {
-  const toolsFile = path.join(repoRoot, 'packages/analoglabor-mcp/src/tools.ts')
+  const toolsFile = path.join(repoRoot, 'packages/analogresearch-mcp/src/tools.ts')
   const contents = fs.readFileSync(toolsFile, 'utf-8')
   const names: string[] = []
   for (const match of contents.matchAll(/name:\s*'([a-z_]+)'/g)) {
@@ -15,7 +15,7 @@ function extractCanonicalToolNames(): string[] {
 }
 
 function extractStandaloneHandledTools(): string[] {
-  const indexFile = path.join(repoRoot, 'packages/analoglabor-mcp/src/index.ts')
+  const indexFile = path.join(repoRoot, 'packages/analogresearch-mcp/src/index.ts')
   const contents = fs.readFileSync(indexFile, 'utf-8')
   const names: string[] = []
   for (const match of contents.matchAll(/case\s+'([a-z_]+)'\s*:/g)) {
@@ -31,7 +31,7 @@ describe('Standalone MCP parity', () => {
 
     const missing = canonical.filter((tool) => !handled.has(tool))
     expect(missing, [
-      'packages/analoglabor-mcp/src/index.ts is missing case handlers for canonical tools:',
+      'packages/analogresearch-mcp/src/index.ts is missing case handlers for canonical tools:',
       ...missing.map((name) => `  - ${name}`),
       '',
       'Add switch cases or refactor handler mapping to cover all tools.',
@@ -44,10 +44,10 @@ describe('Standalone MCP parity', () => {
 
     const stale = handled.filter((tool) => !canonical.has(tool))
     expect(stale, [
-      'packages/analoglabor-mcp/src/index.ts has stale switch handlers not in canonical tools:',
+      'packages/analogresearch-mcp/src/index.ts has stale switch handlers not in canonical tools:',
       ...stale.map((name) => `  - ${name}`),
       '',
-      'Remove stale handlers or add canonical definitions in packages/analoglabor-mcp/src/tools.ts.',
+      'Remove stale handlers or add canonical definitions in packages/analogresearch-mcp/src/tools.ts.',
     ].join('\n')).toEqual([])
   })
 })

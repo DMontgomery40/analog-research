@@ -7,7 +7,7 @@ export const MARKETPLACE_CONNECTOR_STATUSES = [
 export type MarketplaceConnectorStatus = (typeof MARKETPLACE_CONNECTOR_STATUSES)[number]
 
 export interface MarketplaceConnector {
-  id: 'analoglabor' | 'proxypics' | 'upwork' | 'thumbtack' | 'taskrabbit' | 'fiverr'
+  id: 'analogresearch' | 'proxypics' | 'upwork' | 'thumbtack' | 'taskrabbit' | 'fiverr'
   displayName: string
   status: MarketplaceConnectorStatus
   integrationPath: string
@@ -24,7 +24,7 @@ const connectorStatusOrder: Record<MarketplaceConnectorStatus, number> = {
 
 export const RAISED_HAND_MARKETPLACE_CONNECTORS: MarketplaceConnector[] = [
   {
-    id: 'analoglabor',
+    id: 'analogresearch',
     displayName: 'Analog Research Marketplace',
     status: 'live',
     integrationPath: 'REST API + MCP (available now)',

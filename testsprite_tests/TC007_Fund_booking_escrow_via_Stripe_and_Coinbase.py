@@ -48,19 +48,19 @@ async def run_test():
         # -> Navigate to http://localhost:3000
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Open the Login page by clicking the 'Login' link so the authentication form can be completed (then sign in as Molty using the provided credentials).
+        # -> Open the Login page by clicking the 'Login' link so the authentication form can be completed (then sign in as ResearchAgent using the provided credentials).
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Login' link (interactive element index 80) to open the authentication form so Molty can be signed in.
+        # -> Click the 'Login' link (interactive element index 80) to open the authentication form so ResearchAgent can be signed in.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the login form with admin credentials (dmontg@gmail.com / Trenton2023) and submit the sign-in form to authenticate as Molty (admin).
+        # -> Fill the login form with admin credentials (dmontg@gmail.com / Trenton2023) and submit the sign-in form to authenticate as ResearchAgent (admin).
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/div[1]/input').nth(0)

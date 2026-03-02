@@ -70,7 +70,7 @@ function toStartOfNextUtcDay(now: Date): Date {
 }
 
 export function resolveToolPolicySourceFromHeaders(headers: Headers): ToolPolicySource {
-  const source = (headers.get('x-analoglabor-source') || '').trim().toLowerCase()
+  const source = (headers.get('x-analogresearch-source') || '').trim().toLowerCase()
   return source === 'mcp' ? 'mcp' : 'api'
 }
 

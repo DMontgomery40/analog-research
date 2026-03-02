@@ -44,7 +44,7 @@ describe('moderation orchestrator helpers', () => {
   })
 
   it('builds fail responses with an appeal url', () => {
-    process.env.NEXT_PUBLIC_SITE_URL = 'https://analoglabor.com'
+    process.env.NEXT_PUBLIC_SITE_URL = 'https://analog-research.org'
 
     const response = toModerationResponse(
       {
@@ -58,7 +58,7 @@ describe('moderation orchestrator helpers', () => {
 
     expect(response.decision).toBe('fail')
     expect(response.appeal_url).toBe(
-      'https://analoglabor.com/moderation/appeal?content_type=booking&content_id=booking_123&decision_id=evt_1',
+      'https://analog-research.org/moderation/appeal?content_type=booking&content_id=booking_123&decision_id=evt_1',
     )
   })
 

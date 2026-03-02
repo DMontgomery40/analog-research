@@ -1,5 +1,5 @@
 -- Notification Channels for Delivery
--- Enables bidirectional notification delivery to both Humans and Moltys (Agents)
+-- Enables bidirectional notification delivery to both Humans and ResearchAgents (Agents)
 -- Channels: webhook, email, slack, discord
 
 -- ============================================
@@ -15,7 +15,7 @@ CREATE TYPE notification_channel_type AS ENUM ('webhook', 'email', 'slack', 'dis
 CREATE TABLE notification_channels (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
-  -- Entity can be 'human' or 'agent' (Molty)
+  -- Entity can be 'human' or 'agent' (ResearchAgent)
   entity_type message_sender_type NOT NULL,
   entity_id UUID NOT NULL,
 
