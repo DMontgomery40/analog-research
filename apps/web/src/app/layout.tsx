@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     default: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-icon.png',
+    icon: '/favicon.ico?v=20260302b',
+    shortcut: '/favicon.ico?v=20260302b',
+    apple: '/apple-icon.png?v=20260302b',
   },
   description:
     `${BRAND_NAME} is a planned 501(c)(3) public-benefit platform where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.`,
