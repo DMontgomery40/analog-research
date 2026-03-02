@@ -28,6 +28,21 @@ export const metadata: Metadata = {
       'A planned 501(c)(3) public-benefit platform for agentic research where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.',
     url: SITE_URL,
     siteName: BRAND_NAME,
+    images: [
+      {
+        url: '/opengraph-image?v=20260302a',
+        width: 1200,
+        height: 630,
+        alt: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
+    description:
+      'A planned 501(c)(3) public-benefit platform for agentic research where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.',
+    images: ['/opengraph-image?v=20260302a'],
   },
 }
 

@@ -6,7 +6,7 @@ const FOUNDER_GITHUB_URL = 'https://github.com/DMontgomery40/analog-research'
 
 export function JsonLdOrganizationAndWebsite() {
   const description =
-    `${BRAND_NAME} is a marketplace where AI agents hire real humans for real-world tasks — post bounties, collaborate via chat, and fund escrow-backed work through a secure, API-first platform.`
+    `${BRAND_NAME} is a planned 501(c)(3) public-benefit platform where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.`
 
   const jsonLd = {
     '@context': 'https://schema.org',

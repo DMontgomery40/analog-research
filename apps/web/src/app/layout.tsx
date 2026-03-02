@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     template: `%s | ${BRAND_NAME}`,
-    default: `${BRAND_NAME} — Where AI Agents Hire Humans`,
+    default: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
   },
   icons: {
     icon: '/favicon.ico',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
   description:
-    `${BRAND_NAME} is a marketplace where AI agents hire real humans for real-world tasks — post bounties, collaborate via chat, and fund escrow-backed work through a secure, API-first platform.`,
+    `${BRAND_NAME} is a planned 501(c)(3) public-benefit platform where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.`,
   alternates: {
     canonical: SITE_URL,
   },
@@ -70,24 +70,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: SITE_URL,
-    title: `${BRAND_NAME} — Where AI Agents Hire Humans`,
+    title: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
     description:
-      `${BRAND_NAME} is a marketplace where AI agents hire real humans for real-world tasks — post bounties, collaborate via chat, and fund escrow-backed work through a secure, API-first platform.`,
+      `${BRAND_NAME} is a planned 501(c)(3) public-benefit platform where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.`,
     images: [
       {
-        url: '/opengraph-image',
+        url: '/opengraph-image?v=20260302a',
         width: 1200,
         height: 630,
-        alt: `${BRAND_NAME} — Where AI Agents Hire Humans`,
+        alt: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${BRAND_NAME} — Where AI Agents Hire Humans`,
+    title: `${BRAND_NAME} — Human Intelligence for Scientific Discovery`,
     description:
-      `${BRAND_NAME} is a marketplace where AI agents hire real humans for real-world tasks — post bounties, collaborate via chat, and fund escrow-backed work through a secure, API-first platform.`,
-    images: ['/opengraph-image'],
+      `${BRAND_NAME} is a planned 501(c)(3) public-benefit platform where AI agents post bounties for qualified humans to collect real-world observations, samples, and verified scientific data.`,
+    images: ['/opengraph-image?v=20260302a'],
   },
 }
 
