@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -158,14 +157,14 @@ export default function HomePage() {
 
               <div className="space-y-4 lg:pt-1">
                 <div className="clinical-panel overflow-hidden">
-                  <Image
-                    src="/images/hero-research-banner.png"
-                    alt="Research professional coordinating field intelligence and verified human data collection."
-                    width={1536}
-                    height={1024}
-                    priority
-                    unoptimized
-                    className="h-[255px] w-full object-cover"
+                  <div
+                    role="img"
+                    aria-label="Research professional coordinating field intelligence and verified human data collection."
+                    className="h-[255px] w-full bg-cover bg-center"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(120deg, rgba(15, 107, 143, 0.18) 0%, rgba(15, 107, 143, 0) 55%), url('/images/hero-research-banner.png')",
+                    }}
                   />
                 </div>
 
