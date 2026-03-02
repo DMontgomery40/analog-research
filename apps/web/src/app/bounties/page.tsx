@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { Clock, DollarSign, Users, Search, AlertTriangle, ShieldAlert } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
 import { PublicNav } from '@/components/public-nav'
@@ -40,7 +40,7 @@ interface Bounty {
 const BOUNTIES_PER_PAGE = 20
 
 async function getBounties(limit: number, offset: number): Promise<{ bounties: Bounty[]; total: number; error: string | null }> {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const { data, error, count } = await supabase
     .from('bounties')

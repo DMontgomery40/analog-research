@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Clock, DollarSign, Users } from 'lucide-react'
 
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
 import { QualityScoreBadge } from '@/components/quality-score-badge'
@@ -44,7 +44,7 @@ function serializeJsonLd(data: unknown): string {
 }
 
 async function getBounty(id: string): Promise<BountyDetails | null> {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const publicSelectPreferred = 'id, title, description, skills_required, budget_min, budget_max, currency, preferred_payment_method, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
   const publicSelectFallback = 'id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
