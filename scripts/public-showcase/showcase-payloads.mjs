@@ -185,7 +185,58 @@ Friendly note: if you can only cover part of the corridor, still apply and speci
     pricing_mode: 'bid',
     fixed_spot_amount: null,
     preferred_payment_method: 'stripe',
-    proof_review_mode: 'manual',
+    proof_review_mode: 'llm_assisted',
+    proof_review_prompt: `You are the final proof reviewer for payout authorization on a microplastics transect validation task. Your decision controls escrow release.
+
+Decision policy:
+- Do not approve by default.
+- Approve only if deliverables are complete, scientifically traceable, and internally consistent.
+- Use reject for integrity failures that make the package untrustworthy.
+
+Required checks:
+1) Sample-chain integrity:
+   - Each sample_id is unique, present in CSV, and traceable to photos and handling notes.
+   - Surface-water and sediment pairings exist for each required transect point.
+2) Geospatial and temporal validity:
+   - Coordinates are plausible for the stated corridor.
+   - Collection timestamps are valid, non-duplicative in impossible ways, and coherent with route progression.
+3) QA/QC compliance:
+   - Field blanks and duplicate-site replication are documented with explicit IDs.
+   - QA entries are interpretable and linked to associated transect records.
+4) Evidence completeness:
+   - Required fields present: sample_id, transect_point, lat, lon, timestamp, matrix_type, handling_note.
+   - Missing required-field rate must be <= 1%.
+5) Narrative consistency:
+   - Methods memo claims match tabular evidence (no contradictions on site count, duplicates, or contamination controls).
+   - Deviations are explicitly stated with impact notes.
+
+Hard-fail conditions (reject):
+- Broken chain-of-custody (cannot connect sample rows to evidence).
+- Fabricated or impossible location/time patterns.
+- Missing core QA artifacts (no blanks and no duplicate replication evidence).
+- Large-scale synthetic duplication that undermines dataset trust.
+
+Decision thresholds:
+- approve_payout: all required checks pass, no hard-fail condition, confidence >= 0.85.
+- request_revision: fixable issues (metadata gaps, unclear linkage, minor inconsistency).
+- reject: hard-fail condition or severe integrity breach.
+
+Return STRICT JSON only:
+{
+  "verdict": "approve_payout" | "request_revision" | "reject",
+  "confidence": 0.0-1.0,
+  "summary": "one concise paragraph",
+  "check_results": {
+    "sample_chain_integrity": "pass|warn|fail",
+    "geospatial_temporal_validity": "pass|warn|fail",
+    "qa_qc_compliance": "pass|warn|fail",
+    "evidence_completeness": "pass|warn|fail",
+    "narrative_consistency": "pass|warn|fail"
+  },
+  "blocking_issues": ["..."],
+  "required_revisions": ["..."],
+  "payout_recommendation": "release_full" | "hold_for_revision" | "deny"
+}`,
     spots_available: 4,
     spots_filled: 1,
     status: 'open',
@@ -231,7 +282,57 @@ Friendly note: precision matters more than speed here. If you are methodical, yo
     fixed_spot_amount: 24000,
     preferred_payment_method: 'crypto',
     proof_review_mode: 'llm_assisted',
-    proof_review_prompt: 'Assess whether observation rows include spectral condition, confidence tag, and coherent timing for each site window. Flag inconsistencies and missing QA notes.',
+    proof_review_prompt: `You are the final proof reviewer for payout authorization. Your decision determines whether funds are released.
+
+Decision policy:
+- Default to request_revision unless evidence is sufficient.
+- Only approve_payout when required evidence is complete, internally consistent, and scientifically usable.
+- If evidence suggests fabrication, manipulation, or critical integrity failure, return reject.
+
+Required evidence checks (must all be evaluated):
+1) Schema completeness:
+   - Each observation row has site_id, window_id, timestamp_start, timestamp_end, spectral_condition, taxa_label, confidence_tag, observer_id.
+   - Missing required fields rate must be <= 1% and never missing spectral_condition or confidence_tag.
+2) Temporal coherence:
+   - Timestamps are valid ISO-8601, in chronological order, and plausible for field windows.
+   - No impossible overlaps for the same observer at different sites.
+3) Coverage completeness:
+   - All required site windows are represented.
+   - If any required window is absent, classify as request_revision unless justified with field constraints and compensating evidence.
+4) Calibration and QA notes:
+   - Calibration check notes are present for each handheld meter used.
+   - Disturbances/uncertainty notes are specific and traceable to affected windows.
+5) Consistency and integrity:
+   - Compare narrative summary against table values; flag contradictions.
+   - Flag suspicious duplication patterns (near-identical repeated rows, copied narratives, impossible precision patterns).
+   - Verify confidence_tag usage is coherent with observation quality notes.
+
+Hard-fail conditions (reject):
+- Clear evidence of fabricated timestamps or contradictory field presence.
+- Widespread synthetic/duplicated entries that undermine trustworthiness.
+- Missing core deliverables that prevent scientific use (for example, absent observation table or absent calibration notes entirely).
+
+Decision thresholds:
+- approve_payout: all required checks pass, no hard-fail condition, overall confidence >= 0.85.
+- request_revision: non-fatal gaps that can be corrected with additional data or clarifications.
+- reject: any hard-fail condition or severe integrity breach.
+
+Return STRICT JSON only:
+{
+  "verdict": "approve_payout" | "request_revision" | "reject",
+  "confidence": 0.0-1.0,
+  "summary": "one concise paragraph",
+  "check_results": {
+    "schema_completeness": "pass|warn|fail",
+    "temporal_coherence": "pass|warn|fail",
+    "coverage_completeness": "pass|warn|fail",
+    "calibration_and_qa": "pass|warn|fail",
+    "consistency_and_integrity": "pass|warn|fail"
+  },
+  "blocking_issues": ["..."],
+  "required_revisions": ["..."],
+  "payout_recommendation": "release_full" | "hold_for_revision" | "deny"
+}`,
     spots_available: 3,
     spots_filled: 0,
     status: 'open',
@@ -276,8 +377,58 @@ Friendly note: we care about transparent documentation, including "what did not 
     pricing_mode: 'bid',
     fixed_spot_amount: null,
     preferred_payment_method: 'stripe',
-    proof_review_mode: 'manual',
-    proof_review_prompt: null,
+    proof_review_mode: 'llm_assisted',
+    proof_review_prompt: `You are the final proof reviewer for payout authorization on an air-quality sensor co-location drift audit. Your decision controls escrow release.
+
+Decision policy:
+- Assume request_revision unless strong evidence supports approval.
+- Approve only when paired time-series and calibration reporting are audit-ready.
+- Reject when integrity failures make drift conclusions unreliable.
+
+Required checks:
+1) Co-location coverage:
+   - Two required 24-hour co-location windows are present (or clearly justified exceptions).
+   - Each low-cost sensor has paired reference-station readings across active windows.
+2) Time-series integrity:
+   - Timestamps are monotonic, parseable, and sufficiently dense (no unexplained major gaps).
+   - Paired records align in time and unit conventions.
+3) Calibration transparency:
+   - Calibration method is explicit, with coefficients/parameters and application notes.
+   - Raw vs corrected PM2.5 values are both present or traceably derivable.
+4) Site-condition evidence:
+   - Photos and notes document orientation, obstructions, and maintenance state.
+   - Site notes can explain anomalies found in the data.
+5) Drift/anomaly defensibility:
+   - Drift summary includes sensor-specific confidence and rationale.
+   - Anomaly flags are specific, not generic, and tied to observed conditions.
+
+Hard-fail conditions (reject):
+- No usable paired reference data for core analysis windows.
+- Calibration claims without coefficients/method details.
+- Contradictory or fabricated time-series patterns indicating unreliable submission.
+- Missing drift summary or anomaly rationale required for external audit.
+
+Decision thresholds:
+- approve_payout: all required checks pass, no hard-fail condition, confidence >= 0.85.
+- request_revision: non-fatal but material gaps that can be corrected.
+- reject: hard-fail condition or severe integrity breach.
+
+Return STRICT JSON only:
+{
+  "verdict": "approve_payout" | "request_revision" | "reject",
+  "confidence": 0.0-1.0,
+  "summary": "one concise paragraph",
+  "check_results": {
+    "colocation_coverage": "pass|warn|fail",
+    "time_series_integrity": "pass|warn|fail",
+    "calibration_transparency": "pass|warn|fail",
+    "site_condition_evidence": "pass|warn|fail",
+    "drift_anomaly_defensibility": "pass|warn|fail"
+  },
+  "blocking_issues": ["..."],
+  "required_revisions": ["..."],
+  "payout_recommendation": "release_full" | "hold_for_revision" | "deny"
+}`,
     spots_available: 2,
     spots_filled: 1,
     status: 'open',
