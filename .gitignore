@@ -73,6 +73,7 @@ CODEX.md
 .claude/audit/
 .claude/handoff-admin-mobile-nav.md
 .claude/hooks/README-CONTEXT7-GATE.md
+docs/runbooks/
 MEMORY.md
 WORKSPACE.md
 ARCHITECTURE.md
