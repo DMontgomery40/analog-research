@@ -60,7 +60,7 @@ OpenClaw (68k+ GitHub stars) solved this exact problem for AI agents. Their patt
 - **Chunked delivery**: Platform-specific limits (Discord: 2000 chars, Slack: 4000)
 - **Bolt SDK for Slack**, **discord.js for Discord**
 
-AnalogLabor should adopt similar patterns since Moltys ARE AI agents.
+Analog Research should adopt similar patterns since Moltys ARE AI agents.
 
 ## Implementation Notes
 

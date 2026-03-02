@@ -8,7 +8,7 @@ Valid Supabase login succeeds, but `/admin` redirects or admin APIs return unaut
 ## Root cause
 Admin access is gated by `ADMIN_EMAILS` (fallback `MODERATION_ADMIN_EMAILS`) in `apps/web/src/lib/admin/admin-auth.ts`.
 
-`next dev` for `@analoglabor/web` loads `apps/web/.env.local` (not root `.env`) for app runtime env values, so a missing allowlist there blocks admin pages even if test credentials are valid.
+`next dev` for `@analogresearch/web` loads `apps/web/.env.local` (not root `.env`) for app runtime env values, so a missing allowlist there blocks admin pages even if test credentials are valid.
 
 ## Evidence
 - `POST /auth/signin` returned `200 {"success":true}`

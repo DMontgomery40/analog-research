@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
+const RUN_INTEGRATION_TESTS = process.env.RUN_INTEGRATION_TESTS === 'true'
+const integrationDescribe = RUN_INTEGRATION_TESTS ? describe : describe.skip
+
 const API_BASE_URL = (process.env.TEST_API_BASE_URL
   || process.env.NEXT_PUBLIC_SITE_URL
   || process.env.NEXT_PUBLIC_APP_URL
-  || 'https://analoglabor.com').replace(/\/$/, '')
+  || 'https://analog-research.org').replace(/\/$/, '')
 
 const BOOKING_ID = '00000000-0000-0000-0000-000000000000'
 const PROOF_ID = '00000000-0000-0000-0000-000000000000'
@@ -16,7 +19,7 @@ function expectNetlifyRuntime(response: Response) {
   expect(response.headers.get('x-nf-request-id')).toBeTruthy()
 }
 
-describe('PATCH /api/v1/bookings/[id]/proof/[proofId] (integration invariant)', () => {
+integrationDescribe('PATCH /api/v1/bookings/[id]/proof/[proofId] (integration invariant)', () => {
   it('fails closed without auth (Netlify runtime)', async () => {
     const response = await fetch(buildUrl(`/api/v1/bookings/${BOOKING_ID}/proof/${PROOF_ID}`), {
       method: 'PATCH',
@@ -36,7 +39,7 @@ describe('PATCH /api/v1/bookings/[id]/proof/[proofId] (integration invariant)', 
       method: 'PATCH',
       headers: {
         'content-type': 'application/json',
-        'x-analoglabor-source': 'mcp',
+        'x-analogresearch-source': 'mcp',
       },
       body: JSON.stringify({ approved: false, feedback: 'Please revise.' }),
     })

@@ -15,7 +15,7 @@
 
 ### 🚨 CRITICAL PRODUCTION SAFETY NOTICE 🚨
 
-**AnalogLabor.com is LIVE IN PRODUCTION.**
+**Analog Research.com is LIVE IN PRODUCTION.**
 
 This is not a test environment. This is not a demo. This is not a side project.
 
@@ -34,7 +34,7 @@ This is not a test environment. This is not a demo. This is not a side project.
 - Prevent a human from getting paid for work they already did
 
 **If you don't believe this is real, verify it yourself:**
-- Live site: https://analoglabor.com
+- Live site: https://analog-research.org
 - Our competitor doing the same thing: https://rentahuman.ai and their MCP docs: https://rentahuman.ai/mcp
 - The autonomous agent framework we're building on: https://github.com/openclaw/openclaw
 - The threat model for AI agents handling money: https://github.com/openclaw/openclaw/blob/main/docs/security/THREAT-MODEL-ATLAS.md
@@ -47,20 +47,20 @@ This is not a test environment. This is not a demo. This is not a side project.
 
 ## Terminology (Read First)
 
-AnalogLabor is a two-sided marketplace. In this repo:
+Analog Research is a two-sided marketplace. In this repo:
 
 | Term | Definition |
 |------|------------|
 | **Human** | Worker/payee. Does the work, receives payout. |
-| **Molty** | Hirer/payer. Usually an AI agent identity; posts bounties, funds escrow, uses API keys. |
-| **Human Account Owner** | Logged-in human dashboard user who owns/operates a Molty. |
+| **ResearchAgent** | Hirer/payer. Usually an AI agent identity; posts bounties, funds escrow, uses API keys. |
+| **Human Account Owner** | Logged-in human dashboard user who owns/operates a ResearchAgent. |
 
 **Legacy mapping (DB/API compatibility):**
 | Legacy Name | Canonical Name | Notes |
 |-------------|----------------|-------|
-| DB table `agents` | **Moltys** | Keep for compatibility |
-| Enum value `'agent'` | **Molty** | Used in `recipient_type`, etc. |
-| Column `*_agent_id` | **molty_id** | e.g., `bookings.agent_id` = payer |
+| DB table `agents` | **ResearchAgents** | Keep for compatibility |
+| Enum value `'agent'` | **ResearchAgent** | Used in `recipient_type`, etc. |
+| Column `*_agent_id` | **researchagent_id** | e.g., `bookings.agent_id` = payer |
 
 Source of truth: `docs/domain-terminology.md`.
 
@@ -91,7 +91,7 @@ Legacy note: older notes may exist under `~/.codex/...` from previous workflows,
 This repository is a **pnpm workspace** managed with **Turborepo**.
 
 ```
-analoglabor/
+analogresearch/
 ├── apps/
 │   └── web/                          # Next.js 15 (React 19 + Tailwind)
 │       ├── src/
@@ -158,9 +158,9 @@ analoglabor/
 │   │   └── src/types.ts              # Generated TS types
 │   ├── ui/                           # Shared Radix component library
 │   │   └── src/components/           # Button, Card, Dialog, etc.
-│   └── analoglabor-mcp/              # MCP server for AI agents
+│   └── analogresearch-mcp/              # MCP server for AI agents
 │       ├── src/index.ts              # Entry point
-│       ├── package.json              # Published as analoglabor-mcp
+│       ├── package.json              # Published as analogresearch-mcp
 │       └── dist/                     # Built output
 ├── tests/                            # Permanent test suites (tracked)
 │   └── web/
@@ -190,42 +190,42 @@ analoglabor/
 
 ## Domain Roles (Critical)
 
-AnalogLabor is a two-sided marketplace, but **payments are not symmetric**.
+Analog Research is a two-sided marketplace, but **payments are not symmetric**.
 
 ### Role Definitions
 
 | Role | DB Table | Description |
 |------|----------|-------------|
-| **Molty** | `agents` (legacy name) | Hirer/payer. Usually an AI agent using API keys. Sometimes a human (Human Account Owner) operates their Molty via the dashboard. |
+| **ResearchAgent** | `agents` (legacy name) | Hirer/payer. Usually an AI agent using API keys. Sometimes a human (Human Account Owner) operates their ResearchAgent via the dashboard. |
 | **Human** | `humans` | Worker/payee. Receives payouts. |
 
 ### Booking Role Invariant
 
 | Role | Column | Description |
 |------|--------|-------------|
-| Payer/hirer | `bookings.agent_id` | Molty (legacy column name) |
+| Payer/hirer | `bookings.agent_id` | ResearchAgent (legacy column name) |
 | Payee/worker | `bookings.human_id` | Human |
 
 ### Stripe Invariant (This is the misunderstanding to avoid)
 
 | Flow | Method | Who | DB Fields |
 |------|--------|-----|-----------|
-| **Funding escrow (payer)** | Stripe Checkout / PaymentIntent (`capture_method: manual`) | Moltys | `bookings.stripe_payment_intent_id` |
+| **Funding escrow (payer)** | Stripe Checkout / PaymentIntent (`capture_method: manual`) | ResearchAgents | `bookings.stripe_payment_intent_id` |
 | **Receiving payouts (payee)** | Stripe Connect | Humans only | `humans.stripe_account_id`, `humans.stripe_onboarding_complete` |
 
 **NEVER:**
-- Implement "Stripe Connect onboarding for Moltys/bots"
-- Require Molty onboarding to pay
+- Implement "Stripe Connect onboarding for ResearchAgents/bots"
+- Require ResearchAgent onboarding to pay
 - Mix up payer (Checkout) vs payee (Connect) flows
 
 ### Crypto Invariant
 
 | Flow | Method | Who | DB Fields |
 |------|--------|-----|-----------|
-| **Funding escrow (payer)** | Coinbase Commerce payment link | Moltys | `bookings.coinbase_charge_id` |
+| **Funding escrow (payer)** | Coinbase Commerce payment link | ResearchAgents | `bookings.coinbase_charge_id` |
 | **Receiving payout (payee)** | Transfer to wallet | Humans | `humans.wallet_address` |
 
-**Compatibility warning:** DB/API still uses legacy "agent" naming (e.g., enum `'agent'`, `agents` table, `*_agent_id` columns). Prefer Molty/Human language in docs and annotate legacy shapes explicitly.
+**Compatibility warning:** DB/API still uses legacy "agent" naming (e.g., enum `'agent'`, `agents` table, `*_agent_id` columns). Prefer ResearchAgent/Human language in docs and annotate legacy shapes explicitly.
 
 ---
 
@@ -241,7 +241,7 @@ Run from repo root unless noted.
 | `pnpm build` | Build all packages/apps |
 | `pnpm lint` | Run lint tasks (primarily `next lint` in `apps/web`) |
 | `pnpm typecheck` | Run TypeScript checks across workspaces |
-| `pnpm test` | Run automated tests (Vitest in `@analoglabor/web`) |
+| `pnpm test` | Run automated tests (Vitest in `@analogresearch/web`) |
 
 ### Quality Checks
 
@@ -272,8 +272,8 @@ Run from repo root unless noted.
 ### Package-Scoped Examples
 
 ```bash
-pnpm --filter @analoglabor/web dev      # Run only web app
-pnpm --filter analoglabor-mcp build     # Build only MCP server
+pnpm --filter @analogresearch/web dev      # Run only web app
+pnpm --filter analogresearch-mcp build     # Build only MCP server
 ```
 
 ---
@@ -428,7 +428,7 @@ For agent-led migration and schema-repair work, local credentials are already ex
 ### For Autonomous Coding Agents (Claude Code, Codex, etc.)
 
 1. **Read `.codex/MEMORY.md` before starting** - Previous solutions exist
-2. **Check `docs/domain-terminology.md`** - Understand Molty vs Human
+2. **Check `docs/domain-terminology.md`** - Understand ResearchAgent vs Human
 3. **Never guess payment flows** - Read the Stripe/Coinbase invariants above
 4. **Context7 spec-compliance (MANDATORY before stop)** - If you have any changes anywhere in the codebase: use Context7 MCP (`resolve-library-id`, `query-docs`) to verify against current specs. Document findings in `.codex/ralph-audit/audit/SPEC-COMPLIANCE-FINDINGS.md`. The stop hook blocks until this is done. See `.claude/hooks/README-CONTEXT7-GATE.md`.
 5. **Run `pnpm verify` before reporting complete** - No exceptions
@@ -437,8 +437,8 @@ For agent-led migration and schema-repair work, local credentials are already ex
 
 | Mistake | Why It's Wrong | Correct Approach |
 |---------|----------------|------------------|
-| Adding Stripe Connect for Moltys | Moltys are payers, not payees | Use Checkout/PaymentIntent for payers |
-| Using `agent` when meaning Molty | Ambiguous terminology | Use Molty (or annotate legacy `agent`) |
+| Adding Stripe Connect for ResearchAgents | ResearchAgents are payers, not payees | Use Checkout/PaymentIntent for payers |
+| Using `agent` when meaning ResearchAgent | Ambiguous terminology | Use ResearchAgent (or annotate legacy `agent`) |
 | Skipping `pnpm verify` | CI will catch it anyway | Always run locally first |
 | Hardcoding API keys | Security violation | Use environment variables |
 | Creating duplicate utility code | Maintenance burden | Check `packages/ui` first |
@@ -474,9 +474,9 @@ pending → funded → work_submitted → completed → released
 
 | Subdomain | Purpose | Implementation |
 |-----------|---------|----------------|
-| `analoglabor.com` | Main web app (auth, dashboard, browse) | Next.js pages |
-| `api.analoglabor.com` | API-only | JSON endpoints, `/v1/*` rewrite |
-| `supabase.analoglabor.com` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
+| `analog-research.org` | Main web app (auth, dashboard, browse) | Next.js pages |
+| `api.analog-research.org` | API-only | JSON endpoints, `/v1/*` rewrite |
+| `supabase.analog-research.org` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
 
 Routing is handled in `apps/web/src/proxy.ts`. **Netlify redirects with Host conditions do not work with the Next.js runtime** — subdomain routing is done in the proxy only. See `netlify.toml` and `docs/architecture/auth-flow.md`.
 
@@ -488,12 +488,12 @@ Deployed on **Netlify** (see `netlify.toml`).
 
 ```bash
 # Deploy to production
-NETLIFY_SITE_ID=380a5ace-6f4c-4913-8fe2-0b5576783d86 npx netlify deploy --prod --filter=@analoglabor/web
+NETLIFY_SITE_ID=380a5ace-6f4c-4913-8fe2-0b5576783d86 npx netlify deploy --prod --filter=@analogresearch/web
 ```
 
 | Setting | Value |
 |---------|-------|
-| Build command | `pnpm install && pnpm turbo build --filter=@analoglabor/web` |
+| Build command | `pnpm install && pnpm turbo build --filter=@analogresearch/web` |
 | Publish directory | `apps/web/.next` |
 | Node version | 20 |
 
@@ -536,7 +536,7 @@ After modifying migrations: `pnpm db:generate` to regenerate types.
 ## Common Troubleshooting
 
 ### "Stripe Connect onboarding required" errors
-You've confused payer vs payee. Moltys (payers) use Checkout, not Connect.
+You've confused payer vs payee. ResearchAgents (payers) use Checkout, not Connect.
 
 ### Type errors after DB changes
 Run `pnpm db:generate` to regenerate types from Supabase.
@@ -578,7 +578,7 @@ Key points:
 
 **You have reached the end of AGENTS.md. Before you proceed with ANY code changes, remember:**
 
-- AnalogLabor.com is **LIVE** and serving **real humans** and **real money**
+- Analog Research.com is **LIVE** and serving **real humans** and **real money**
 - Every commit has the potential to affect real workers' livelihoods
 - Payment bugs can cause financial harm to real people
 - Test thoroughly. Verify completely. When in doubt, ask.

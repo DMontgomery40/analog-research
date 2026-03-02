@@ -1,7 +1,7 @@
 # ChatGPT App Phase 1 (OAuth-First MCP) — Implementation Record
 
 Date: 2026-02-13
-Scope: Private ChatGPT Developer Mode app enablement for AnalogLabor via MCP OAuth + dashboard account linking.
+Scope: Private ChatGPT Developer Mode app enablement for Analog Research via MCP OAuth + dashboard account linking.
 
 ## Goals
 
@@ -28,7 +28,7 @@ Scope: Private ChatGPT Developer Mode app enablement for AnalogLabor via MCP OAu
   - OAuth config resolution from env.
   - Bearer extraction.
   - JWT verification via `jose` (`createRemoteJWKSet` + `jwtVerify`).
-  - Scope mapping (`analoglabor.read`/`analoglabor.write` -> internal `read`/`write`).
+  - Scope mapping (`analogresearch.read`/`analogresearch.write` -> internal `read`/`write`).
   - Subject mapping lookup in `mcp_oauth_identities`.
   - Synthetic `apiKeyId` generation for rate-limit bucket compatibility.
   - Challenge header builder for `WWW-Authenticate` with `resource_metadata`.
@@ -64,7 +64,7 @@ Scope: Private ChatGPT Developer Mode app enablement for AnalogLabor via MCP OAu
 
 ### 5) Canonical MCP tool metadata hardening
 
-- Updated `packages/analoglabor-mcp/src/tools.ts`:
+- Updated `packages/analogresearch-mcp/src/tools.ts`:
   - Ensures every canonical tool has full annotations:
     - `readOnlyHint`
     - `openWorldHint`
@@ -73,7 +73,7 @@ Scope: Private ChatGPT Developer Mode app enablement for AnalogLabor via MCP OAu
   - Mirrors `securitySchemes` into `_meta.securitySchemes` for compatibility clients.
   - Adds open-world classification wrappers for external provider/talent-network operations.
 - Updated MCP SDK package parity:
-  - `packages/analoglabor-mcp/package.json` now matches `@modelcontextprotocol/sdk` version used by web app (`^1.26.0`).
+  - `packages/analogresearch-mcp/package.json` now matches `@modelcontextprotocol/sdk` version used by web app (`^1.26.0`).
 
 ### 6) Tests added/updated
 

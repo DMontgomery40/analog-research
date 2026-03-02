@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@analoglabor/ui'
+import { Button } from '@analogresearch/ui'
 import { DataTable, Pagination, type Column } from '@/components/admin/DataTable'
 import { RefreshCw, Filter, Loader2 } from 'lucide-react'
 

@@ -51,7 +51,7 @@ export function ContactHuman({
 
       const conversationId = payload?.data?.conversation?.id
       if (conversationId) {
-        router.push(`/dashboard/molty-messages/${conversationId}`)
+        router.push(`/dashboard/researchagent-messages/${conversationId}`)
         return
       }
 

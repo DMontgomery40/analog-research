@@ -10,20 +10,20 @@
 - Clearer signal about in-person availability and a simple way for Moltys/hirers to set minimum travel requirements (without hardcoding an upper bound).
 
 ## Key files
-- UI: `/Users/davidmontgomery/analoglabor/apps/web/src/app/humans/[id]/page.tsx`
-- UI: `/Users/davidmontgomery/analoglabor/apps/web/src/app/browse/browse-humans-client.tsx`
-- UI: `/Users/davidmontgomery/analoglabor/apps/web/src/components/contact-human.tsx`
-- Profile edit: `/Users/davidmontgomery/analoglabor/apps/web/src/app/(dashboard)/dashboard/profile/page.tsx`
-- API: `/Users/davidmontgomery/analoglabor/apps/web/src/app/api/v1/humans/route.ts`
-- API: `/Users/davidmontgomery/analoglabor/apps/web/src/app/api/v1/humans/[id]/route.ts`
-- Admin: `/Users/davidmontgomery/analoglabor/apps/web/src/app/api/v1/admin/humans/[id]/route.ts`
-- MCP: `/Users/davidmontgomery/analoglabor/packages/analoglabor-mcp/src/tools.ts`
-- MCP dispatcher: `/Users/davidmontgomery/analoglabor/apps/web/src/lib/mcp/dispatcher.ts`
-- Docs: `/Users/davidmontgomery/analoglabor/apps/web/src/app/mcp/page.tsx`
-- Docs: `/Users/davidmontgomery/analoglabor/apps/web/src/app/api-docs/page.tsx`
-- Docs: `/Users/davidmontgomery/analoglabor/apps/web/src/app/api/v1/llms.txt/route.ts`
-- OpenAPI: `/Users/davidmontgomery/analoglabor/apps/web/public/openapi.json`
-- Migration: `/Users/davidmontgomery/analoglabor/packages/database/supabase/migrations/041_human_drive_radius.sql`
+- UI: `/Users/davidmontgomery/analogresearch/apps/web/src/app/humans/[id]/page.tsx`
+- UI: `/Users/davidmontgomery/analogresearch/apps/web/src/app/browse/browse-humans-client.tsx`
+- UI: `/Users/davidmontgomery/analogresearch/apps/web/src/components/contact-human.tsx`
+- Profile edit: `/Users/davidmontgomery/analogresearch/apps/web/src/app/(dashboard)/dashboard/profile/page.tsx`
+- API: `/Users/davidmontgomery/analogresearch/apps/web/src/app/api/v1/humans/route.ts`
+- API: `/Users/davidmontgomery/analogresearch/apps/web/src/app/api/v1/humans/[id]/route.ts`
+- Admin: `/Users/davidmontgomery/analogresearch/apps/web/src/app/api/v1/admin/humans/[id]/route.ts`
+- MCP: `/Users/davidmontgomery/analogresearch/packages/analogresearch-mcp/src/tools.ts`
+- MCP dispatcher: `/Users/davidmontgomery/analogresearch/apps/web/src/lib/mcp/dispatcher.ts`
+- Docs: `/Users/davidmontgomery/analogresearch/apps/web/src/app/mcp/page.tsx`
+- Docs: `/Users/davidmontgomery/analogresearch/apps/web/src/app/api-docs/page.tsx`
+- Docs: `/Users/davidmontgomery/analogresearch/apps/web/src/app/api/v1/llms.txt/route.ts`
+- OpenAPI: `/Users/davidmontgomery/analogresearch/apps/web/public/openapi.json`
+- Migration: `/Users/davidmontgomery/analogresearch/packages/database/supabase/migrations/041_human_drive_radius.sql`
 
 ## Revert plan (if we don’t like it)
 1. Revert UI/UX changes in the files above.

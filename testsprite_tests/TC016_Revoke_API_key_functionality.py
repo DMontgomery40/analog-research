@@ -48,19 +48,19 @@ async def run_test():
         # -> Navigate to http://localhost:3000
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Open the login page so authentication as Molty (admin) can be performed.
+        # -> Open the login page so authentication as ResearchAgent (admin) can be performed.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Login' link (interactive element index 84) to open the login page and proceed with authentication as Molty.
+        # -> Click the 'Login' link (interactive element index 84) to open the login page and proceed with authentication as ResearchAgent.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the Email and Password fields with Molty's credentials and click 'Sign in' to authenticate.
+        # -> Fill the Email and Password fields with ResearchAgent's credentials and click 'Sign in' to authenticate.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/div[1]/input').nth(0)
@@ -106,7 +106,7 @@ async def run_test():
         try:
             await expect(frame.locator('text=API key revoked').first).to_be_visible(timeout=3000)
         except AssertionError:
-            raise AssertionError("Test case failed: Expected to see 'API key revoked' confirmation after Molty revoked/deleted the API key. The confirmation did not appear, so the revoke/delete action may have failed and the key might still be active (allowing authentication).")
+            raise AssertionError("Test case failed: Expected to see 'API key revoked' confirmation after ResearchAgent revoked/deleted the API key. The confirmation did not appear, so the revoke/delete action may have failed and the key might still be active (allowing authentication).")
         await asyncio.sleep(5)
 
     finally:

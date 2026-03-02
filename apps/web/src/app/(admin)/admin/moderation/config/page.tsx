@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Button } from '@analoglabor/ui'
+import { Button } from '@analogresearch/ui'
 import { Save, Loader2, RefreshCw } from 'lucide-react'
 
 interface ModerationConfig {

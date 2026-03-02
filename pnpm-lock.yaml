@@ -29,10 +29,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@analoglabor/database':
+      '@analogresearch/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@analoglabor/ui':
+      '@analogresearch/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@modelcontextprotocol/sdk':
@@ -56,9 +56,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
-      analoglabor-mcp:
+      analogresearch-mcp:
         specifier: workspace:*
-        version: link:../../packages/analoglabor-mcp
+        version: link:../../packages/analogresearch-mcp
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -145,7 +145,7 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.19.9)(jiti@1.21.7)(yaml@2.8.2)
 
-  packages/analoglabor-mcp:
+  packages/analogresearch-mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0

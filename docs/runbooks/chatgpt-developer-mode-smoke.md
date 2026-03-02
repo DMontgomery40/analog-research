@@ -1,7 +1,7 @@
 # ChatGPT Developer Mode Smoke Runbook (MCP ChatGPT Endpoint)
 
 ## Purpose
-Validate that the private ChatGPT connector for AnalogLabor is operational, correctly authenticated, and stable before broader beta rollout.
+Validate that the private ChatGPT connector for Analog Research is operational, correctly authenticated, and stable before broader beta rollout.
 
 ## Scope
 This runbook validates:
@@ -20,13 +20,13 @@ This runbook validates:
    - `https://chatgpt.com/connector_platform_oauth_redirect`
    - `https://platform.openai.com/apps-manage/oauth`
 4. Connector endpoint to test:
-   - `https://api.analoglabor.com/v1/mcp/chatgpt`
+   - `https://api.analog-research.org/v1/mcp/chatgpt`
 5. Protected resource metadata endpoint:
-   - `https://api.analoglabor.com/.well-known/oauth-protected-resource`
+   - `https://api.analog-research.org/.well-known/oauth-protected-resource`
 
 ## Test data and safety notes
 
-1. Use a dedicated internal owner account + Molty for this pass.
+1. Use a dedicated internal owner account + ResearchAgent for this pass.
 2. Prefer read-only tools first.
 3. For write-tool smoke, use non-financial low-risk actions when possible.
 4. Do not test irreversible payment flows on production records unless explicitly approved.
@@ -36,19 +36,19 @@ This runbook validates:
 ### 1) Metadata contract check (HTTP)
 
 ```bash
-curl -s https://api.analoglabor.com/.well-known/oauth-protected-resource | jq
+curl -s https://api.analog-research.org/.well-known/oauth-protected-resource | jq
 ```
 
 Expected:
 
-1. `resource` equals `https://api.analoglabor.com/api/v1/mcp/chatgpt`.
+1. `resource` equals `https://api.analog-research.org/api/v1/mcp/chatgpt`.
 2. `authorization_servers` includes the expected Auth0 issuer.
-3. `scopes_supported` includes `analoglabor.read` and `analoglabor.write`.
+3. `scopes_supported` includes `analogresearch.read` and `analogresearch.write`.
 
 ### 2) Unauthenticated discovery check (HTTP)
 
 ```bash
-curl -sS -X POST https://api.analoglabor.com/v1/mcp/chatgpt \
+curl -sS -X POST https://api.analog-research.org/v1/mcp/chatgpt \
   -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":"smoke-tools-list","method":"tools/list"}' | jq
 ```
@@ -61,7 +61,7 @@ Expected:
 ### 3) Unauthenticated protected-tool challenge check (HTTP)
 
 ```bash
-curl -sS -X POST https://api.analoglabor.com/v1/mcp/chatgpt \
+curl -sS -X POST https://api.analog-research.org/v1/mcp/chatgpt \
   -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":"smoke-auth-challenge","method":"tools/call","params":{"name":"list_bounties","arguments":{"limit":1}}}' | jq
 ```
@@ -70,13 +70,13 @@ Expected:
 
 1. Tool result is error.
 2. `_meta["mcp/www_authenticate"]` exists.
-3. Challenge includes `resource_metadata="https://api.analoglabor.com/.well-known/oauth-protected-resource"`.
+3. Challenge includes `resource_metadata="https://api.analog-research.org/.well-known/oauth-protected-resource"`.
 
 ### 4) Add connector in ChatGPT Developer Mode
 
 In ChatGPT:
 
-1. Open Developer Mode and add connector using `https://api.analoglabor.com/v1/mcp/chatgpt`.
+1. Open Developer Mode and add connector using `https://api.analog-research.org/v1/mcp/chatgpt`.
 2. Confirm connector appears and tool catalog loads.
 
 Expected:
@@ -91,7 +91,7 @@ Expected:
 3. In dashboard session, verify link status endpoint:
 
 ```bash
-curl -sS https://analoglabor.com/api/v1/mcp/oauth/link \
+curl -sS https://analog-research.org/api/v1/mcp/oauth/link \
   -H "Cookie: <dashboard-session-cookie>" | jq
 ```
 
@@ -165,7 +165,7 @@ Smoke run date: YYYY-MM-DD
 Executor: <name/email>
 Environment: <dev/staging/prod>
 Commit SHA: <sha>
-Connector URL: https://api.analoglabor.com/v1/mcp/chatgpt
+Connector URL: https://api.analog-research.org/v1/mcp/chatgpt
 Result: PASS | FAIL
 Blocking issues:
 - <issue 1>

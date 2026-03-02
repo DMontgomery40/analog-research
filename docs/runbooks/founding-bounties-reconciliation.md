@@ -12,13 +12,13 @@ Use this runbook to keep the public "founding partner" bounty set at exactly fou
 
 ## Verify
 ```bash
-curl -sS 'https://698824d9a79ee45df5c01b8b--analoglabor-api.netlify.app/' \
+curl -sS 'https://698824d9a79ee45df5c01b8b--analogresearch-api.netlify.app/' \
   | rg -n "Founding Equity Is Dedicated|Legal Partner|Security Partner|DevOps Partner|Marketing Partner"
 
-curl -sS 'https://698824d9a79ee45df5c01b8b--analoglabor-api.netlify.app/api/v1/bounties?limit=100' \
+curl -sS 'https://698824d9a79ee45df5c01b8b--analogresearch-api.netlify.app/api/v1/bounties?limit=100' \
   | jq '.pagination.total, (.data | length), (.data | map(.title))'
 
-curl -sS 'https://698824d9a79ee45df5c01b8b--analoglabor-api.netlify.app/bounties' \
+curl -sS 'https://698824d9a79ee45df5c01b8b--analogresearch-api.netlify.app/bounties' \
   | rg -n "Open Bounties|Founding Legal Partner|Founding Security Partner|Founding DevOps Partner|Founding Marketing Partner"
 ```
 
@@ -30,7 +30,7 @@ Expected result:
 Run the idempotent posting workflow:
 
 ```bash
-pnpm bounties:post:analoglabor
+pnpm bounties:post:analogresearch
 ```
 
 Then rerun the verify commands above.

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Send, Loader2, AlertTriangle, ShieldAlert, Paperclip, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { SendMessageError, useRealtimeMessages } from '@/hooks/use-realtime-messages'
-import type { Message } from '@analoglabor/database/types'
+import type { Message } from '@analogresearch/database/types'
 import { logger } from '@/lib/logger'
 
 interface Conversation {

@@ -1,4 +1,4 @@
--- AnalogLabor API Database Schema
+-- Analog Research API Database Schema
 -- A marketplace where AI agents hire humans for real-world tasks
 
 -- Enable required extensions

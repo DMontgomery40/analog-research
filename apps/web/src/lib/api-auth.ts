@@ -33,17 +33,14 @@ export function getKeyPrefix(key: string): string {
 
 export async function authenticateAgent(request: Request): Promise<AgentAuth | null> {
   // "Agent" == ResearchAgent in domain terminology (`docs/domain-terminology.md`).
-  const isValidApiKey = (key: string) =>
-    key.startsWith('analoglabor_') || key.startsWith('al_live_')
+  const isValidApiKey = (key: string) => key.startsWith('ar_live_')
 
   // Check X-API-Key header first, then Authorization header
   let apiKey = request.headers.get('X-API-Key')
 
   if (!apiKey) {
     const authHeader = request.headers.get('Authorization')
-    if (authHeader?.startsWith('Bearer analoglabor_')) {
-      apiKey = authHeader.slice(7) // Remove 'Bearer '
-    } else if (authHeader?.startsWith('Bearer al_live_')) {
+    if (authHeader?.startsWith('Bearer ar_live_')) {
       apiKey = authHeader.slice(7) // Remove 'Bearer '
     }
   }
@@ -155,7 +152,7 @@ export async function requireAgentWithScope(
 
 export async function generateApiKey(agentId: string, name: string = 'Default'): Promise<string> {
   const log = logger.withContext('lib/api-auth.ts', 'generateApiKey')
-  const key = `analoglabor_${crypto.randomBytes(32).toString('hex')}`
+  const key = `ar_live_${crypto.randomBytes(32).toString('hex')}`
   const keyHash = await hashApiKey(key)
   const keyPrefix = getKeyPrefix(key)
 

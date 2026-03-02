@@ -76,31 +76,31 @@ async def run_test():
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Try to recover UI by waiting briefly, then navigate to the admin interface to sign in as admin (dmontg@gmail.com / Trenton2023) and retrieve Molty's API key.
+        # -> Try to recover UI by waiting briefly, then navigate to the admin interface to sign in as admin (dmontg@gmail.com / Trenton2023) and retrieve ResearchAgent's API key.
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Navigate to the admin page (/admin), wait for it to load, then sign in as admin (dmontg@gmail.com / Trenton2023) to locate Molty's API key for subsequent API requests.
+        # -> Navigate to the admin page (/admin), wait for it to load, then sign in as admin (dmontg@gmail.com / Trenton2023) to locate ResearchAgent's API key for subsequent API requests.
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Load the admin login page so admin credentials can be used to retrieve Molty's API key (navigate directly to /admin since the SPA is currently not rendering).
+        # -> Load the admin login page so admin credentials can be used to retrieve ResearchAgent's API key (navigate directly to /admin since the SPA is currently not rendering).
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Reload the site root to recover the SPA/UI, wait for it to load, then attempt to access the admin login page to sign in as admin and retrieve Molty's API key.
+        # -> Reload the site root to recover the SPA/UI, wait for it to load, then attempt to access the admin login page to sign in as admin and retrieve ResearchAgent's API key.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Open the user Dashboard (click 'Dashboard') to find account settings or links to admin/API key UI where Molty's API key can be obtained, or to sign out and re-authenticate as admin if necessary.
+        # -> Open the user Dashboard (click 'Dashboard') to find account settings or links to admin/API key UI where ResearchAgent's API key can be obtained, or to sign out and re-authenticate as admin if necessary.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Open the user Dashboard (click the 'Dashboard' link) to find account settings or API key area where Molty's API key can be retrieved. If dashboard doesn't load, locate 'Sign out' and re-authenticate as admin.
+        # -> Open the user Dashboard (click the 'Dashboard' link) to find account settings or API key area where ResearchAgent's API key can be retrieved. If dashboard doesn't load, locate 'Sign out' and re-authenticate as admin.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Sign out the current user (click 'Sign out') so the session is cleared, then navigate to admin login and sign in as admin to retrieve Molty's API key.
+        # -> Sign out the current user (click 'Sign out') so the session is cleared, then navigate to admin login and sign in as admin to retrieve ResearchAgent's API key.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/form/button').nth(0)
@@ -109,7 +109,7 @@ async def run_test():
         # -> Try to recover the UI by reloading the site root and waiting briefly to see if the server/UI returns to normal. If the Internal Server Error persists, report failure and stop the test.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Sign out' button to clear the current session so the admin login can be used; then navigate to /admin to sign in as admin and retrieve Molty's API key.
+        # -> Click the 'Sign out' button to clear the current session so the admin login can be used; then navigate to /admin to sign in as admin and retrieve ResearchAgent's API key.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/form/button').nth(0)
@@ -117,7 +117,7 @@ async def run_test():
         
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Sign in as admin using provided credentials (dmontg@gmail.com / Trenton2023) to access admin dashboard and retrieve Molty's API key.
+        # -> Sign in as admin using provided credentials (dmontg@gmail.com / Trenton2023) to access admin dashboard and retrieve ResearchAgent's API key.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/div[1]/input').nth(0)
@@ -133,22 +133,22 @@ async def run_test():
         elem = frame.locator('xpath=html/body/div[2]/div/div[2]/form/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Reload the site root to recover the SPA/UI, wait for it to load, then navigate to /admin and attempt the admin sign-in again to retrieve Molty's API key.
+        # -> Reload the site root to recover the SPA/UI, wait for it to load, then navigate to /admin and attempt the admin sign-in again to retrieve ResearchAgent's API key.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Recover the SPA by reloading the site root, wait for it to render, then navigate to the admin login page so a new admin sign-in attempt can be made to retrieve Molty's API key.
+        # -> Recover the SPA by reloading the site root, wait for it to render, then navigate to the admin login page so a new admin sign-in attempt can be made to retrieve ResearchAgent's API key.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Recover the SPA/UI and open the admin login page so admin sign-in can be retried to obtain Molty's API key. Steps: reload site root, wait for it to render, then navigate to /admin.
+        # -> Recover the SPA/UI and open the admin login page so admin sign-in can be retried to obtain ResearchAgent's API key. Steps: reload site root, wait for it to render, then navigate to /admin.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
         await page.goto("http://localhost:3000/admin", wait_until="commit", timeout=10000)
         
-        # -> Reload the site root to recover the SPA/UI, wait briefly, then proceed to /admin to attempt admin sign-in again and retrieve Molty's API key.
+        # -> Reload the site root to recover the SPA/UI, wait briefly, then proceed to /admin to attempt admin sign-in again and retrieve ResearchAgent's API key.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
         await asyncio.sleep(5)

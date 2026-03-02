@@ -67,7 +67,7 @@ pnpm db:push
 If using explicit DB URL:
 
 ```bash
-pnpm --filter @analoglabor/database push -- --db-url "postgresql://..."
+pnpm --filter @analogresearch/database push -- --db-url "postgresql://..."
 ```
 
 ### Step 2: Refresh PostgREST schema cache

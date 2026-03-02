@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { Message } from '@analoglabor/database/types'
+import type { Message } from '@analogresearch/database/types'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
 export interface MessageAttachment {

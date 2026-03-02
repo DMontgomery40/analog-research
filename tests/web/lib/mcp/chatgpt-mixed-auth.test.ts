@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
+const RUN_INTEGRATION_TESTS = process.env.RUN_INTEGRATION_TESTS === 'true'
+const integrationDescribe = RUN_INTEGRATION_TESTS ? describe : describe.skip
+
 const API_BASE_URL = (
   process.env.TEST_API_BASE_URL
   || process.env.NEXT_PUBLIC_SITE_URL
   || process.env.NEXT_PUBLIC_APP_URL
-  || 'https://analoglabor.com'
+  || 'https://analog-research.org'
 ).replace(/\/$/, '')
 
-const EXPECTED_READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analoglabor.read').trim() || 'analoglabor.read'
-const EXPECTED_WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analoglabor.write').trim() || 'analoglabor.write'
+const EXPECTED_READ_SCOPE = (process.env.MCP_OAUTH_SCOPES_READ || 'analogresearch.read').trim() || 'analogresearch.read'
+const EXPECTED_WRITE_SCOPE = (process.env.MCP_OAUTH_SCOPES_WRITE || 'analogresearch.write').trim() || 'analogresearch.write'
 
 function buildUrl(path: string) {
   return `${API_BASE_URL}${path}`
@@ -72,7 +75,7 @@ async function readMcpTransportPayload(response: Response): Promise<any> {
   return messages[messages.length - 1]
 }
 
-describe('ChatGPT MCP mixed auth tool calls (deployed invariants)', () => {
+integrationDescribe('ChatGPT MCP mixed auth tool calls (deployed invariants)', () => {
   it('returns OAuth challenge metadata for unauthenticated protected tool call', async () => {
     const response = await fetch(buildUrl('/api/v1/mcp/chatgpt'), {
       method: 'POST',

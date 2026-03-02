@@ -62,7 +62,7 @@ describe('MCP dispatcher tool-policy guards (unit)', () => {
       },
       {
         agent: { apiKeyId: 'key-1', agentId: 'agent-123', keyPrefix: 'prefix', scopes: ['write'] } as any,
-        apiKey: 'analoglabor_test_key',
+        apiKey: 'ar_live_test_key',
         baseUrl: 'https://example.com/api/v1',
         fetchFn,
         serviceClient,

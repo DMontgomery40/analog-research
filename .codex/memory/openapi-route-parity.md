@@ -2,7 +2,7 @@
 
 ## Problem
 
-`apps/web/public/openapi.json` declared several HTTP methods that were missing from the corresponding Next.js route handlers under `apps/web/src/app/api/v1/**/route.ts`. This caused the published spec to be inaccurate and made `api.analoglabor.com` effectively “out of parity” with the spec.
+`apps/web/public/openapi.json` declared several HTTP methods that were missing from the corresponding Next.js route handlers under `apps/web/src/app/api/v1/**/route.ts`. This caused the published spec to be inaccurate and made `api.analog-research.org` effectively “out of parity” with the spec.
 
 ## Fix
 

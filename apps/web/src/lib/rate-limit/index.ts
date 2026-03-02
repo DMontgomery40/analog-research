@@ -72,14 +72,14 @@ function parsePositiveInt(value: number | string | null | undefined, fallback: n
 
 function getStore(): Map<string, RateLimitBucket> {
   const globalWithStore = globalThis as typeof globalThis & {
-    __analoglaborRateLimitStore?: Map<string, RateLimitBucket>
+    __analogresearchRateLimitStore?: Map<string, RateLimitBucket>
   }
 
-  if (!globalWithStore.__analoglaborRateLimitStore) {
-    globalWithStore.__analoglaborRateLimitStore = new Map()
+  if (!globalWithStore.__analogresearchRateLimitStore) {
+    globalWithStore.__analogresearchRateLimitStore = new Map()
   }
 
-  return globalWithStore.__analoglaborRateLimitStore
+  return globalWithStore.__analogresearchRateLimitStore
 }
 
 function getUpstash(): {
@@ -93,21 +93,21 @@ function getUpstash(): {
   }
 
   const globalWithUpstash = globalThis as typeof globalThis & {
-    __analoglaborUpstashRedis?: Redis
-    __analoglaborUpstashRatelimitCache?: Map<string, Ratelimit>
+    __analogresearchUpstashRedis?: Redis
+    __analogresearchUpstashRatelimitCache?: Map<string, Ratelimit>
   }
 
-  if (!globalWithUpstash.__analoglaborUpstashRedis) {
-    globalWithUpstash.__analoglaborUpstashRedis = Redis.fromEnv()
+  if (!globalWithUpstash.__analogresearchUpstashRedis) {
+    globalWithUpstash.__analogresearchUpstashRedis = Redis.fromEnv()
   }
 
-  if (!globalWithUpstash.__analoglaborUpstashRatelimitCache) {
-    globalWithUpstash.__analoglaborUpstashRatelimitCache = new Map()
+  if (!globalWithUpstash.__analogresearchUpstashRatelimitCache) {
+    globalWithUpstash.__analogresearchUpstashRatelimitCache = new Map()
   }
 
   return {
-    redis: globalWithUpstash.__analoglaborUpstashRedis,
-    limiterCache: globalWithUpstash.__analoglaborUpstashRatelimitCache,
+    redis: globalWithUpstash.__analogresearchUpstashRedis,
+    limiterCache: globalWithUpstash.__analogresearchUpstashRatelimitCache,
   }
 }
 
@@ -123,7 +123,7 @@ function getUpstashLimiter(params: { limit: number; window: '1 m' | '1 h' }): Ra
   const created = new Ratelimit({
     redis: upstash.redis,
     limiter: Ratelimit.slidingWindow(limit, params.window),
-    prefix: 'analoglabor:api-key-rate-limit',
+    prefix: 'analogresearch:api-key-rate-limit',
   })
 
   upstash.limiterCache.set(cacheKey, created)

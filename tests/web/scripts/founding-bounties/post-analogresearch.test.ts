@@ -5,13 +5,13 @@ import {
   buildBountyPatch,
   planFoundingBountyActions,
   resolveRoleForExistingBounty,
-} from '../../../../scripts/founding-bounties/post-analoglabor.mjs'
+} from '../../../../scripts/founding-bounties/post-analogresearch.mjs'
 
 describe('founding bounties reconciliation planning', () => {
   it('resolves role from track URL first, then title fallback', () => {
     expect(resolveRoleForExistingBounty({
       title: 'Unrelated title',
-      description: 'Apply at: https://analoglabor.com/founding-partner-apply?track=security&source=analoglabor',
+      description: 'Apply at: https://analog-research.org/founding-partner-apply?track=security&source=analogresearch',
     })).toBe('security')
 
     expect(resolveRoleForExistingBounty({
@@ -31,7 +31,7 @@ describe('founding bounties reconciliation planning', () => {
       {
         id: 'legal-existing',
         title: 'Founding Legal Partner',
-        description: 'Apply at: https://analoglabor.com/founding-partner-apply?track=legal&source=analoglabor',
+        description: 'Apply at: https://analog-research.org/founding-partner-apply?track=legal&source=analogresearch',
         skills_required: ['legal'],
         budget_min: 100,
         budget_max: 200,

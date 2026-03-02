@@ -7,11 +7,11 @@ import {
 
 import { MCP_TOOLS } from './tools.js'
 
-const API_BASE_URL = process.env.ANALOGLABOR_API_URL || 'https://analoglabor.com/api/v1'
-const API_KEY = process.env.ANALOGLABOR_API_KEY
+const API_BASE_URL = process.env.ANALOG_RESEARCH_API_URL || 'https://analog-research.org/api/v1'
+const API_KEY = process.env.ANALOG_RESEARCH_API_KEY
 
 if (!API_KEY) {
-  console.error('ANALOGLABOR_API_KEY environment variable is required')
+  console.error('ANALOG_RESEARCH_API_KEY environment variable is required')
   process.exit(1)
 }
 
@@ -35,7 +35,7 @@ async function apiRequest(
   } catch (error) {
     const baseHint = `Network error calling ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`
     const localHint = /^(http:\/\/localhost|http:\/\/127\.0\.0\.1)(:\d+)?(\/|$)/.test(API_BASE_URL)
-      ? ` Is your local API running? Try: pnpm --filter @analoglabor/web dev`
+      ? ` Is your local API running? Try: pnpm --filter @analogresearch/web dev`
       : ''
     throw new Error(`${baseHint}.${localHint}`)
   }
@@ -52,7 +52,7 @@ const tools = MCP_TOOLS
 
 const server = new Server(
   {
-    name: 'analoglabor-mcp',
+    name: 'analogresearch-mcp',
     version: '1.0.0',
   },
   {
@@ -540,7 +540,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  console.error('AnalogLabor MCP server running')
+  console.error('Analog Research MCP server running')
 }
 
 main().catch(console.error)

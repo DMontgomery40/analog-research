@@ -15,6 +15,7 @@ import {
   Inbox,
   Users,
   Camera,
+  PlusCircle,
 } from 'lucide-react'
 import { BrandMark } from '@/components/brand-mark'
 import { DashboardNavLink } from '@/components/dashboard/NavLink'
@@ -79,6 +80,9 @@ export function DashboardMobileNav({
           <DashboardNavLink href="/dashboard/browse" icon={<Search className="w-5 h-5" />} className="w-full">
             Browse Bounties
           </DashboardNavLink>
+          <DashboardNavLink href="/dashboard/bounties/new" icon={<PlusCircle className="w-5 h-5" />} className="w-full">
+            Create Bounty
+          </DashboardNavLink>
           <DashboardNavLink href="/dashboard/bookings" icon={<Briefcase className="w-5 h-5" />} className="w-full">
             My Bookings
           </DashboardNavLink>
@@ -88,7 +92,7 @@ export function DashboardMobileNav({
           <DashboardNavLink href="/dashboard/conversations" icon={<MessageSquare className="w-5 h-5" />} className="w-full">
             Messages
           </DashboardNavLink>
-          <DashboardNavLink href="/dashboard/molty-messages" icon={<Inbox className="w-5 h-5" />} className="w-full">
+          <DashboardNavLink href="/dashboard/researchagent-messages" icon={<Inbox className="w-5 h-5" />} className="w-full">
             ResearchAgent Messages
           </DashboardNavLink>
           <DashboardNavLink href="/dashboard/profile" icon={<User className="w-5 h-5" />} className="w-full">

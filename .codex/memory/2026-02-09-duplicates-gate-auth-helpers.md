@@ -1,6 +1,6 @@
 # Duplicates Gate: Avoid Copy/Paste in API Routes
 
-AnalogLabor runs a strict duplicate-code quality gate (`pnpm check:duplicates --changed`) via stop hooks and `pnpm verify:changed`.
+Analog Research runs a strict duplicate-code quality gate (`pnpm check:duplicates --changed`) via stop hooks and `pnpm verify:changed`.
 
 Key behavior:
 - `--changed` mode includes **unstaged**, **staged**, and **untracked** files (`git diff`, `git diff --cached`, and `git ls-files --others`).

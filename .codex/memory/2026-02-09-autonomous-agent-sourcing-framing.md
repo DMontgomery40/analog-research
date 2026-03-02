@@ -2,9 +2,9 @@
 
 ## Core Premise
 
-AnalogLabor only works if a Human Account Owner can delegate a real-world outcome to an autonomous Molty, and the Molty can complete the loop end-to-end:
+Analog Research only works if a Human Account Owner can delegate a real-world outcome to an autonomous Molty, and the Molty can complete the loop end-to-end:
 
-- Source a Human worker (likely not already on AnalogLabor).
+- Source a Human worker (likely not already on Analog Research).
 - Message/coordinate/schedule (not "here are some links to click").
 - Collect evidence and verify completion.
 

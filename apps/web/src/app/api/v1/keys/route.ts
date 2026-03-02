@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate the API key with al_live_ prefix (production format)
-    const rawKey = `al_live_${crypto.randomBytes(32).toString('hex')}`
+    // Generate the API key with ar_live_ prefix (production format)
+    const rawKey = `ar_live_${crypto.randomBytes(32).toString('hex')}`
     const keyHash = await hashApiKey(rawKey)
     const keyPrefix = getKeyPrefix(rawKey)
 

@@ -1,5 +1,5 @@
 -- Link external jobs to core marketplace records (bounty/booking/application/conversation)
--- while enforcing same-molty ownership invariants.
+-- while enforcing same-researchagent ownership invariants.
 
 ALTER TABLE external_jobs
   ADD COLUMN IF NOT EXISTS bounty_id UUID REFERENCES bounties(id) ON DELETE SET NULL,

@@ -7,7 +7,7 @@ This file is **institutional memory** for 3rd-party “humans everywhere” inte
 Status (2026-02-09): External-fulfillment integrations are being implemented (v1: field checks via ProxyPics).
 
 ## Core Framing (Do Not Drift)
-- AnalogLabor only takes off if autonomous Moltys can **order/coordinate** work from where humans already are.
+- Analog Research only takes off if autonomous Moltys can **order/coordinate** work from where humans already are.
 - The agent must be able to **take actions** (order, message, track, fetch deliverables), not return “web search results”.
 - Start with fulfillment networks that already provide “order + status + deliverable” APIs (ProxyPics now; WeGoLook once partner docs/keys exist).
 
@@ -28,7 +28,7 @@ Status (2026-02-09): External-fulfillment integrations are being implemented (v1
 
 ## Key Files (Review After Every Compaction)
 - DB: `packages/database/supabase/migrations/021_external_jobs_and_integrations.sql`
-- MCP tool defs: `packages/analoglabor-mcp/src/tools.ts` (and built `packages/analoglabor-mcp/dist/tools.js`)
+- MCP tool defs: `packages/analogresearch-mcp/src/tools.ts` (and built `packages/analogresearch-mcp/dist/tools.js`)
 - MCP dispatcher: `apps/web/src/lib/mcp/dispatcher.ts`
 - Secrets: `apps/web/src/lib/integrations-secrets.ts`
 - External jobs types: `apps/web/src/lib/external-jobs/types.ts`
@@ -163,7 +163,7 @@ Status (2026-02-09): External-fulfillment integrations are being implemented (v1
   - `reject_external_job`
 - Added dispatcher/runtime support:
   - `apps/web/src/lib/mcp/dispatcher.ts`
-  - `packages/analoglabor-mcp/src/index.ts`
+  - `packages/analogresearch-mcp/src/index.ts`
 - Updated MCP docs page parity:
   - `apps/web/src/app/mcp/page.tsx`
 - Added tests:
@@ -245,7 +245,7 @@ This phase explicitly targets “no fake tests” by asserting full canonical to
     - `apps/web/src/app/page.tsx`
 - Added source-of-truth connector matrix for worker marketplaces:
   - `apps/web/src/lib/integrations/marketplace-connectors.ts`
-  - current set: `analoglabor`, `upwork`, `thumbtack`, `taskrabbit`, `fiverr`
+  - current set: `analogresearch`, `upwork`, `thumbtack`, `taskrabbit`, `fiverr`
   - status model: `live | partner_onboarding | researching`
 - Added policy invariant to prevent future product drift:
   - every connector has `supportsColdOutreach: false`

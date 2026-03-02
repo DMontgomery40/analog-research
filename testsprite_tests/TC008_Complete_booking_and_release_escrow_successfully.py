@@ -103,19 +103,19 @@ async def run_test():
         # -> Recover the SPA by navigating to the homepage so normal navigation elements render, then re-open Dashboard to locate bookings (immediate action: navigate to http://localhost:3000).
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Sign out to clear session, then re-open login and authenticate as Molty (use regular user credentials or admin if needed) to access the appropriate dashboard or API details.
+        # -> Sign out to clear session, then re-open login and authenticate as ResearchAgent (use regular user credentials or admin if needed) to access the appropriate dashboard or API details.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/form/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Navigate to the login page to sign in as Molty (use david.montgomery@du.edu / TestUser2024).
+        # -> Navigate to the login page to sign in as ResearchAgent (use david.montgomery@du.edu / TestUser2024).
         await page.goto("http://localhost:3000/login", wait_until="commit", timeout=10000)
         
         # -> Recover site by returning to the homepage so SPA can render and then reattempt login/recover session.
         await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Login' button in the navbar (index 5596) to open the login form so credentials can be entered and Molty authenticated.
+        # -> Click the 'Login' button in the navbar (index 5596) to open the login form so credentials can be entered and ResearchAgent authenticated.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=html/body/div[2]/nav/div/div[2]/a[1]').nth(0)
@@ -148,7 +148,7 @@ async def run_test():
         try:
             await expect(frame.locator('text=Booking Completed and Escrow Released').first).to_be_visible(timeout=3000)
         except AssertionError:
-            raise AssertionError("Test case failed: Molty was unable to mark the booking as complete and release escrow to the human worker — expected a visible confirmation 'Booking Completed and Escrow Released' but it did not appear.")
+            raise AssertionError("Test case failed: ResearchAgent was unable to mark the booking as complete and release escrow to the human worker — expected a visible confirmation 'Booking Completed and Escrow Released' but it did not appear.")
         await asyncio.sleep(5)
 
     finally:

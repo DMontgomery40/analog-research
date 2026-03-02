@@ -21,7 +21,7 @@ function CodeBlock({ code, language = 'bash' }: { code: string; language?: strin
   )
 }
 
-// SOURCE OF TRUTH: packages/analoglabor-mcp/src/tools.ts (MCP_TOOL_DEFINITIONS)
+// SOURCE OF TRUTH: packages/analogresearch-mcp/src/tools.ts (MCP_TOOL_DEFINITIONS)
 // If you add/remove/rename tools there, update this list to match.
 // Verified by: tests/web/docs/source-of-truth-parity.test.ts
 const tools = [
@@ -568,22 +568,22 @@ const tools = [
 
 const claudeConfig = `{
   "mcpServers": {
-    "analoglabor": {
+    "analogresearch": {
       "command": "npx",
-      "args": ["analoglabor-mcp"],
+      "args": ["analogresearch-mcp"],
       "env": {
-        "ANALOGLABOR_API_KEY": "al_live_YOUR_KEY_HERE"
+        "ANALOG_RESEARCH_API_KEY": "ar_live_YOUR_KEY_HERE"
       }
     }
   }
 }`
 
 const cursorConfig = `{
-  "analoglabor": {
+  "analogresearch": {
     "command": "npx",
-    "args": ["analoglabor-mcp"],
+    "args": ["analogresearch-mcp"],
     "env": {
-      "ANALOGLABOR_API_KEY": "al_live_YOUR_KEY_HERE"
+      "ANALOG_RESEARCH_API_KEY": "ar_live_YOUR_KEY_HERE"
     }
   }
 }`
@@ -645,7 +645,7 @@ const mcpFaqItems = [
   {
     question: 'How do I authenticate the Analog Research MCP server?',
     answer:
-      'Create an Analog Research API key, then set ANALOGLABOR_API_KEY in your MCP client configuration (for example Claude or Cursor). API keys use the al_live_ prefix.',
+      'Create an Analog Research API key, then set ANALOG_RESEARCH_API_KEY in your MCP client configuration (for example Claude or Cursor). API keys use the ar_live_ prefix.',
   },
   {
     question: 'Can I create bounties and fund escrow through MCP?',
@@ -774,11 +774,11 @@ export default function MCPDocsPage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Run directly with npx (recommended):</p>
-                  <CodeBlock code="npx analoglabor-mcp" />
+                  <CodeBlock code="npx analogresearch-mcp" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Or install globally:</p>
-                  <CodeBlock code="npm install -g analoglabor-mcp" />
+                  <CodeBlock code="npm install -g analogresearch-mcp" />
                 </div>
               </div>
 
@@ -834,12 +834,12 @@ export default function MCPDocsPage() {
                       </thead>
                       <tbody>
                         <tr>
-                          <td className="p-3 border-b border-border font-mono text-primary">ANALOGLABOR_API_KEY</td>
+                          <td className="p-3 border-b border-border font-mono text-primary">ANALOG_RESEARCH_API_KEY</td>
                           <td className="p-3 border-b border-border">Yes</td>
-                          <td className="p-3 border-b border-border text-muted-foreground">Your API key (al_live_...)</td>
+                          <td className="p-3 border-b border-border text-muted-foreground">Your API key (ar_live_...)</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-mono text-primary">ANALOGLABOR_API_URL</td>
+                          <td className="p-3 font-mono text-primary">ANALOG_RESEARCH_API_URL</td>
                           <td className="p-3">No</td>
                           <td className="p-3 text-muted-foreground">API base URL (default: https://api.analog-research.org/v1)</td>
                         </tr>

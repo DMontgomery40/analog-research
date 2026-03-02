@@ -96,7 +96,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'pnpm --filter @analoglabor/web dev',
+    command: 'pnpm --filter @analogresearch/web dev',
     url: baseURL,
     reuseExistingServer: true,
     env: webServerEnv,

@@ -1,5 +1,5 @@
 {
-  "name": "@analoglabor/web",
+  "name": "@analogresearch/web",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -13,8 +13,8 @@
     "test:coverage": "vitest run --coverage --config vitest.config.ts"
   },
   "dependencies": {
-    "@analoglabor/database": "workspace:*",
-    "@analoglabor/ui": "workspace:*",
+    "@analogresearch/database": "workspace:*",
+    "@analogresearch/ui": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@radix-ui/react-slider": "^1.2.2",
     "@supabase/ssr": "^0.8.0",
@@ -22,7 +22,7 @@
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.34.3",
     "ajv": "^8.17.1",
-    "analoglabor-mcp": "workspace:*",
+    "analogresearch-mcp": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jose": "^5.10.0",

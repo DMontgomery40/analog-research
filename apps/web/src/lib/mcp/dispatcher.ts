@@ -46,7 +46,7 @@ async function apiRequest(
     headers: {
       'Authorization': `Bearer ${context.apiKey}`,
       'Content-Type': 'application/json',
-      'x-analoglabor-source': 'mcp',
+      'x-analogresearch-source': 'mcp',
     },
     body: body ? JSON.stringify(body) : undefined,
   })

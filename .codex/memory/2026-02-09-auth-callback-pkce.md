@@ -9,7 +9,7 @@
 
 ## Context (Why This Repo Is Weird)
 
-AnalogLabor runs on Netlify with a host-based proxy layer (`apps/web/src/proxy.ts`) to support:
+Analog Research runs on Netlify with a host-based proxy layer (`apps/web/src/proxy.ts`) to support:
 
 - `supabase.*` proxying to Supabase (auth/storage/realtime)
 - `api.*` serving only `/api/v1/*` (plus doc assets)

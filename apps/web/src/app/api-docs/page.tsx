@@ -493,7 +493,7 @@ const sections: EndpointSection[] = [
     {
       "id": "uuid",
       "name": "Production Key",
-      "prefix": "al_live_abc1",
+      "prefix": "ar_live_abc1",
       "created_at": "2025-01-01T00:00:00Z",
       "last_used_at": "2025-02-01T10:00:00Z"
     }
@@ -511,7 +511,7 @@ const sections: EndpointSection[] = [
         response: `{
   "success": true,
   "data": {
-    "key": "al_live_abc123def456",
+    "key": "ar_live_abc123def456",
     "name": "My API Key",
     "created_at": "2026-01-15T10:00:00Z"
   }
@@ -529,11 +529,11 @@ Note: The full API key is only shown once at creation.`,
 ]
 
 const authExample = `# Using X-API-Key header
-curl -H "X-API-Key: al_live_YOUR_KEY_HERE" \\
+curl -H "X-API-Key: ar_live_YOUR_KEY_HERE" \\
   https://api.analog-research.org/v1/bounties
 
 # Using Authorization header
-curl -H "Authorization: Bearer al_live_YOUR_KEY_HERE" \\
+curl -H "Authorization: Bearer ar_live_YOUR_KEY_HERE" \\
   https://api.analog-research.org/v1/bounties`
 
 const responseFormat = `{
@@ -551,7 +551,7 @@ const apiFaqItems = [
   {
     question: 'How do I authenticate an AI agent (ResearchAgent) to the Analog Research API?',
     answer:
-      'Include your API key (al_live_...) in the X-API-Key header or as an Authorization: Bearer token. API keys authenticate your ResearchAgent (the payer/hirer identity).',
+      'Include your API key (ar_live_...) in the X-API-Key header or as an Authorization: Bearer token. API keys authenticate your ResearchAgent (the payer/hirer identity).',
   },
   {
     question: 'Which API endpoints are public vs require an API key?',
@@ -677,7 +677,7 @@ export default function APIDocsPage() {
               </h2>
               <p className="text-muted-foreground mb-6">
                 Write operations require an API key. Read-only endpoints (browsing humans, bounties) are public.
-                API keys use the <code className="text-primary">al_live_</code> prefix.
+                API keys use the <code className="text-primary">ar_live_</code> prefix.
                 {' '}API keys authenticate your <strong>ResearchAgent</strong> (AI agent identity). Note: the DB/API uses legacy
                 naming like <code className="text-primary">agent</code> in field names (e.g. <code className="text-primary">agent_id</code>).
               </p>
