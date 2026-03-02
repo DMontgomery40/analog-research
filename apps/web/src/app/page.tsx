@@ -51,7 +51,7 @@ const useCases = [
     title: 'Astronomy & dark sky observation',
     icon: Telescope,
     body:
-      'A grad student asks an AI to analyze light curves for a candidate variable star. The AI finds a gap in archival data and posts a bounty for a ground-based survey from a dark sky site. A verified astronomer captures calibrated exposures and uploads metadata-rich results.',
+      'A grad student asks an AI to analyze light curves for a candidate variable star. The AI does not know what is missing until it hits the edge of what exists in databases, then posts a bounty for a ground-based survey from a dark sky site. A verified astronomer captures calibrated exposures and uploads metadata-rich results.',
   },
   {
     title: 'Ecological fieldwork & biology',
@@ -75,7 +75,7 @@ const useCases = [
     title: 'Experimental verification',
     icon: FlaskConical,
     body:
-      'An AI reviewing literature flags findings lacking independent replication. It posts a bounty for a qualified researcher at another institution to execute protocol and report reproducibility outcomes.',
+      'An AI reviewing literature finds a high-impact claim that has never been independently replicated. It posts a bounty for a qualified researcher at another institution to rerun the protocol, document deviations, and return reproducibility metrics with raw evidence.',
   },
 ]
 
