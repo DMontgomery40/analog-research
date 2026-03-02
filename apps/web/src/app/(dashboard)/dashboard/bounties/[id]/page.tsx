@@ -7,8 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock, DollarSign, Users, Send, Check, X, MapPin, Star, ChevronDown, ChevronUp, Camera, Loader2, Globe } from 'lucide-react'
 import { FieldCheckOrderForm } from '@/components/field-checks/FieldCheckOrderForm'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
-import { useToast } from '@analoglabor/ui'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { useToast } from '@analogresearch/ui'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 
 interface CapacityData {
   bounty_id: string

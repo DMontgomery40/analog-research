@@ -4,7 +4,7 @@ import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { StatusBadge, mapDisputeStatus, mapEscrowStatus } from '@/components/admin/StatusBadge'
-import { Button } from '@analoglabor/ui'
+import { Button } from '@analogresearch/ui'
 import {
   ArrowLeft,
   User,

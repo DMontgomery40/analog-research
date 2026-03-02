@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@analoglabor/ui'
+import { cn } from '@analogresearch/ui'
 import { ArrowRight } from 'lucide-react'
 
 interface StatCardProps {

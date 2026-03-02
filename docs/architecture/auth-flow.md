@@ -1,6 +1,6 @@
 # Auth Flow Architecture
 
-Human authentication on AnalogLabor uses Supabase Auth with a host-based proxy and subdomain setup. This document describes the flow, constraints, and operational notes.
+Human authentication on Analog Research uses Supabase Auth with a host-based proxy and subdomain setup. This document describes the flow, constraints, and operational notes.
 
 ## Overview
 
@@ -15,13 +15,13 @@ Human authentication on AnalogLabor uses Supabase Auth with a host-based proxy a
 
 | Subdomain | Purpose | Implementation |
 |-----------|---------|----------------|
-| `analoglabor.com` | Main web app (auth, dashboard, browse) | Next.js pages |
-| `api.analoglabor.com` | API-only | JSON endpoints, `/v1/*` rewrite |
-| `supabase.analoglabor.com` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
+| `analog-research.org` | Main web app (auth, dashboard, browse) | Next.js pages |
+| `api.analog-research.org` | API-only | JSON endpoints, `/v1/*` rewrite |
+| `supabase.analog-research.org` | Supabase proxy | Rewrite to Supabase (auth, storage, realtime) |
 
 All routing is in `apps/web/src/proxy.ts`. **Netlify redirects with Host conditions do not work with the Next.js runtime** — see `netlify.toml`. The proxy runs at the edge; the `Host` header is preserved.
 
-Auth flows (login, signup, callback) run on the main domain. Supabase auth endpoints are reached via `supabase.analoglabor.com` when configured.
+Auth flows (login, signup, callback) run on the main domain. Supabase auth endpoints are reached via `supabase.analog-research.org` when configured.
 
 ## OAuth PKCE Flow
 
@@ -35,7 +35,7 @@ Auth flows (login, signup, callback) run on the main domain. Supabase auth endpo
 
 ## MCP OAuth (ChatGPT App, Developer Mode)
 
-AnalogLabor MCP supports OAuth bearer tokens in addition to API keys for ChatGPT App integrations.
+Analog Research MCP supports OAuth bearer tokens in addition to API keys for ChatGPT App integrations.
 
 ### Resource metadata and challenge
 
@@ -50,7 +50,7 @@ AnalogLabor MCP supports OAuth bearer tokens in addition to API keys for ChatGPT
 - `tools/list` and initialization are accessible without auth on `/api/v1/mcp/chatgpt`.
 - Tool invocation requires OAuth/API-key auth and enforces per-tool scope policy from canonical `securitySchemes`.
 - Auth failures return `_meta["mcp/www_authenticate"]` challenge hints to trigger connector relink/scope upgrade.
-- Widget resources are exposed through `resources/list` + `resources/read` using versioned `ui://analoglabor/.../v1` URIs.
+- Widget resources are exposed through `resources/list` + `resources/read` using versioned `ui://analogresearch/.../v1` URIs.
 
 ### Dashboard linking flow
 
@@ -59,7 +59,7 @@ AnalogLabor MCP supports OAuth bearer tokens in addition to API keys for ChatGPT
 - Status: `GET /api/v1/mcp/oauth/link`
 - Unlink: `DELETE /api/v1/mcp/oauth/link`
 
-Link state is persisted in `mcp_oauth_link_states` and OAuth subject-to-Molty mapping is persisted in `mcp_oauth_identities`.
+Link state is persisted in `mcp_oauth_link_states` and OAuth subject-to-ResearchAgent mapping is persisted in `mcp_oauth_identities`.
 
 ### Auth0 redirect allowlist requirements
 
@@ -77,28 +77,28 @@ Use these values as the source-of-truth contract for ChatGPT connector runtime:
 | `MCP_OAUTH_ENABLED` | `true` | Enables OAuth verification + challenge responses |
 | `MCP_OAUTH_PROVIDER` | `auth0` | Provider key used in `mcp_oauth_identities` lookup |
 | `MCP_OAUTH_ISSUER` | `https://<tenant>.auth0.com` | Must match token `iss` exactly |
-| `MCP_OAUTH_AUDIENCE` | `https://api.analoglabor.com` | Must match token `aud` |
-| `MCP_OAUTH_RESOURCE` | `https://api.analoglabor.com/api/v1/mcp/chatgpt` | Protected resource identifier advertised by metadata endpoint |
-| `MCP_OAUTH_SCOPES_READ` | `analoglabor.read` | Read tool scope |
-| `MCP_OAUTH_SCOPES_WRITE` | `analoglabor.write` | Write tool scope |
+| `MCP_OAUTH_AUDIENCE` | `https://api.analog-research.org` | Must match token `aud` |
+| `MCP_OAUTH_RESOURCE` | `https://api.analog-research.org/api/v1/mcp/chatgpt` | Protected resource identifier advertised by metadata endpoint |
+| `MCP_OAUTH_SCOPES_READ` | `analogresearch.read` | Read tool scope |
+| `MCP_OAUTH_SCOPES_WRITE` | `analogresearch.write` | Write tool scope |
 | `AUTH0_MCP_LINK_CLIENT_ID` | Auth0 app client id | Used by dashboard link start/callback |
 | `AUTH0_MCP_LINK_CLIENT_SECRET` | Auth0 app client secret | Server-side code exchange |
 
 Expected external connector URL in ChatGPT Developer Mode:
 
-- `https://api.analoglabor.com/v1/mcp/chatgpt`
+- `https://api.analog-research.org/v1/mcp/chatgpt`
 
 Expected metadata URL:
 
-- `https://api.analoglabor.com/.well-known/oauth-protected-resource`
+- `https://api.analog-research.org/.well-known/oauth-protected-resource`
 
 ### Operational preflight checks
 
 Run these before any dogfood/beta pass:
 
 1. Confirm metadata contract:
-   - `curl -s https://api.analoglabor.com/.well-known/oauth-protected-resource | jq`
-   - Verify `resource` is `https://api.analoglabor.com/api/v1/mcp/chatgpt`
+   - `curl -s https://api.analog-research.org/.well-known/oauth-protected-resource | jq`
+   - Verify `resource` is `https://api.analog-research.org/api/v1/mcp/chatgpt`
    - Verify `authorization_servers` includes your Auth0 issuer.
 2. Confirm unauthenticated connector challenge:
    - Send MCP `tools/call` to `/v1/mcp/chatgpt` without auth.
@@ -129,7 +129,7 @@ This avoids exhausting Supabase rate limits on unauthenticated traffic.
 
 ## Cookie Domain
 
-`getSupabaseAuthCookieDomain()` in `@/lib/supabase/cookie-domain.ts` sets `domain: '.analoglabor.com'` so sessions persist across `www.analoglabor.com` and `analoglabor.com`.
+`getSupabaseAuthCookieDomain()` in `@/lib/supabase/cookie-domain.ts` sets `domain: '.analog-research.org'` so sessions persist across `www.analog-research.org` and `analog-research.org`.
 
 ## Related Documentation
 

@@ -12,7 +12,7 @@ import { getMcpOauthChallengeHeader } from '@/lib/mcp/oauth-auth'
 export const runtime = 'nodejs'
 
 const SERVER_INFO = {
-  name: 'analoglabor-mcp',
+  name: 'analogresearch-mcp',
   version: '1.0.0',
 }
 
@@ -109,8 +109,8 @@ function createMcpServer(context: {
       if (result.error === 'Insufficient permissions') {
         const definition = getToolDefinition(name)
         const requiredScope = definition?.access === 'write'
-          ? ((process.env.MCP_OAUTH_SCOPES_WRITE || 'analoglabor.write').trim() || 'analoglabor.write')
-          : ((process.env.MCP_OAUTH_SCOPES_READ || 'analoglabor.read').trim() || 'analoglabor.read')
+          ? ((process.env.MCP_OAUTH_SCOPES_WRITE || 'analogresearch.write').trim() || 'analogresearch.write')
+          : ((process.env.MCP_OAUTH_SCOPES_READ || 'analogresearch.read').trim() || 'analogresearch.read')
 
         const challenge = getMcpOauthChallengeHeader({
           originHint: context.requestOrigin,

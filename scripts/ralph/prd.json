@@ -1,7 +1,7 @@
 {
-  "project": "AnalogLaborAPI",
+  "project": "Analog ResearchAPI",
   "branchName": "ralph/mvp-launch",
-  "description": "Complete the AnalogLaborAPI platform — a free marketplace where AI agents hire humans for real-world tasks. 3% transaction fee, no monthly paywall. Deploys to Netlify with Supabase backend. Includes subdomain architecture: main site for humans, api subdomain for bots with llms.txt.",
+  "description": "Complete the Analog ResearchAPI platform — a free marketplace where AI agents hire humans for real-world tasks. 3% transaction fee, no monthly paywall. Deploys to Netlify with Supabase backend. Includes subdomain architecture: main site for humans, api subdomain for bots with llms.txt.",
   "verificationCommands": {
     "typecheck": "cd apps/web && npx tsc --noEmit",
     "lint": "cd apps/web && npx next lint",
@@ -108,9 +108,9 @@
     {
       "id": "US-006",
       "title": "Agent API key system",
-      "description": "Agents need API keys to interact with the platform. Keys are prefixed al_live_ for production. Provide endpoints to create, list, and revoke keys. Keys are hashed before storage.",
+      "description": "Agents need API keys to interact with the platform. Keys are prefixed ar_live_ for production. Provide endpoints to create, list, and revoke keys. Keys are hashed before storage.",
       "acceptanceCriteria": [
-        "POST /api/v1/keys/generate creates a new API key: generates random key with al_live_ prefix, hashes it, stores hash + prefix in api_keys table, returns the raw key ONCE",
+        "POST /api/v1/keys/generate creates a new API key: generates random key with ar_live_ prefix, hashes it, stores hash + prefix in api_keys table, returns the raw key ONCE",
         "GET /api/v1/keys lists all keys for the authenticated agent (shows prefix, name, created_at, last_used_at — never the full key)",
         "DELETE /api/v1/keys/[id] revokes a key by setting is_active = false",
         "API key auth middleware: extracts key from X-API-Key header, hashes it, looks up in api_keys table, verifies is_active, updates last_used_at",
@@ -121,7 +121,7 @@
       ],
       "priority": 6,
       "passes": true,
-      "notes": "Use crypto.randomBytes for key generation. Hash with SHA-256. Prefix format: al_live_[32 random hex chars]."
+      "notes": "Use crypto.randomBytes for key generation. Hash with SHA-256. Prefix format: ar_live_[32 random hex chars]."
     },
     {
       "id": "US-007",
@@ -212,29 +212,29 @@
       "description": "Set up subdomain routing so bots hit api.{domain} which serves only API endpoints and llms.txt (no GUI, no JS bundles, no HTML). Humans use the main domain for the full web app. This prevents bot traffic from impacting the human experience and gives agents a clean, fast endpoint.",
       "acceptanceCriteria": [
         "Next.js middleware detects the Host header and routes accordingly",
-        "Requests to api.analoglabor.com/* route ONLY to /api/v1/* endpoints — no pages, no static assets, no HTML",
-        "Requests to api.analoglabor.com/ returns a JSON welcome: {name: 'AnalogLaborAPI', version: '1.0', docs: '/docs'}",
-        "Requests to api.analoglabor.com/llms.txt returns a well-formatted llms.txt file describing all available API endpoints, authentication, and usage examples in plain text optimized for LLM consumption",
-        "Requests to api.analoglabor.com/.well-known/llms.txt returns the same llms.txt",
+        "Requests to api.analog-research.org/* route ONLY to /api/v1/* endpoints — no pages, no static assets, no HTML",
+        "Requests to api.analog-research.org/ returns a JSON welcome: {name: 'Analog ResearchAPI', version: '1.0', docs: '/docs'}",
+        "Requests to api.analog-research.org/llms.txt returns a well-formatted llms.txt file describing all available API endpoints, authentication, and usage examples in plain text optimized for LLM consumption",
+        "Requests to api.analog-research.org/.well-known/llms.txt returns the same llms.txt",
         "Main domain serves the full Next.js web app normally",
-        "llms.txt includes: platform description, all REST endpoints with methods/params/examples, authentication instructions (API key format al_live_*), MCP server install instructions, rate limits, escrow flow description, and the npx analoglabor-mcp config block",
+        "llms.txt includes: platform description, all REST endpoints with methods/params/examples, authentication instructions (API key format ar_live_*), MCP server install instructions, rate limits, escrow flow description, and the npx analogresearch-mcp config block",
         "netlify.toml updated with redirect rules if needed for subdomain routing",
         "Typecheck passes"
       ],
       "priority": 11,
       "passes": true,
-      "notes": "Domain is analoglabor.com. In Next.js middleware: check req.headers.get('host'). If it starts with 'api.', rewrite to API routes only. The llms.txt should be comprehensive — it's the bot's equivalent of the MCP docs page. Netlify supports subdomains natively with custom domains. Create the llms.txt as a static file or API route. The MCP server default URL should be https://api.analoglabor.com/v1"
+      "notes": "Domain is analog-research.org. In Next.js middleware: check req.headers.get('host'). If it starts with 'api.', rewrite to API routes only. The llms.txt should be comprehensive — it's the bot's equivalent of the MCP docs page. Netlify supports subdomains natively with custom domains. Create the llms.txt as a static file or API route. The MCP server default URL should be https://api.analog-research.org/v1"
     },
     {
       "id": "US-012",
       "title": "MCP server — complete and publish to npm",
-      "description": "The MCP server at packages/analoglabor-mcp has a skeleton. Complete all tools to match the REST API, test it, and prepare for npm publish.",
+      "description": "The MCP server at packages/analogresearch-mcp has a skeleton. Complete all tools to match the REST API, test it, and prepare for npm publish.",
       "acceptanceCriteria": [
         "MCP server implements ALL tools: browse_humans, get_human, list_skills, start_conversation, send_message, get_conversation, list_conversations, create_bounty, list_bounties, get_bounty, get_applications, accept_application, reject_application, create_booking, fund_escrow, submit_review, get_reviews",
         "Each tool maps to the corresponding REST API endpoint",
-        "API key passed via ANALOGLABOR_API_KEY env var",
-        "Base URL configurable via ANALOGLABOR_API_URL env var (defaults to https://api.analoglabor.com/v1)",
-        "npx analoglabor-mcp starts the server without errors",
+        "API key passed via ANALOG_RESEARCH_API_KEY env var",
+        "Base URL configurable via ANALOG_RESEARCH_API_URL env var (defaults to https://api.analog-research.org/v1)",
+        "npx analogresearch-mcp starts the server without errors",
         "package.json has correct bin field, name, version, description",
         "README.md includes installation instructions, config example for Claude/Cursor, and tool descriptions",
         "TypeScript compiles with zero errors",
@@ -286,7 +286,7 @@
       "description": "Ensure the project builds and deploys correctly on Netlify. Verify netlify.toml, environment variables, and Next.js SSR functions all work.",
       "acceptanceCriteria": [
         "netlify.toml is correctly configured for Next.js with @netlify/plugin-nextjs",
-        "pnpm install && pnpm turbo build --filter=@analoglabor/web succeeds with zero errors",
+        "pnpm install && pnpm turbo build --filter=@analogresearch/web succeeds with zero errors",
         "All API routes work as Netlify Functions (test locally with netlify dev if possible)",
         "Environment variables documented in .env.local.example with all required keys listed",
         ".gitignore includes .env, .env.local, node_modules, .next, dist",

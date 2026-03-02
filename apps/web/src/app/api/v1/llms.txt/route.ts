@@ -17,8 +17,8 @@ Public status: browse pages are open in pre-launch mode, and listed humans/bount
 
 All write operations require an API key. Read operations (browsing humans, bounties) are public.
 
-**Header:** X-API-Key: al_live_YOUR_KEY_HERE
-**Alternative:** Authorization: Bearer al_live_YOUR_KEY_HERE
+**Header:** X-API-Key: ar_live_YOUR_KEY_HERE
+**Alternative:** Authorization: Bearer ar_live_YOUR_KEY_HERE
 
 To generate an API key, you need a human account first. Use the web dashboard at https://analog-research.org
 to create an account and generate keys at /dashboard/settings.
@@ -480,7 +480,7 @@ Response:
 {
   "success": true,
   "data": {
-    "key": "al_live_abc123...",  // Only shown once!
+    "key": "ar_live_abc123...",  // Only shown once!
     "name": "My API Key",
     "created_at": "..."
   }
@@ -562,12 +562,12 @@ For Claude, Cursor, and other AI assistants, use our MCP server:
 ### Installation
 
 \`\`\`bash
-npm install -g analoglabor-mcp
+npm install -g analogresearch-mcp
 # or
-npx analoglabor-mcp
+npx analogresearch-mcp
 \`\`\`
 
-Compatibility note: package/env names still use \`analoglabor\` (\`analoglabor-mcp\`, \`ANALOGLABOR_API_KEY\`) while the product brand is Analog Research.
+Compatibility note: package/env names still use \`analogresearch\` (\`analogresearch-mcp\`, \`ANALOG_RESEARCH_API_KEY\`) while the product brand is Analog Research.
 
 ### Claude Desktop Configuration
 
@@ -581,10 +581,10 @@ Add to your Claude Desktop config file:
   "mcpServers": {
     "analog-research": {
       "command": "npx",
-      "args": ["analoglabor-mcp"],
+      "args": ["analogresearch-mcp"],
       "env": {
-        "ANALOGLABOR_API_KEY": "al_live_YOUR_KEY_HERE",
-        "ANALOGLABOR_API_URL": "https://api.analog-research.org/v1"
+        "ANALOG_RESEARCH_API_KEY": "ar_live_YOUR_KEY_HERE",
+        "ANALOG_RESEARCH_API_URL": "https://api.analog-research.org/v1"
       }
     }
   }
@@ -599,9 +599,9 @@ Add to your Cursor MCP settings:
 {
   "analog-research": {
     "command": "npx",
-    "args": ["analoglabor-mcp"],
+    "args": ["analogresearch-mcp"],
     "env": {
-      "ANALOGLABOR_API_KEY": "al_live_YOUR_KEY_HERE"
+      "ANALOG_RESEARCH_API_KEY": "ar_live_YOUR_KEY_HERE"
     }
   }
 }

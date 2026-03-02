@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '../../..')
 // ---------------------------------------------------------------------------
 
 function extractMcpToolNames(): string[] {
-  const toolsFile = path.join(repoRoot, 'packages/analoglabor-mcp/src/tools.ts')
+  const toolsFile = path.join(repoRoot, 'packages/analogresearch-mcp/src/tools.ts')
   const contents = fs.readFileSync(toolsFile, 'utf-8')
   const names: string[] = []
   for (const match of contents.matchAll(/name:\s*'([a-z_]+)'/g)) {
@@ -127,7 +127,7 @@ describe('Docs source-of-truth parity', () => {
 
       const missing = canonical.filter(name => !documented.has(name))
       expect(missing, [
-        'MCP docs page is missing tools from packages/analoglabor-mcp/src/tools.ts:',
+        'MCP docs page is missing tools from packages/analogresearch-mcp/src/tools.ts:',
         ...missing.map(n => `  - ${n}`),
         '',
         'Update apps/web/src/app/mcp/page.tsx to include these tools.',
@@ -140,7 +140,7 @@ describe('Docs source-of-truth parity', () => {
 
       const stale = documented.filter(name => !canonical.has(name))
       expect(stale, [
-        'MCP docs page lists tools not found in packages/analoglabor-mcp/src/tools.ts:',
+        'MCP docs page lists tools not found in packages/analogresearch-mcp/src/tools.ts:',
         ...stale.map(n => `  - ${n}`),
         '',
         'Remove these from apps/web/src/app/mcp/page.tsx.',

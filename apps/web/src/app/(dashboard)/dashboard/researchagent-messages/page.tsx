@@ -37,7 +37,7 @@ async function getResearchAgentConversations(agentId: string): Promise<Conversat
     .limit(1, { foreignTable: 'messages' })
 
   if (error) {
-    console.error('[molty-messages/page] Failed to fetch conversations:', error.message, error.code)
+    console.error('[researchagent-messages/page] Failed to fetch conversations:', error.message, error.code)
     return []
   }
 
@@ -100,7 +100,7 @@ export default async function ResearchAgentMessagesPage() {
             return (
               <Link
                 key={conv.id}
-                href={`/dashboard/molty-messages/${conv.id}`}
+                href={`/dashboard/researchagent-messages/${conv.id}`}
                 className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-colors"
               >
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">

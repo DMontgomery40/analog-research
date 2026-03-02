@@ -14,7 +14,7 @@ type JsonSchema = {
 
 const baseContext = {
   agent: { apiKeyId: 'key-1', agentId: 'agent-123', keyPrefix: 'prefix', scopes: ['write'] },
-  apiKey: 'analoglabor_test_key',
+  apiKey: 'ar_live_test_key',
   baseUrl: 'https://example.com/api/v1',
 }
 

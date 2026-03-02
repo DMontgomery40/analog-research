@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
+const RUN_INTEGRATION_TESTS = process.env.RUN_INTEGRATION_TESTS === 'true'
+const integrationDescribe = RUN_INTEGRATION_TESTS ? describe : describe.skip
+
 const API_BASE_URL = (
   process.env.TEST_API_BASE_URL
   || process.env.NEXT_PUBLIC_SITE_URL
   || process.env.NEXT_PUBLIC_APP_URL
-  || 'https://analoglabor.com'
+  || 'https://analog-research.org'
 ).replace(/\/$/, '')
 
 const BOOKING_ID = '00000000-0000-0000-0000-000000000000'
@@ -17,7 +20,7 @@ function expectNetlifyRuntime(response: Response) {
   expect(response.headers.get('x-nf-request-id')).toBeTruthy()
 }
 
-describe('Stripe escrow release + transfer (deployed invariants)', () => {
+integrationDescribe('Stripe escrow release + transfer (deployed invariants)', () => {
   it('protects auto-complete endpoint that can trigger capture/transfer (Netlify runtime)', async () => {
     const response = await fetch(buildUrl('/api/v1/bookings/auto-complete'), {
       method: 'POST',

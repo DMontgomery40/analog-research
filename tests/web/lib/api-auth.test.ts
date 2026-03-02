@@ -4,13 +4,13 @@ import { getKeyPrefix, hasAgentScope, hashApiKey } from '@/lib/api-auth'
 
 describe('api-auth helpers', () => {
   it('hashApiKey produces deterministic sha256 hashes', async () => {
-    const hash = await hashApiKey('analoglabor_example_key')
+    const hash = await hashApiKey('ar_live_example_key')
 
-    expect(hash).toBe('8a0c1fad703eb697aa2dcf7f513b7d12d54dd17ddc6e43213c387754ea4a8658')
+    expect(hash).toBe('677be7193daef62ef9ae6768b228b562f7721ca739042211712fb3246e17b61a')
   })
 
   it('getKeyPrefix returns the first 16 chars', () => {
-    expect(getKeyPrefix('analoglabor_abcdefghijklmnopqrstuvwxyz')).toBe('analoglabor_abcd')
+    expect(getKeyPrefix('ar_live_abcdefghijklmnopqrstuvwxyz')).toBe('ar_live_abcdefgh')
   })
 
   it('hasAgentScope checks scope membership safely', () => {

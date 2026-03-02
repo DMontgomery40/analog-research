@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Clock, DollarSign, Users, AlertTriangle, ShieldAlert } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
-import { formatResearchAgentDisplayName } from '@/lib/molty-display'
+import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 
 interface Bounty {
   id: string

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 const API_BASE_URL = (process.env.TEST_API_BASE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.NEXT_PUBLIC_APP_URL ||
-  'https://analoglabor.com').replace(/\/$/, '')
+  'https://analog-research.org').replace(/\/$/, '')
 
 const CONVERSATION_ID = '00000000-0000-0000-0000-000000000000'
 

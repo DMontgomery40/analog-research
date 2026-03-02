@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@analoglabor/ui'
+import { cn } from '@analogresearch/ui'
 import {
   CheckCircle,
   XCircle,

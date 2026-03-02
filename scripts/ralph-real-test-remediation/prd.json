@@ -1,5 +1,5 @@
 {
-  "project": "AnalogLabor Real Test Remediation",
+  "project": "Analog Research Real Test Remediation",
   "branchName": "codex/real-test-remediation",
   "description": "Convert every mocked test into real validation against deployed APIs or live integrations. No fake assertions.",
   "generatedAt": "2026-02-15T15:04:30.973Z",

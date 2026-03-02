@@ -176,7 +176,7 @@ describe('link-risk assessment', () => {
     const supabase = new FakeLinkRiskSupabase(new Map())
 
     const result = await assessLinkRisk(
-      'Check our docs at https://docs.analoglabor.com/getting-started',
+      'Check our docs at https://docs.analog-research.org/getting-started',
       supabase as never,
     )
 

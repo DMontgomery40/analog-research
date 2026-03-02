@@ -79,7 +79,7 @@ async function checkNetlifyFunction(apiBaseUrl) {
   const probeUrl = `${apiBaseUrl.replace(/\/$/, '')}/api/v1/welcome`
   const response = await fetch(probeUrl, {
     headers: {
-      'x-analoglabor-realness-probe': '1',
+      'x-analogresearch-realness-probe': '1',
       'cache-control': 'no-cache',
     },
   })
@@ -104,7 +104,7 @@ async function main() {
     envValue('TEST_API_BASE_URL')
     || envValue('NEXT_PUBLIC_SITE_URL')
     || envValue('NEXT_PUBLIC_APP_URL')
-    || 'https://analoglabor.com'
+    || 'https://analog-research.org'
   ).replace(/\/$/, '')
 
   if (isLocalHost(apiBaseUrl)) {

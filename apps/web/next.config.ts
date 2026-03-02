@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@analoglabor/ui', '@analoglabor/database', 'analoglabor-mcp'],
+  transpilePackages: ['@analogresearch/ui', '@analogresearch/database', 'analogresearch-mcp'],
   images: {
     remotePatterns: [
       {

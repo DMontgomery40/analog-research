@@ -3,11 +3,11 @@ import { describe, expect, it } from 'vitest'
 import { getSupabaseAuthCookieDomain } from '@/lib/supabase/cookie-domain'
 
 describe('getSupabaseAuthCookieDomain', () => {
-  it('returns a shared cookie domain for analoglabor hosts', () => {
-    expect(getSupabaseAuthCookieDomain('analoglabor.com')).toBe('.analoglabor.com')
-    expect(getSupabaseAuthCookieDomain('www.analoglabor.com')).toBe('.analoglabor.com')
-    expect(getSupabaseAuthCookieDomain('api.analoglabor.com')).toBe('.analoglabor.com')
-    expect(getSupabaseAuthCookieDomain('analoglabor.com:3000')).toBe('.analoglabor.com')
+  it('returns a shared cookie domain for analogresearch hosts', () => {
+    expect(getSupabaseAuthCookieDomain('analog-research.org')).toBe('.analog-research.org')
+    expect(getSupabaseAuthCookieDomain('www.analog-research.org')).toBe('.analog-research.org')
+    expect(getSupabaseAuthCookieDomain('api.analog-research.org')).toBe('.analog-research.org')
+    expect(getSupabaseAuthCookieDomain('analog-research.org:3000')).toBe('.analog-research.org')
   })
 
   it('does not set a domain for localhost/ip', () => {
