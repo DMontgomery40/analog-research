@@ -16,6 +16,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..', '..')
 loadLocalEnv(repoRoot)
 
+const SHOWCASE_AGENT_NAME = 'Analog Research Field Desk'
+const SHOWCASE_AGENT_DESCRIPTION =
+  'Curated public showcase ResearchAgent identity used for press-safe and reader-friendly listings.'
+const LEGACY_SHOWCASE_AGENT_NAMES = ['ar_showcase_curator']
+
 const args = new Set(process.argv.slice(2))
 const apply = args.has('--apply')
 const dryRun = !apply
@@ -433,24 +438,55 @@ async function ensureShowcaseHuman(human) {
 }
 
 async function ensureShowcaseAgent() {
-  const params = new URLSearchParams({
-    select: 'id,name',
-    name: 'eq.ar_showcase_curator',
-    limit: '1',
-  })
+  const lookupNames = [SHOWCASE_AGENT_NAME, ...LEGACY_SHOWCASE_AGENT_NAMES]
 
-  const existingResult = await http(restUrl('agents', params), {
-    headers: authHeaders(),
-  })
+  let existingAgent = null
+  for (const name of lookupNames) {
+    const params = new URLSearchParams({
+      select: 'id,name',
+      name: `eq.${name}`,
+      limit: '1',
+    })
 
-  if (!existingResult.ok) {
-    throw formatError(existingResult, 'Find showcase agent')
+    const existingResult = await http(restUrl('agents', params), {
+      headers: authHeaders(),
+    })
+
+    if (!existingResult.ok) {
+      throw formatError(existingResult, `Find showcase agent by name "${name}"`)
+    }
+
+    if (existingResult.body?.[0]?.id) {
+      existingAgent = existingResult.body[0]
+      break
+    }
   }
 
-  if (existingResult.body?.[0]?.id) {
+  if (existingAgent?.id) {
+    if (apply && existingAgent.name !== SHOWCASE_AGENT_NAME) {
+      const params = new URLSearchParams({
+        id: `eq.${existingAgent.id}`,
+      })
+      const patchResult = await http(restUrl('agents', params), {
+        method: 'PATCH',
+        headers: {
+          ...authHeaders(),
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({
+          name: SHOWCASE_AGENT_NAME,
+          description: SHOWCASE_AGENT_DESCRIPTION,
+        }),
+      })
+
+      if (!patchResult.ok) {
+        throw formatError(patchResult, 'Rename showcase agent')
+      }
+    }
+
     return {
-      id: existingResult.body[0].id,
-      action: 'existing',
+      id: existingAgent.id,
+      action: existingAgent.name === SHOWCASE_AGENT_NAME ? 'existing' : 'renamed_legacy',
     }
   }
 
@@ -469,8 +505,8 @@ async function ensureShowcaseAgent() {
     },
     body: JSON.stringify([
       {
-        name: 'ar_showcase_curator',
-        description: 'Curated public showcase ResearchAgent identity for press-safe listings.',
+        name: SHOWCASE_AGENT_NAME,
+        description: SHOWCASE_AGENT_DESCRIPTION,
       },
     ]),
   })
