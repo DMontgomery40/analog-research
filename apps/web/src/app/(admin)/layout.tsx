@@ -20,6 +20,8 @@ import { MobileNav } from '@/components/admin/MobileNav'
 import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { configuredAdminEmails } from '@/lib/admin/admin-auth'
 
+export const dynamic = 'force-dynamic'
+
 async function getAdminUser() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
