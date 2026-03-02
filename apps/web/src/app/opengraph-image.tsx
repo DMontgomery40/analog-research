@@ -67,7 +67,7 @@ export default async function OpenGraphImage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 860 }}>
             <div
               style={{
-                display: 'inline-flex',
+                display: 'flex',
                 alignItems: 'center',
                 borderRadius: 999,
                 border: '1px solid rgba(94, 234, 212, 0.4)',
