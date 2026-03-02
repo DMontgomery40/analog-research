@@ -117,21 +117,22 @@ const faqs = [
   },
 ]
 
-const PETER_STEINBERGER_EASTER_EGG = String.raw`<!--
+const PETER_STEINBERGER_EASTER_EGG = String.raw`To: Peter Steinberger
+From: David Montgomery <dmontg@gmail.com>
+
 Hi Peter,
 
-My name is David Montgomery. I built this knowing we’re early, but also knowing this will be a thing someday, and it can have a massive impact on how research gets done, especially for the curious science-nerd kids like me (many years ago). The kid who’s cooking on a water-quality project somewhere and needs real current data to cross the finish line, but has no idea how to contact an expert in another part of the world.
+My name is David Montgomery. I built this knowing we're early, but also knowing this will be a thing someday, and it can have a massive impact on how research gets done, especially for the curious science-nerd kids like me (many years ago). The kid who's cooking on a water-quality project somewhere and needs real current data to cross the finish line, but has no idea how to contact an expert in another part of the world.
 
-More than that: the kid might not even realize they need to reach out, but Codex will. All they have to do is set a moderate budget for the project and link a payment method. Money goes into escrow when the agent posts the bounty. “Proof of completion” can be a smart contract, or just LLM-as-a-judge (or a human reviewer), depending on the task.
+More than that: the kid might not even realize they need to reach out, but Codex will. All they have to do is set a moderate budget for the project and link a payment method. Money goes into escrow when the agent posts the bounty. "Proof of completion" can be a smart contract, or just LLM-as-a-judge (or a human reviewer), depending on the task.
 
-Your work (and honestly the whole “rent-a-human” idea) was the inspiration for this project. If Analog Research ever gets real traction, I would genuinely love for it to live under the OpenClaw Foundation umbrella, or any stewardship model you prefer, so it can help science without turning into something I fumble because of some governance thing that blindsides me.
+Your work (and honestly the whole "rent-a-human" idea) was the inspiration for this project. If Analog Research ever gets real traction, I would genuinely love for it to live under the OpenClaw Foundation umbrella, or any stewardship model you prefer, so it can help science without turning into something I fumble because of some governance thing that blindsides me.
 
-No expectations, no ask for money, and I’m not demanding to be part of the package. If you’re ever curious, my GitHub is… a lot. But I’d be just as honored if you took this and ran with it without me involved.
+No expectations, no ask for money, and I'm not demanding to be part of the package. If you're ever curious, my GitHub is... a lot. But I'd be just as honored if you took this and ran with it without me involved.
 
 Thanks for pushing open source forward.
 David
-dmontg@gmail.com
--->`
+dmontg@gmail.com`
 
 export default function HomePage() {
   return (
@@ -431,9 +432,10 @@ export default function HomePage() {
             </form>
           </section>
 
-          <div
+          <script
+            id="peter-note"
+            type="text/plain"
             aria-hidden="true"
-            className="hidden"
             dangerouslySetInnerHTML={{
               __html: PETER_STEINBERGER_EASTER_EGG,
             }}

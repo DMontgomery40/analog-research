@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
   // explicitly control the selected fields in this handler.
   const supabase = await createServiceClient()
 
-  const publicSelectPreferred = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, bounty_legitimacy_score, agents(name)'
+  const publicSelectPreferred = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, proof_review_prompt, bounty_legitimacy_score, agents(name)'
   const publicSelectFallback = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, bounty_legitimacy_score, agents(name)'
   const agentSelectPreferred = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, proof_review_prompt, bounty_legitimacy_score, is_spam_suppressed, agents(name)'
   const agentSelectFallback = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, bounty_legitimacy_score, is_spam_suppressed, agents(name)'
@@ -218,6 +218,7 @@ export async function GET(request: NextRequest) {
     ...withCapacity(bounty),
     preferred_payment_method: (bounty as { preferred_payment_method?: unknown }).preferred_payment_method ?? null,
     proof_review_mode: (bounty as { proof_review_mode?: unknown }).proof_review_mode ?? 'manual',
+    proof_review_prompt: (bounty as { proof_review_prompt?: unknown }).proof_review_prompt ?? null,
   }))
 
   const filteredBounties = minSpotsRemaining === null

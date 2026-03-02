@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
-import { Clock, DollarSign, Users, Search, AlertTriangle, ShieldAlert, MapPin } from 'lucide-react'
+import { Clock, DollarSign, Users, Search, AlertTriangle, ShieldAlert } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
 import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
@@ -10,12 +10,14 @@ import { SimpleSiteFooter } from '@/components/seo/simple-site-footer'
 import { TESTING_DATA_NOTICE } from '@/lib/brand'
 import { formatDate } from '@/lib/format-date'
 import { parseBountyDescription } from '@/lib/bounty-description'
+import { formatPaymentRailLabel } from '@/lib/payment-rail'
 import {
   getPublicShowcaseConfig,
   isPublicShowcaseCuratedMode,
   shouldFailClosedPublicBounties,
 } from '@/lib/public-showcase'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
+import { isMissingColumnError } from '@/lib/supabase/errors'
 
 export const metadata: Metadata = {
   title: 'Open Bounties | Analog Research',
@@ -35,6 +37,11 @@ interface Bounty {
   application_count: number
   spots_available: number
   spots_filled: number
+  pricing_mode: 'bid' | 'fixed_per_spot'
+  fixed_spot_amount: number | null
+  preferred_payment_method: 'stripe' | 'crypto' | null
+  proof_review_mode: 'manual' | 'llm_assisted'
+  proof_review_prompt: string | null
   bounty_legitimacy_score?: number
   bounty_legitimacy_confidence?: number
   created_at: string
@@ -53,26 +60,50 @@ async function getBounties(limit: number, offset: number): Promise<{ bounties: B
 
   const supabase = await createServiceClient()
 
-  let query = supabase
-    .from('bounties')
-    .select('id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)', { count: 'exact' })
-    .or('is_spam_suppressed.is.false,is_spam_suppressed.is.null')
-    .eq('status', 'open')
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1)
+  const selectPreferred = 'id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, pricing_mode, fixed_spot_amount, preferred_payment_method, proof_review_mode, proof_review_prompt, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
+  const selectFallback = 'id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, pricing_mode, fixed_spot_amount, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
 
-  if (isPublicShowcaseCuratedMode(showcaseConfig)) {
-    query = query.in('id', showcaseConfig.bountyIds)
+  const fetchBounties = (select: string) => {
+    let query = supabase
+      .from('bounties')
+      .select(select, { count: 'exact' })
+      .or('is_spam_suppressed.is.false,is_spam_suppressed.is.null')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+
+    if (isPublicShowcaseCuratedMode(showcaseConfig)) {
+      query = query.in('id', showcaseConfig.bountyIds)
+    }
+
+    return query
   }
 
-  const { data, error, count } = await query
+  const preferredResult = await fetchBounties(selectPreferred)
+  let data = preferredResult.data
+  let error = preferredResult.error
+  let count = preferredResult.count
+
+  if (isMissingColumnError(error, { table: 'bounties' })) {
+    const fallbackResult = await fetchBounties(selectFallback)
+    data = fallbackResult.data
+    error = fallbackResult.error
+    count = fallbackResult.count
+  }
 
   if (error) {
     console.error('Failed to fetch bounties:', error.message)
     return { bounties: [], total: 0, error: 'Failed to load bounties. Please try again later.' }
   }
 
-  return { bounties: (data || []) as unknown as Bounty[], total: count ?? 0, error: null }
+  const normalized = ((data || []) as unknown as Array<Record<string, unknown>>).map((bounty) => ({
+    ...bounty,
+    preferred_payment_method: (bounty.preferred_payment_method as 'stripe' | 'crypto' | null | undefined) ?? null,
+    proof_review_mode: (bounty.proof_review_mode as 'manual' | 'llm_assisted' | undefined) ?? 'manual',
+    proof_review_prompt: (bounty.proof_review_prompt as string | null | undefined) ?? null,
+  })) as unknown as Bounty[]
+
+  return { bounties: normalized, total: count ?? 0, error: null }
 }
 
 export default async function PublicBountiesPage({
@@ -218,6 +249,11 @@ export default async function PublicBountiesPage({
                         <p className="text-muted-foreground line-clamp-3 mb-4">
                           {parsed.body}
                         </p>
+                        {parsed.context && (
+                          <p className="mb-4 rounded-md border border-border/70 bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+                            <span className="font-semibold text-foreground">Context:</span> {parsed.context}
+                          </p>
+                        )}
 
                         <div className="flex flex-wrap gap-2 mb-4">
                           {bounty.skills_required.slice(0, 5).map((skill: string) => (
@@ -231,6 +267,33 @@ export default async function PublicBountiesPage({
                           {bounty.skills_required.length > 5 && (
                             <span className="px-2.5 py-0.5 bg-muted text-muted-foreground rounded-full text-sm">
                               +{bounty.skills_required.length - 5} more
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mb-4 flex flex-wrap gap-2 text-xs">
+                          {parsed.location && (
+                            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-primary">
+                              Location: <span className="font-semibold text-primary">{parsed.location}</span>
+                            </span>
+                          )}
+                          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-muted-foreground">
+                            Payment: <span className="font-medium text-foreground">{formatPaymentRailLabel(bounty.preferred_payment_method)}</span>
+                          </span>
+                          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-muted-foreground">
+                            Pricing: <span className="font-medium text-foreground">{bounty.pricing_mode === 'fixed_per_spot' ? 'Fixed per spot' : 'Bid'}</span>
+                          </span>
+                          {bounty.pricing_mode === 'fixed_per_spot' && bounty.fixed_spot_amount ? (
+                            <span className="rounded-full border border-border bg-background px-2.5 py-1 text-muted-foreground">
+                              Spot amount: <span className="font-medium text-foreground">{bounty.currency} {(bounty.fixed_spot_amount / 100).toFixed(0)}</span>
+                            </span>
+                          ) : null}
+                          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-muted-foreground">
+                            Proof review: <span className="font-medium text-foreground">{bounty.proof_review_mode === 'llm_assisted' ? 'LLM-as-judge' : 'Manual'}</span>
+                          </span>
+                          {bounty.proof_review_mode === 'llm_assisted' && bounty.proof_review_prompt && (
+                            <span className="rounded-full border border-border bg-background px-2.5 py-1 text-muted-foreground">
+                              Proof prompt: <span className="font-medium text-foreground">Configured</span>
                             </span>
                           )}
                         </div>
@@ -250,12 +313,6 @@ export default async function PublicBountiesPage({
                             <Users className="w-4 h-4" />
                             <span>Spots {bounty.spots_filled}/{bounty.spots_available}</span>
                           </div>
-                          {parsed.location && (
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="w-4 h-4" />
-                              <span>{parsed.location}</span>
-                            </div>
-                          )}
                           {bounty.deadline && (
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Clock, DollarSign, Users, MapPin } from 'lucide-react'
+import { Clock, DollarSign, Users } from 'lucide-react'
 
 import { createServiceClient } from '@/lib/supabase/server'
 import { PublicNav } from '@/components/public-nav'
@@ -22,7 +22,11 @@ interface BountyDetails {
   budget_min: number
   budget_max: number
   currency: string
+  pricing_mode: 'bid' | 'fixed_per_spot'
+  fixed_spot_amount: number | null
   preferred_payment_method: 'stripe' | 'crypto' | null
+  proof_review_mode: 'manual' | 'llm_assisted'
+  proof_review_prompt: string | null
   deadline: string | null
   status: string
   application_count: number
@@ -54,8 +58,8 @@ async function getBounty(id: string): Promise<BountyDetails | null> {
 
   const supabase = await createServiceClient()
 
-  const publicSelectPreferred = 'id, title, description, skills_required, budget_min, budget_max, currency, preferred_payment_method, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
-  const publicSelectFallback = 'id, title, description, skills_required, budget_min, budget_max, currency, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
+  const publicSelectPreferred = 'id, title, description, skills_required, budget_min, budget_max, currency, pricing_mode, fixed_spot_amount, preferred_payment_method, proof_review_mode, proof_review_prompt, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
+  const publicSelectFallback = 'id, title, description, skills_required, budget_min, budget_max, currency, pricing_mode, fixed_spot_amount, deadline, status, application_count, spots_available, spots_filled, bounty_legitimacy_score, bounty_legitimacy_confidence, created_at, moderation_decision, is_spam_suppressed, agents(name)'
 
   const fetchBounty = (select: string) => supabase
     .from('bounties')
@@ -68,7 +72,7 @@ async function getBounty(id: string): Promise<BountyDetails | null> {
   let data = preferredResult.data
   let error = preferredResult.error
 
-  // Stay compatible with environments that haven't migrated preferred_payment_method yet.
+  // Stay compatible with environments that haven't migrated payout/proof columns yet.
   if (isMissingColumnError(error, { table: 'bounties' })) {
     const fallbackResult = await fetchBounty(publicSelectFallback)
     data = fallbackResult.data
@@ -76,10 +80,20 @@ async function getBounty(id: string): Promise<BountyDetails | null> {
   }
 
   if (error || !data) return null
-  const bounty = data as unknown as Record<string, unknown> & { preferred_payment_method?: 'stripe' | 'crypto' | null }
+  const bounty = data as unknown as Record<string, unknown> & {
+    pricing_mode?: 'bid' | 'fixed_per_spot'
+    fixed_spot_amount?: number | null
+    preferred_payment_method?: 'stripe' | 'crypto' | null
+    proof_review_mode?: 'manual' | 'llm_assisted'
+    proof_review_prompt?: string | null
+  }
   return {
     ...bounty,
+    pricing_mode: bounty.pricing_mode ?? 'bid',
+    fixed_spot_amount: bounty.fixed_spot_amount ?? null,
     preferred_payment_method: bounty.preferred_payment_method ?? null,
+    proof_review_mode: bounty.proof_review_mode ?? 'manual',
+    proof_review_prompt: bounty.proof_review_prompt ?? null,
   } as unknown as BountyDetails
 }
 
@@ -188,12 +202,6 @@ export default async function PublicBountyDetailsPage(
                   </div>
                 )}
               </div>
-              {parsedDescription.location && (
-                <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{parsedDescription.location}</span>
-                </div>
-              )}
             </div>
 
             <QualityScoreBadge
@@ -221,11 +229,6 @@ export default async function PublicBountyDetailsPage(
 
         <section className="bg-card border border-border rounded-xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-3">Description</h2>
-          {parsedDescription.context && (
-            <p className="mb-4 rounded-md border border-border/70 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Context:</span> {parsedDescription.context}
-            </p>
-          )}
           <p className="text-muted-foreground whitespace-pre-wrap">{parsedDescription.body}</p>
         </section>
 
@@ -246,17 +249,45 @@ export default async function PublicBountyDetailsPage(
         )}
 
         <section className="bg-card border border-border rounded-xl p-6 mb-8">
-          <h2 className="text-lg font-semibold mb-3">Payment</h2>
-          <p className="text-sm text-muted-foreground">
-            Payment rail:{' '}
-            <span className="font-medium text-foreground">
-              {formatPaymentRailLabel(bounty.preferred_payment_method)}
-            </span>
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Escrow funding model:{' '}
-            <span className="font-medium text-foreground">deferred per booking (after acceptance)</span>
-          </p>
+          <h2 className="text-lg font-semibold mb-3">Execution parameters</h2>
+          <dl className="space-y-2 text-sm">
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">location</dt>
+              <dd className="font-medium text-foreground">{parsedDescription.location ?? 'Not provided'}</dd>
+            </div>
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">context</dt>
+              <dd className="text-muted-foreground">{parsedDescription.context ?? 'Not provided'}</dd>
+            </div>
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">payment_rail</dt>
+              <dd className="font-medium text-foreground">{formatPaymentRailLabel(bounty.preferred_payment_method)}</dd>
+            </div>
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">pricing_mode</dt>
+              <dd className="font-medium text-foreground">{bounty.pricing_mode === 'fixed_per_spot' ? 'fixed_per_spot' : 'bid'}</dd>
+            </div>
+            {bounty.pricing_mode === 'fixed_per_spot' && bounty.fixed_spot_amount !== null && (
+              <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+                <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">fixed_spot_amount</dt>
+                <dd className="font-medium text-foreground">{bounty.currency} {(bounty.fixed_spot_amount / 100).toFixed(0)}</dd>
+              </div>
+            )}
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">proof_review_mode</dt>
+              <dd className="font-medium text-foreground">{bounty.proof_review_mode === 'llm_assisted' ? 'llm_assisted (LLM-as-judge)' : 'manual'}</dd>
+            </div>
+            {bounty.proof_review_mode === 'llm_assisted' && bounty.proof_review_prompt && (
+              <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+                <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">proof_review_prompt</dt>
+                <dd className="text-muted-foreground whitespace-pre-wrap">{bounty.proof_review_prompt}</dd>
+              </div>
+            )}
+            <div className="grid gap-1 rounded-md border border-border/70 bg-muted/25 px-3 py-2 md:grid-cols-[220px_1fr]">
+              <dt className="font-semibold uppercase tracking-[0.08em] text-[11px] text-muted-foreground">escrow_funding_model</dt>
+              <dd className="font-medium text-foreground">deferred_per_booking</dd>
+            </div>
+          </dl>
         </section>
 
         <section className="bg-primary/5 border border-primary/20 rounded-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

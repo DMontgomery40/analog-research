@@ -90,7 +90,7 @@ export async function GET(
 
   const bountyClient = isOwner && service ? service : anon
   const ownerSelect = '*, agents(name, rating_average)'
-  const publicSelect = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, bounty_legitimacy_score, agents(name, rating_average)'
+  const publicSelect = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, proof_review_prompt, bounty_legitimacy_score, agents(name, rating_average)'
   const publicSelectFallback = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, bounty_legitimacy_score, agents(name, rating_average)'
 
   const initialResult = isOwner
@@ -178,6 +178,7 @@ export async function GET(
       ...withCapacity(bounty),
       preferred_payment_method: bounty.preferred_payment_method ?? null,
       proof_review_mode: bounty.proof_review_mode ?? 'manual',
+      proof_review_prompt: bounty.proof_review_prompt ?? null,
       applications,
     },
   })
