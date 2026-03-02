@@ -89,7 +89,9 @@ export async function GET(request: NextRequest) {
     if (rateLimitResponse) return rateLimitResponse
   }
 
-  const supabase = agent ? await createServiceClient() : await createClient()
+  // Public bounty feeds should not depend on anon RLS joins. Use service reads and
+  // explicitly control the selected fields in this handler.
+  const supabase = await createServiceClient()
 
   const publicSelectPreferred = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, preferred_payment_method, proof_review_mode, bounty_legitimacy_score, agents(name)'
   const publicSelectFallback = 'id, agent_id, title, description, skills_required, budget_min, budget_max, deadline, status, application_count, view_count, created_at, updated_at, spots_available, spots_filled, pricing_mode, fixed_spot_amount, currency, bounty_legitimacy_score, agents(name)'

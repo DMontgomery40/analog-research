@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { Clock, DollarSign, Users, AlertTriangle, ShieldAlert } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
@@ -25,7 +25,7 @@ interface Bounty {
 }
 
 async function getBounties(): Promise<Bounty[]> {
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const { data } = await supabase
     .from('bounties')
