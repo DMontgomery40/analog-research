@@ -8,6 +8,8 @@ import { Toaster } from '@analogresearch/ui'
 import { DashboardNavLink } from '@/components/dashboard/NavLink'
 import { DashboardMobileNav } from '@/components/dashboard/MobileNav'
 
+export const dynamic = 'force-dynamic'
+
 async function getUser() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

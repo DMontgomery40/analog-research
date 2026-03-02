@@ -4,6 +4,8 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { resolveSessionOwnerAgent } from '@/lib/session-owner-agent'
 import { MessageSquare } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface Message {
   id: string
   content: string
