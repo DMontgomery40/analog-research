@@ -8,6 +8,7 @@ import {
   validateAndNormalizeSocialLinks,
 } from '@/lib/social-links'
 import { logger } from '@/lib/logger'
+import { getPublicShowcaseConfig, isHumanPubliclyVisible } from '@/lib/public-showcase'
 import { handleSingleResult, isMissingColumnError } from '@/lib/supabase/errors'
 import { z } from 'zod'
 
@@ -39,6 +40,10 @@ export async function GET(
 ) {
   const log = logger.withContext('api/v1/humans/[id]/route.ts', 'GET')
   const { id } = await params
+  const showcaseConfig = getPublicShowcaseConfig()
+  if (!isHumanPubliclyVisible(id, showcaseConfig)) {
+    return NextResponse.json({ success: false, error: 'Human not found' }, { status: 404 })
+  }
   const supabase = await createServiceClient()
 
   const preferredSelect = `

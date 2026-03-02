@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   MapPin,
@@ -24,6 +25,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { coerceSocialLinksFromRow } from '@/lib/social-links'
 import { formatDate } from '@/lib/format-date'
 import { logger } from '@/lib/logger'
+import { getPublicShowcaseConfig, isHumanPubliclyVisible } from '@/lib/public-showcase'
 import { isMissingColumnError } from '@/lib/supabase/errors'
 import { TESTING_DATA_NOTICE } from '@/lib/brand'
 
@@ -90,6 +92,11 @@ const humanProfileLog = logger.withContext('app/humans/[id]/page.tsx', 'getHuman
 
 async function getHuman(id: string): Promise<GetHumanResult> {
   try {
+    const showcaseConfig = getPublicShowcaseConfig()
+    if (!isHumanPubliclyVisible(id, showcaseConfig)) {
+      return { kind: 'not_found' }
+    }
+
     const supabase = await createServiceClient()
 
     const preferredSelect = `
@@ -395,6 +402,12 @@ export default async function HumanProfilePage({
           <p className="mb-6 rounded-md border border-amber-300/50 bg-amber-100/70 px-3 py-2 text-sm text-amber-950">
             {TESTING_DATA_NOTICE}
           </p>
+          <p className="mb-6 text-xs text-muted-foreground">
+            Full endpoints + parameters:{' '}
+            <Link href="/api-docs#humans" className="text-primary hover:underline">REST</Link>
+            {' · '}
+            <Link href="/mcp#tools" className="text-primary hover:underline">MCP tools</Link>
+          </p>
           <div className="bg-card border border-destructive/50 rounded-xl p-12 text-center">
             <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
             <p className="text-muted-foreground">{result.message}</p>
@@ -448,6 +461,12 @@ export default async function HumanProfilePage({
         />
         <p className="mb-6 rounded-md border border-amber-300/50 bg-amber-100/70 px-3 py-2 text-sm text-amber-950">
           {TESTING_DATA_NOTICE}
+        </p>
+        <p className="mb-6 text-xs text-muted-foreground">
+          Full endpoints + parameters:{' '}
+          <Link href="/api-docs#humans" className="text-primary hover:underline">REST</Link>
+          {' · '}
+          <Link href="/mcp#tools" className="text-primary hover:underline">MCP tools</Link>
         </p>
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] gap-8">
