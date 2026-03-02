@@ -4,6 +4,7 @@ import { authenticateAgent, hasAgentScope } from '@/lib/api-auth'
 import { createBountySchema, createBountyWithModeration } from '@/lib/bounties/create-bounty'
 import { parseBoundedIntegerParam } from '@/lib/request-params'
 import { logger } from '@/lib/logger'
+import { parseBountyDescription } from '@/lib/bounty-description'
 import {
   getPublicShowcaseConfig,
   isPublicShowcaseCuratedMode,
@@ -207,6 +208,13 @@ export async function GET(request: NextRequest) {
     spots_available: number
     spots_filled: number
   }>).map((bounty) => ({
+    ...(function deriveDescriptionHints() {
+      const parsed = parseBountyDescription(String((bounty as { description?: unknown }).description || ''))
+      return {
+        location_hint: parsed.location,
+        context_hint: parsed.context,
+      }
+    })(),
     ...withCapacity(bounty),
     preferred_payment_method: (bounty as { preferred_payment_method?: unknown }).preferred_payment_method ?? null,
     proof_review_mode: (bounty as { proof_review_mode?: unknown }).proof_review_mode ?? 'manual',

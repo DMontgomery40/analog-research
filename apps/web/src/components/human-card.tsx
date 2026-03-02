@@ -75,7 +75,7 @@ export function HumanCard({ human }: HumanCardProps) {
           </div>
 
           {human.bio && (
-            <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
+            <p className="text-muted-foreground text-sm whitespace-pre-line line-clamp-4 mb-3">
               {human.bio}
             </p>
           )}

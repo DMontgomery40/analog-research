@@ -9,6 +9,7 @@ import { FieldCheckOrderForm } from '@/components/field-checks/FieldCheckOrderFo
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
 import { useToast } from '@analogresearch/ui'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
+import { formatPaymentRailLabel } from '@/lib/payment-rail'
 
 interface CapacityData {
   bounty_id: string
@@ -829,7 +830,7 @@ export default function BountyDetailPage() {
               <p>
                 Payment rail:{' '}
                 <span className="font-medium text-foreground">
-                  {bounty.preferred_payment_method ? bounty.preferred_payment_method : 'chosen when escrow is funded'}
+                  {formatPaymentRailLabel(bounty.preferred_payment_method)}
                 </span>
               </p>
               <p>

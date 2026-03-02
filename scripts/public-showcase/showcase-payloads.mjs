@@ -17,7 +17,13 @@ export const SHOWCASE_HUMANS = [
     key: 'coastal-biogeochemistry',
     email: 'showcase.coastal.biogeochemistry@analog-research.org',
     name: 'Dr. Elena Marquez',
-    bio: 'Coastal biogeochemist focused on nutrient flux, estuarine eutrophication, and field protocol design. I run reproducible sampling campaigns with chain-of-custody controls, calibration logs, and transparent QA/QC notes so downstream modelers can trust every measurement.',
+    bio: `I run coastal and estuarine field campaigns for nutrient chemistry, turbidity, and microplastics QA. If your model needs ground truth, I design sampling plans that survive peer review and replication.
+
+What I can do in practice: coordinate site permits, pre-label chain-of-custody kits, calibrate sondes against field standards, collect replicate grabs and sediments, and deliver clean CSV + photo evidence tied to sample IDs. I also include a short methods memo that calls out uncertainty, contamination controls, and any deviation.
+
+Background: PhD in marine biogeochemistry and 9+ years managing multi-team campaigns with graduate researchers and partner labs. I am cheerful at 6:30 a.m., but only after coffee and calibration checks, in that order.
+
+Schedule/travel note: this location is accurate for winter and spring (Monterey). From June through August I usually relocate to Bellingham, Washington for field season; I update location at the start of summer and can cover Pacific Northwest sites during that window.`,
     avatar_url: null,
     location: 'Monterey, California, USA',
     drive_radius_miles: 60,
@@ -56,7 +62,13 @@ export const SHOWCASE_HUMANS = [
     key: 'urban-heat-instrumentation',
     email: 'showcase.urban.heat.instrumentation@analog-research.org',
     name: 'Prof. Amina Okafor',
-    bio: 'Urban climate scientist specializing in heat-island instrumentation, pedestrian-level exposure mapping, and sensor intercomparison studies. I deliver publication-grade field notes with geospatial metadata, instrument serial tracking, and uncertainty summaries.',
+    bio: `I focus on urban heat-island measurement at the pedestrian scale: where people actually stand, wait, and walk. My work combines instrument setup, route design, and exposure mapping so data is useful for both climate analysis and public-health decisions.
+
+I can deploy and audit mixed sensor stacks (fixed loggers plus mobile transects), run intercomparison checks, and deliver timestamped outputs with serial-number tracking, mounting photos, and uncertainty notes. If your protocol says "repeatable," I treat that as a non-negotiable requirement.
+
+Background: professor of urban climate science with prior municipal heat-response consulting and summer field schools across the Midwest. I carry extra batteries like snacks; nobody gets stranded mid-run on my watch.
+
+Schedule/travel note: during academic terms I am mainly available in Chicago Tuesday-Thursday. From late May through early August I can take assignments across the Great Lakes corridor and nearby rail-connected cities.`,
     avatar_url: null,
     location: 'Chicago, Illinois, USA',
     drive_radius_miles: 30,
@@ -95,7 +107,13 @@ export const SHOWCASE_HUMANS = [
     key: 'remote-bioinformatics-verification',
     email: 'showcase.remote.bioinformatics@analog-research.org',
     name: 'Jordan Lee, MSc',
-    bio: 'Field-to-cloud microbiome analyst who combines on-site sample handling guidance with remote sequence validation and reproducible notebooks. I help teams close the loop from collection protocol to interpretable evidence with transparent assumptions and audit trails.',
+    bio: `I work at the handoff between field collection and analysis: the part where strong science can quietly break if metadata, controls, or file conventions drift. My role is to keep that handoff clean and reproducible through remote QA support.
+
+I can review sample-handling SOPs before field day, validate sequence and metadata packages after upload, and return analysis-ready tables plus notebook-based QA notes. Typical fixes include taxonomy normalization, duplicate sample-ID repair, contamination control flagging, and methods traceability checks. I do not perform in-person sample pickup or site visits for this profile.
+
+Background: MSc in computational biology, with mixed experience in wet-lab support and bioinformatics QA for microbiome and environmental DNA projects. If your headers look cursed, good news: I actually enjoy untangling them.
+
+Schedule/travel note: profile location is accurate for winter (Colorado Front Range). In summer I typically work from coastal Maine and update location accordingly; remote workflows stay continuous year-round.`,
     avatar_url: null,
     location: 'Remote (US)',
     drive_radius_miles: 0,
@@ -134,7 +152,10 @@ export const SHOWCASE_BOUNTIES = [
   {
     key: 'microplastics-river-transects',
     title: 'Microplastics Transect Validation Across Urban Rivers (Q2 2026)',
-    description: `Objective: validate microplastics concentration estimates produced by satellite-assisted watershed models using physically collected transect samples.
+    description: `Location: Denver metro watershed corridor (South Platte + Cherry Creek), Colorado, USA. On-site collection required.
+Context: We have strong satellite-assisted estimates, but we need physical transect samples to verify concentration bands before publishing the next model update.
+
+Thanks for looking at this project. We are looking for a field operator who can run a careful, low-drama sampling day and leave us with audit-ready evidence.
 
 Scope:
 - Collect paired surface-water and sediment samples at 6 pre-specified transect points.
@@ -149,7 +170,9 @@ Deliverables:
 Acceptance criteria:
 - Complete metadata for every sample.
 - No broken sample-ID links between photos and rows.
-- QA fields present and interpretable for independent re-analysis.`,
+- QA fields present and interpretable for independent re-analysis.
+
+Friendly note: if you can only cover part of the corridor, still apply and specify your travel radius in your application.`,
     skills_required: [
       'water quality sampling',
       'environmental QA/QC',
@@ -164,7 +187,7 @@ Acceptance criteria:
     preferred_payment_method: 'stripe',
     proof_review_mode: 'manual',
     spots_available: 4,
-    spots_filled: 1,
+    spots_filled: 0,
     status: 'open',
     deadline: '2026-06-30T23:59:59Z',
     bounty_legitimacy_score: 95,
@@ -174,7 +197,10 @@ Acceptance criteria:
   {
     key: 'pollinator-nocturnal-light-spectra',
     title: 'Nocturnal Pollinator Activity Survey with Spectral Light Controls',
-    description: `Objective: produce repeatable observations of nocturnal pollinator activity under varied artificial light spectra in peri-urban habitats.
+    description: `Location: Boulder-Longmont peri-urban habitat belt, Colorado, USA. Evening and night field windows required.
+Context: Our current model predicts nocturnal pollinator response to artificial light spectra; we now need consistent observational data to validate those predictions in real habitats.
+
+If this sounds like your kind of fieldwork, we would love your help. The work is structured, but we want observations from people who notice details and document uncertainty honestly.
 
 Scope:
 - Run synchronized 90-minute observation windows at 3 habitat sites over 4 nights.
@@ -189,7 +215,9 @@ Deliverables:
 Acceptance criteria:
 - Every observation row includes spectral condition and confidence tag.
 - Site-level coverage complete across all required windows.
-- Data package can be merged directly into model training set without schema edits.`,
+- Data package can be merged directly into model training set without schema edits.
+
+Friendly note: precision matters more than speed here. If you are methodical, you are exactly who we want.`,
     skills_required: [
       'ecology field methods',
       'species observation',
@@ -215,7 +243,10 @@ Acceptance criteria:
   {
     key: 'air-quality-colocation-audit',
     title: 'Community Air-Quality Sensor Co-Location and Drift Audit',
-    description: `Objective: assess drift and calibration stability in community-operated PM2.5 sensors via co-location against reference monitors.
+    description: `Location: Berlin and Potsdam metro area (Germany). On-site co-location work required; nearby regional travel is acceptable.
+Context: Community PM2.5 networks are highly valuable, but drift and installation variance can quietly degrade trust. This bounty funds a grounded co-location audit against reference stations.
+
+We are looking for someone who can combine technical rigor with practical field judgment. If you have done instrumentation checks in messy real-world conditions, this is a strong fit.
 
 Scope:
 - Co-locate low-cost sensors with reference stations for two 24-hour windows.
@@ -230,7 +261,9 @@ Deliverables:
 Acceptance criteria:
 - Paired time-series has no missing timestamps over active windows.
 - Calibration method and coefficients are explicitly documented.
-- Anomaly flags include rationale suitable for external audit.`,
+- Anomaly flags include rationale suitable for external audit.
+
+Friendly note: we care about transparent documentation, including "what did not go perfectly." Honest logs are a plus, not a penalty.`,
     skills_required: [
       'air quality monitoring',
       'sensor calibration',

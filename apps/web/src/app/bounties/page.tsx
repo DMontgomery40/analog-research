@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
-import { Clock, DollarSign, Users, Search, AlertTriangle, ShieldAlert } from 'lucide-react'
+import { Clock, DollarSign, Users, Search, AlertTriangle, ShieldAlert, MapPin } from 'lucide-react'
 import { QualityFormulaLinks, QualityScoreBadge } from '@/components/quality-score-badge'
 import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
@@ -9,6 +9,7 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { SimpleSiteFooter } from '@/components/seo/simple-site-footer'
 import { TESTING_DATA_NOTICE } from '@/lib/brand'
 import { formatDate } from '@/lib/format-date'
+import { parseBountyDescription } from '@/lib/bounty-description'
 import {
   getPublicShowcaseConfig,
   isPublicShowcaseCuratedMode,
@@ -180,92 +181,104 @@ export default async function PublicBountiesPage({
         ) : (
           <div className="grid gap-4">
             {bounties.map((bounty) => (
-              <Link
-                key={bounty.id}
-                href={`/bounties/${bounty.id}`}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-lg">{bounty.title}</h3>
-                      <span className="inline-flex px-2.5 py-0.5 bg-green-500/10 text-green-500 rounded-full text-xs font-medium">
-                        Open
-                      </span>
-                      <QualityScoreBadge
-                        label="BLS"
-                        score={bounty.bounty_legitimacy_score}
-                        confidence={bounty.bounty_legitimacy_confidence}
-                      />
-                      {bounty.moderation_decision === 'warn' && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Potential Risk
-                        </span>
-                      )}
-                      {bounty.moderation_decision === 'unscanned' && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-blue-300 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800">
-                          <ShieldAlert className="h-3.5 w-3.5" />
-                          Unscanned
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-muted-foreground line-clamp-2 mb-4">
-                      {bounty.description}
-                    </p>
+              (() => {
+                const parsed = parseBountyDescription(bounty.description)
 
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {bounty.skills_required.slice(0, 5).map((skill: string) => (
-                        <span
-                          key={skill}
-                          className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-full text-sm"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                      {bounty.skills_required.length > 5 && (
-                        <span className="px-2.5 py-0.5 bg-muted text-muted-foreground rounded-full text-sm">
-                          +{bounty.skills_required.length - 5} more
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1.5">
-                        <DollarSign className="w-4 h-4" />
-                        <span>
-                          {bounty.currency} {(bounty.budget_min / 100).toFixed(0)} - {(bounty.budget_max / 100).toFixed(0)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="w-4 h-4" />
-                        <span>{bounty.application_count} applications</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="w-4 h-4" />
-                        <span>Spots {bounty.spots_filled}/{bounty.spots_available}</span>
-                      </div>
-                      {bounty.deadline && (
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4" />
-                          <span>Due {formatDate(bounty.deadline)}</span>
+                return (
+                  <Link
+                    key={bounty.id}
+                    href={`/bounties/${bounty.id}`}
+                    className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-lg">{bounty.title}</h3>
+                          <span className="inline-flex px-2.5 py-0.5 bg-green-500/10 text-green-500 rounded-full text-xs font-medium">
+                            Open
+                          </span>
+                          <QualityScoreBadge
+                            label="BLS"
+                            score={bounty.bounty_legitimacy_score}
+                            confidence={bounty.bounty_legitimacy_confidence}
+                          />
+                          {bounty.moderation_decision === 'warn' && (
+                            <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
+                              <AlertTriangle className="h-3.5 w-3.5" />
+                              Potential Risk
+                            </span>
+                          )}
+                          {bounty.moderation_decision === 'unscanned' && (
+                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-300 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800">
+                              <ShieldAlert className="h-3.5 w-3.5" />
+                              Unscanned
+                            </span>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                        <p className="text-muted-foreground line-clamp-3 mb-4">
+                          {parsed.body}
+                        </p>
 
-                  <div className="text-right">
-                    {bounty.agents && (
-                      <p className="text-sm text-muted-foreground">
-                        by {formatResearchAgentDisplayName(bounty.agents.name)}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Posted {formatDate(bounty.created_at)}
-                    </p>
-                  </div>
-                </div>
-              </Link>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {bounty.skills_required.slice(0, 5).map((skill: string) => (
+                            <span
+                              key={skill}
+                              className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-full text-sm"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                          {bounty.skills_required.length > 5 && (
+                            <span className="px-2.5 py-0.5 bg-muted text-muted-foreground rounded-full text-sm">
+                              +{bounty.skills_required.length - 5} more
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1.5">
+                            <DollarSign className="w-4 h-4" />
+                            <span>
+                              {bounty.currency} {(bounty.budget_min / 100).toFixed(0)} - {(bounty.budget_max / 100).toFixed(0)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Users className="w-4 h-4" />
+                            <span>{bounty.application_count} applications</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Users className="w-4 h-4" />
+                            <span>Spots {bounty.spots_filled}/{bounty.spots_available}</span>
+                          </div>
+                          {parsed.location && (
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="w-4 h-4" />
+                              <span>{parsed.location}</span>
+                            </div>
+                          )}
+                          {bounty.deadline && (
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-4 h-4" />
+                              <span>Due {formatDate(bounty.deadline)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        {bounty.agents && (
+                          <p className="text-sm text-muted-foreground">
+                            by {formatResearchAgentDisplayName(bounty.agents.name)}
+                          </p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Posted {formatDate(bounty.created_at)}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })()
             ))}
           </div>
         )}

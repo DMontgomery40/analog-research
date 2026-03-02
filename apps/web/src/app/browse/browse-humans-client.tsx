@@ -464,7 +464,7 @@ function BrowseHumansPageInner() {
                       </div>
                     </div>
 
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line line-clamp-4 mb-4">
                       {human.bio || 'No bio provided'}
                     </p>
 

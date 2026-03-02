@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Clock, DollarSign, Users } from 'lucide-react'
+import { Clock, DollarSign, Users, MapPin } from 'lucide-react'
 
 import { createServiceClient } from '@/lib/supabase/server'
 import { PublicNav } from '@/components/public-nav'
 import { PublicResearchShell } from '@/components/public-research-shell'
 import { QualityScoreBadge } from '@/components/quality-score-badge'
 import { BRAND_NAME, SITE_URL, TESTING_DATA_NOTICE } from '@/lib/brand'
+import { parseBountyDescription } from '@/lib/bounty-description'
+import { formatPaymentRailLabel } from '@/lib/payment-rail'
 import { getPublicShowcaseConfig, isBountyPubliclyVisible } from '@/lib/public-showcase'
 import { formatResearchAgentDisplayName } from '@/lib/researchagent-display'
 import { isMissingColumnError } from '@/lib/supabase/errors'
@@ -91,7 +93,8 @@ export async function generateMetadata({
   if (!bounty) return { title: 'Bounty' }
 
   const canonicalPath = `/bounties/${bounty.id}`
-  const description = truncateText(bounty.description || '', 160)
+  const parsedDescription = parseBountyDescription(bounty.description || '')
+  const description = truncateText(parsedDescription.body, 160)
 
   return {
     title: bounty.title,
@@ -114,6 +117,7 @@ export default async function PublicBountyDetailsPage(
   const { id } = await params
   const bounty = await getBounty(id)
   if (!bounty) notFound()
+  const parsedDescription = parseBountyDescription(bounty.description || '')
   const spotsRemaining = Math.max(bounty.spots_available - bounty.spots_filled, 0)
   const salaryMin = bounty.budget_min / 100
   const salaryMax = bounty.budget_max / 100
@@ -122,7 +126,7 @@ export default async function PublicBountyDetailsPage(
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: bounty.title,
-    description: bounty.description.replace(/\s+/g, ' ').trim(),
+    description: parsedDescription.body.replace(/\s+/g, ' ').trim(),
     datePosted: new Date(bounty.created_at).toISOString(),
     employmentType: 'CONTRACTOR',
     hiringOrganization: {
@@ -184,6 +188,12 @@ export default async function PublicBountyDetailsPage(
                   </div>
                 )}
               </div>
+              {parsedDescription.location && (
+                <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span>{parsedDescription.location}</span>
+                </div>
+              )}
             </div>
 
             <QualityScoreBadge
@@ -211,7 +221,12 @@ export default async function PublicBountyDetailsPage(
 
         <section className="bg-card border border-border rounded-xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-3">Description</h2>
-          <p className="text-muted-foreground whitespace-pre-wrap">{bounty.description}</p>
+          {parsedDescription.context && (
+            <p className="mb-4 rounded-md border border-border/70 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">Context:</span> {parsedDescription.context}
+            </p>
+          )}
+          <p className="text-muted-foreground whitespace-pre-wrap">{parsedDescription.body}</p>
         </section>
 
         {bounty.skills_required?.length > 0 && (
@@ -235,7 +250,7 @@ export default async function PublicBountyDetailsPage(
           <p className="text-sm text-muted-foreground">
             Payment rail:{' '}
             <span className="font-medium text-foreground">
-              {bounty.preferred_payment_method || 'chosen when escrow is funded'}
+              {formatPaymentRailLabel(bounty.preferred_payment_method)}
             </span>
           </p>
           <p className="text-sm text-muted-foreground mt-1">

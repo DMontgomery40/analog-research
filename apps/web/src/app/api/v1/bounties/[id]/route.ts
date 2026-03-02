@@ -11,6 +11,7 @@ import {
 } from '@/lib/moderation'
 import { recomputeQualityForBountyBestEffort } from '@/lib/quality-score-recompute'
 import { logger } from '@/lib/logger'
+import { parseBountyDescription } from '@/lib/bounty-description'
 import { getPublicShowcaseConfig, isBountyPubliclyVisible } from '@/lib/public-showcase'
 import { handleSingleResult, isMissingColumnError, logOnError } from '@/lib/supabase/errors'
 import { z } from 'zod'
@@ -167,6 +168,13 @@ export async function GET(
   return NextResponse.json({
     success: true,
     data: {
+      ...(() => {
+        const parsed = parseBountyDescription(String(bounty.description || ''))
+        return {
+          location_hint: parsed.location,
+          context_hint: parsed.context,
+        }
+      })(),
       ...withCapacity(bounty),
       preferred_payment_method: bounty.preferred_payment_method ?? null,
       proof_review_mode: bounty.proof_review_mode ?? 'manual',

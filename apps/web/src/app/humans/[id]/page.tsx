@@ -442,6 +442,10 @@ export default async function HumanProfilePage({
   const driveRadiusLabel = typeof human.drive_radius_miles === 'number'
     ? (human.drive_radius_miles === 0 ? 'Remote only' : `Within ${human.drive_radius_miles} mi`)
     : null
+  const bioParagraphs = (human.bio || '')
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
 
   return (
     <div className="min-h-screen bg-background">
@@ -675,8 +679,12 @@ export default async function HumanProfilePage({
                   <span className="h-1 w-10 rounded-full bg-primary/60" />
                   <h2 className="text-lg font-semibold">About</h2>
                 </div>
-                <div className="prose prose-invert max-w-none text-muted-foreground">
-                  <p className="whitespace-pre-wrap">{human.bio}</p>
+                <div className="space-y-4 text-muted-foreground">
+                  {bioParagraphs.map((paragraph, index) => (
+                    <p key={`bio-paragraph-${index}`} className="whitespace-pre-wrap leading-relaxed">
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               </section>
             )}
