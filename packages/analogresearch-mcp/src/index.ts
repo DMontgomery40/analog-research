@@ -1,3 +1,4 @@
+import pino from 'pino'
 import { Server } from '@modelcontextprotocol/sdk/server/index.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
@@ -10,8 +11,180 @@ import { MCP_TOOLS } from './tools.js'
 const API_BASE_URL = process.env.ANALOG_RESEARCH_API_URL || 'https://analog-research.org/api/v1'
 const API_KEY = process.env.ANALOG_RESEARCH_API_KEY
 
+interface McpErrorOptions {
+  code?: string
+  status?: number
+  operatorHint?: string
+  details?: unknown
+  runId?: string
+  cause?: unknown
+}
+
+interface NormalizedMcpError {
+  name: string
+  message: string
+  code?: string
+  status?: number
+  operatorHint?: string
+  details?: unknown
+  runId?: string
+}
+
+class McpRuntimeError extends Error {
+  code?: string
+  status?: number
+  operatorHint?: string
+  details?: unknown
+  runId?: string
+
+  constructor(message: string, options: McpErrorOptions = {}) {
+    super(message)
+    this.name = 'McpRuntimeError'
+    this.code = options.code
+    this.status = options.status
+    this.operatorHint = options.operatorHint
+    this.details = options.details
+    this.runId = options.runId
+
+    if (options.cause !== undefined) {
+      ;(this as Error & { cause?: unknown }).cause = options.cause
+    }
+  }
+}
+
+const mcpLogger = pino(
+  {
+    level: process.env.LOG_LEVEL || 'info',
+    base: undefined,
+    messageKey: 'message',
+    timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
+    formatters: {
+      level: (label) => ({ level: label }),
+    },
+  },
+  pino.destination({ dest: 2, sync: true })
+).child({
+  context: {
+    file: 'packages/analogresearch-mcp/src/index.ts',
+    function: 'server',
+  },
+})
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function maybeString(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const trimmed = value.trim()
+  return trimmed ? trimmed : undefined
+}
+
+function maybeStatus(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) ? value : undefined
+}
+
+function normalizeMcpError(
+  error: unknown,
+  fallback: McpErrorOptions & { message?: string } = {}
+): NormalizedMcpError {
+  const message =
+    (typeof error === 'string' ? maybeString(error) : undefined) ??
+    maybeString(error instanceof Error ? error.message : isRecord(error) ? error.message : undefined) ??
+    fallback.message ??
+    'Unexpected MCP error'
+
+  const name =
+    maybeString(error instanceof Error ? error.name : isRecord(error) ? error.name : undefined) ??
+    'Error'
+
+  const code =
+    maybeString(isRecord(error) ? error.code : undefined) ??
+    (error instanceof Error ? maybeString((error as Error & { code?: unknown }).code) : undefined) ??
+    fallback.code
+
+  const status =
+    maybeStatus(isRecord(error) ? error.status : undefined) ??
+    (error instanceof Error ? maybeStatus((error as Error & { status?: unknown }).status) : undefined) ??
+    fallback.status
+
+  const operatorHint =
+    maybeString(isRecord(error) ? error.operatorHint : undefined) ??
+    (error instanceof Error
+      ? maybeString((error as Error & { operatorHint?: unknown }).operatorHint)
+      : undefined) ??
+    fallback.operatorHint
+
+  const runId =
+    maybeString(isRecord(error) ? error.runId : undefined) ??
+    (error instanceof Error ? maybeString((error as Error & { runId?: unknown }).runId) : undefined) ??
+    fallback.runId
+
+  const details =
+    (isRecord(error) && 'details' in error ? error.details : undefined) ?? fallback.details
+
+  return {
+    name,
+    message,
+    ...(code ? { code } : {}),
+    ...(status ? { status } : {}),
+    ...(operatorHint ? { operatorHint } : {}),
+    ...(details !== undefined ? { details } : {}),
+    ...(runId ? { runId } : {}),
+  }
+}
+
+function serializeMcpError(error: NormalizedMcpError) {
+  return {
+    name: error.name,
+    message: error.message,
+    ...(error.code ? { code: error.code } : {}),
+    ...(error.status ? { status: error.status } : {}),
+    ...(error.operatorHint ? { operatorHint: error.operatorHint } : {}),
+    ...(error.details !== undefined ? { details: error.details } : {}),
+    ...(error.runId ? { runId: error.runId } : {}),
+  }
+}
+
+function toMcpErrorText(error: unknown, fallback: McpErrorOptions & { message?: string } = {}) {
+  const normalized = normalizeMcpError(error, fallback)
+  return JSON.stringify(
+    {
+      success: false,
+      error: normalized.message,
+      ...(normalized.code ? { code: normalized.code } : {}),
+      ...(normalized.operatorHint ? { operatorHint: normalized.operatorHint } : {}),
+      ...(normalized.runId ? { runId: normalized.runId } : {}),
+    },
+    null,
+    2
+  )
+}
+
+function truncateText(value: string, maxLength: number): string {
+  if (value.length <= maxLength) return value
+  return `${value.slice(0, maxLength - 3)}...`
+}
+
+function isLocalApiUrl(url: string): boolean {
+  return /^(http:\/\/localhost|http:\/\/127\.0\.0\.1)(:\d+)?(\/|$)/.test(url)
+}
+
 if (!API_KEY) {
-  console.error('ANALOG_RESEARCH_API_KEY environment variable is required')
+  mcpLogger.error(
+    {
+      error: serializeMcpError(
+        normalizeMcpError(
+          new McpRuntimeError('ANALOG_RESEARCH_API_KEY environment variable is required', {
+            code: 'MISSING_API_KEY',
+            operatorHint: 'check API key env',
+          })
+        )
+      ),
+      operatorHint: 'check API key env',
+    },
+    'MCP server configuration is missing the API key'
+  )
   process.exit(1)
 }
 
@@ -33,16 +206,35 @@ async function apiRequest(
       body: body ? JSON.stringify(body) : undefined,
     })
   } catch (error) {
-    const baseHint = `Network error calling ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`
-    const localHint = /^(http:\/\/localhost|http:\/\/127\.0\.0\.1)(:\d+)?(\/|$)/.test(API_BASE_URL)
-      ? ` Is your local API running? Try: pnpm --filter @analogresearch/web dev`
-      : ''
-    throw new Error(`${baseHint}.${localHint}`)
+    throw new McpRuntimeError('Failed to reach the Analog Research API', {
+      code: 'API_FETCH_FAILED',
+      status: 502,
+      operatorHint: isLocalApiUrl(API_BASE_URL) ? 'check local web server' : 'check API reachability',
+      details: {
+        endpoint,
+        method,
+        apiBaseUrl: API_BASE_URL,
+      },
+      cause: error,
+    })
   }
 
   if (!response.ok) {
-    const error = await response.text()
-    throw new Error(`API error ${response.status}: ${error}`)
+    const errorText = await response.text()
+    throw new McpRuntimeError(`Analog Research API returned ${response.status}`, {
+      code: 'API_RESPONSE_ERROR',
+      status: response.status,
+      operatorHint:
+        response.status === 401 || response.status === 403
+          ? 'check API key auth'
+          : 'check API response',
+      details: {
+        endpoint,
+        method,
+        apiBaseUrl: API_BASE_URL,
+        responseBody: truncateText(errorText, 240),
+      },
+    })
   }
 
   return response.json()
@@ -68,6 +260,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params
+  const runId = crypto.randomUUID()
+  const runLogger = mcpLogger.child({
+    context: {
+      file: 'packages/analogresearch-mcp/src/index.ts',
+      function: 'CallToolRequestSchema',
+    },
+    runId,
+    toolName: name,
+  })
 
   try {
     let result: unknown
@@ -513,7 +714,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break
 
       default:
-        throw new Error(`Unknown tool: ${name}`)
+        throw new McpRuntimeError(`Unknown tool: ${name}`, {
+          code: 'UNKNOWN_TOOL',
+          status: 400,
+          operatorHint: 'check MCP tool name',
+          runId,
+        })
     }
 
     return {
@@ -525,11 +731,25 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       ],
     }
   } catch (error) {
+    const normalized = normalizeMcpError(error, {
+      message: 'MCP tool call failed',
+      operatorHint: 'check MCP tool handler',
+      runId,
+    })
+
+    runLogger.error(
+      {
+        error: serializeMcpError(normalized),
+        operatorHint: normalized.operatorHint,
+      },
+      'MCP tool call failed'
+    )
+
     return {
       content: [
         {
           type: 'text',
-          text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          text: toMcpErrorText(normalized),
         },
       ],
       isError: true,
@@ -540,9 +760,29 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  console.error('Analog Research MCP server running')
+  mcpLogger.info(
+    {
+      apiBaseUrl: API_BASE_URL,
+    },
+    'Analog Research MCP server running'
+  )
 }
 
-main().catch(console.error)
+main().catch((error) => {
+  const normalized = normalizeMcpError(error, {
+    message: 'Failed to start MCP server',
+    operatorHint: 'check MCP stdio startup',
+  })
+
+  mcpLogger.error(
+    {
+      error: serializeMcpError(normalized),
+      operatorHint: normalized.operatorHint,
+    },
+    'Analog Research MCP server exited unexpectedly'
+  )
+
+  process.exitCode = 1
+})
 
 export {}

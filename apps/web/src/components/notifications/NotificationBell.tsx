@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Bell, Check } from 'lucide-react'
+import { normalizeError } from '@/lib/errors'
+import { logger } from '@/lib/logger'
 import { NotificationItem, type NotificationData } from './NotificationItem'
 
 interface NotificationsResponse {
@@ -15,6 +17,10 @@ interface NotificationsResponse {
 }
 
 const POLL_INTERVAL_MS = 30000 // 30 seconds
+const notificationBellLog = logger.withContext(
+  'components/notifications/NotificationBell.tsx',
+  'NotificationBell'
+)
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false)
@@ -50,16 +56,50 @@ export function NotificationBell() {
         return
       }
 
-      const data: NotificationsResponse = await response.json().catch(() => ({ success: false }))
-      if (data.success && data.data) {
+      const data: NotificationsResponse | null = await response.json().catch(() => null)
+      if (!response.ok) {
+        notificationBellLog.error(
+          'Notification fetch failed',
+          {
+            endpoint: '/api/v1/notifications',
+            status: response.status,
+          },
+          normalizeError(
+            new Error(data?.error || 'Failed to load notifications'),
+            {
+              operatorHint:
+                'NotificationBell fetchNotifications -> /api/v1/notifications GET did not return the expected success payload',
+            }
+          )
+        )
+        return
+      }
+
+      if (data?.success && data.data) {
         setNotifications(data.data.notifications)
         setUnreadCount(data.data.unread_count)
+        return
       }
+
+      notificationBellLog.warn('Notification fetch returned an unexpected payload', {
+        endpoint: '/api/v1/notifications',
+        operatorHint:
+          'NotificationBell fetchNotifications expects success plus data.notifications and data.unread_count',
+      })
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         return
       }
-      console.error('Failed to fetch notifications:', error)
+      notificationBellLog.error(
+        'Notification fetch threw unexpectedly',
+        {
+          endpoint: '/api/v1/notifications',
+        },
+        normalizeError(error, {
+          operatorHint:
+            'NotificationBell fetchNotifications -> /api/v1/notifications GET failed before payload parsing completed',
+        })
+      )
     } finally {
       setIsLoading(false)
     }
@@ -108,9 +148,34 @@ export function NotificationBell() {
           prev.map((n) => (n.id === notificationId ? { ...n, is_read: true } : n))
         )
         setUnreadCount((prev) => Math.max(0, prev - 1))
+        return
       }
+
+      const payload: NotificationsResponse | null = await response.json().catch(() => null)
+      notificationBellLog.error(
+        'Notification mark-read request failed',
+        {
+          endpoint: '/api/v1/notifications',
+          notificationId,
+          status: response.status,
+        },
+        normalizeError(new Error(payload?.error || 'Failed to update notification'), {
+          operatorHint:
+            'NotificationBell handleMarkRead -> /api/v1/notifications PATCH notification_ids payload failed',
+        })
+      )
     } catch (error) {
-      console.error('Failed to mark notification as read:', error)
+      notificationBellLog.error(
+        'Notification mark-read threw unexpectedly',
+        {
+          endpoint: '/api/v1/notifications',
+          notificationId,
+        },
+        normalizeError(error, {
+          operatorHint:
+            'NotificationBell handleMarkRead -> /api/v1/notifications PATCH failed before the read mutation completed',
+        })
+      )
     }
   }
 
@@ -130,9 +195,32 @@ export function NotificationBell() {
       if (response.ok) {
         setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
         setUnreadCount(0)
+        return
       }
+
+      const payload: NotificationsResponse | null = await response.json().catch(() => null)
+      notificationBellLog.error(
+        'Notification mark-all-read request failed',
+        {
+          endpoint: '/api/v1/notifications',
+          status: response.status,
+        },
+        normalizeError(new Error(payload?.error || 'Failed to update notifications'), {
+          operatorHint:
+            'NotificationBell handleMarkAllRead -> /api/v1/notifications PATCH mark_all_read payload failed',
+        })
+      )
     } catch (error) {
-      console.error('Failed to mark all as read:', error)
+      notificationBellLog.error(
+        'Notification mark-all-read threw unexpectedly',
+        {
+          endpoint: '/api/v1/notifications',
+        },
+        normalizeError(error, {
+          operatorHint:
+            'NotificationBell handleMarkAllRead -> /api/v1/notifications PATCH failed before the bulk read mutation completed',
+        })
+      )
     }
   }
 

@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { deliverNotification } from './notification-delivery'
+import { AppError, normalizeError } from './errors'
+import { logger } from './logger'
 
 export type NotificationRecipientType = 'human' | 'agent'
 
@@ -51,6 +53,12 @@ export interface AgentWorkflowNotificationResult {
   ownerNotificationId: string | null
 }
 
+const createNotificationLog = logger.withContext('lib/notifications.ts', 'createNotification')
+const ownerFanoutLog = logger.withContext(
+  'lib/notifications.ts',
+  'createAgentWorkflowNotificationWithOwnerFanout'
+)
+
 /**
  * Create a notification and deliver it to configured channels.
  * This is the preferred way to create notifications - it handles both
@@ -79,13 +87,28 @@ export async function createNotification(
     .single()
 
   if (error || !notification) {
-    console.error('[notifications] Failed to create notification:', error)
+    createNotificationLog.error(
+      'Failed to create notification',
+      {
+        recipientType,
+        recipientId,
+        notificationType: type,
+      },
+      normalizeError(
+        error ?? new AppError('Notification insert returned no row', {
+          operatorHint: 'check notifications insert',
+        }),
+        {
+          operatorHint: 'check notifications insert',
+        }
+      )
+    )
     return null
   }
 
   // Deliver to configured channels (non-blocking)
   // Fire and forget - don't wait for delivery
-  deliverNotification({
+  void deliverNotification({
     id: notification.id,
     recipient_type: notification.recipient_type,
     recipient_id: notification.recipient_id,
@@ -95,7 +118,18 @@ export async function createNotification(
     data: (notification.data ?? {}) as Record<string, unknown>,
     created_at: notification.created_at,
   }).catch((err) => {
-    console.error('[notifications] Delivery failed:', err)
+    createNotificationLog.error(
+      'Notification delivery failed',
+      {
+        notificationId: notification.id,
+        recipientType: notification.recipient_type,
+        recipientId: notification.recipient_id,
+        notificationType: notification.type,
+      },
+      normalizeError(err, {
+        operatorHint: 'check channel delivery',
+      })
+    )
   })
 
   return { id: notification.id }
@@ -128,11 +162,30 @@ export async function createAgentWorkflowNotificationWithOwnerFanout(
     data,
   })
 
-  const { data: ownerAgent } = await supabase
+  const { data: ownerAgent, error: ownerAgentError } = await supabase
     .from('agents')
     .select('owner_human_id')
     .eq('id', agentId)
     .maybeSingle()
+
+  if (ownerAgentError) {
+    ownerFanoutLog.error(
+      'Failed to look up owner human for notification fanout',
+      {
+        agentId,
+        notificationType: type,
+      },
+      normalizeError(ownerAgentError, {
+        operatorHint: 'check owner_human_id lookup',
+      })
+    )
+
+    return {
+      agentNotificationId: agentNotification?.id || null,
+      ownerHumanId: null,
+      ownerNotificationId: null,
+    }
+  }
 
   const ownerHumanId = ownerAgent?.owner_human_id || null
   if (!ownerHumanId) {
@@ -209,6 +262,7 @@ export type ParseMarkReadRequestResult =
       ok: false
       status: 400
       error: string
+      operatorHint: string
       details?: unknown
     }
 
@@ -217,7 +271,12 @@ export async function parseMarkReadRequest(request: Request): Promise<ParseMarkR
   try {
     body = await request.json()
   } catch {
-    return { ok: false, status: 400, error: 'Invalid JSON body' }
+    return {
+      ok: false,
+      status: 400,
+      error: 'Invalid JSON body',
+      operatorHint: 'check notifications payload',
+    }
   }
 
   const parsed = markReadRequestSchema.safeParse(body)
@@ -226,6 +285,7 @@ export async function parseMarkReadRequest(request: Request): Promise<ParseMarkR
       ok: false,
       status: 400,
       error: 'Invalid request body',
+      operatorHint: 'check notifications payload',
       details: parsed.error.flatten(),
     }
   }
@@ -262,7 +322,11 @@ export async function listNotifications(
   const { data: notifications, error, count } = await query
 
   if (error) {
-    throw new Error(error.message)
+    throw new AppError(error.message, {
+      code: error.code,
+      status: 500,
+      operatorHint: 'check notifications query',
+    })
   }
 
   // Separate query so we always have an accurate badge count, independent of list filters.
@@ -274,7 +338,11 @@ export async function listNotifications(
     .eq('is_read', false)
 
   if (unreadError) {
-    throw new Error(unreadError.message)
+    throw new AppError(unreadError.message, {
+      code: unreadError.code,
+      status: 500,
+      operatorHint: 'check unread_count query',
+    })
   }
 
   return {
@@ -300,14 +368,21 @@ export async function markNotificationsRead(
       .eq('is_read', false)
 
     if (error) {
-      throw new Error(error.message)
+      throw new AppError(error.message, {
+        code: error.code,
+        status: 500,
+        operatorHint: 'check notifications update',
+      })
     }
 
     return
   }
 
   if (!notificationIds || notificationIds.length === 0) {
-    throw new Error('No notification_ids provided')
+    throw new AppError('No notification_ids provided', {
+      status: 400,
+      operatorHint: 'check notifications payload',
+    })
   }
 
   const { error } = await supabase
@@ -318,6 +393,10 @@ export async function markNotificationsRead(
     .in('id', notificationIds)
 
   if (error) {
-    throw new Error(error.message)
+    throw new AppError(error.message, {
+      code: error.code,
+      status: 500,
+      operatorHint: 'check notifications update',
+    })
   }
 }

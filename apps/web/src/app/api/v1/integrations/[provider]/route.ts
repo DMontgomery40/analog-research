@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
+import { AppError, normalizeError, toPublicErrorPayload, withRequestId } from '@/lib/errors'
 import { getExternalProviderPlugin } from '@/lib/external-jobs/providers/registry'
 import { requireIntegrationProviderAccess } from '@/lib/integrations/http'
 import { buildIntegrationCredentialsMask, parseIntegrationCredentialUpdate } from '@/lib/integrations/credentials'
 import { encryptIntegrationCredentials } from '@/lib/integrations-secrets'
+import { logger } from '@/lib/logger'
 import { ensureExternalIntegrationsConfigSchema, toSchemaParityErrorBody } from '@/lib/schema-parity'
 
 export const runtime = 'nodejs'
@@ -21,13 +23,17 @@ interface RouteParams {
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  const { log, requestId } = logger.withRequest(request, 'api/v1/integrations/[provider]/route.ts', 'GET')
   const access = await requireIntegrationProviderAccess(request, params, 'read')
-  if (!access.ok) return access.response
+  if (!access.ok) return withRequestId(access.response, requestId)
   const { provider, actingAgentId, serviceClient } = access.context
 
   const schema = await ensureExternalIntegrationsConfigSchema({ supabase: serviceClient })
   if (!schema.ok) {
-    return NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 })
+    return withRequestId(
+      NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 }),
+      requestId
+    )
   }
 
   const url = new URL(request.url)
@@ -42,39 +48,95 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     .maybeSingle()
 
   if (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
-  }
+    const normalized = normalizeError(error, {
+      message: 'Failed to load integration',
+      operatorHint:
+        'GET integrations/[provider] -> external_integrations maybeSingle for actingAgentId/provider/env',
+      requestId,
+      status: 500,
+    })
 
-  if (!data) {
-    return NextResponse.json(
-      { success: false, error: `Integration not configured for ${provider} (${env})` },
-      { status: 404 }
+    log.error('Integration lookup failed', { actingAgentId, provider, env }, normalized)
+
+    return withRequestId(
+      NextResponse.json(toPublicErrorPayload(normalized), { status: normalized.status ?? 500 }),
+      requestId
     )
   }
 
-  return NextResponse.json({ success: true, data })
+  if (!data) {
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError(`Integration not configured for ${provider} (${env})`, {
+            status: 404,
+            operatorHint:
+              'GET integrations/[provider] expected an active external_integrations row for actingAgentId/provider/env',
+            requestId,
+          })
+        ),
+        { status: 404 }
+      ),
+      requestId
+    )
+  }
+
+  return withRequestId(NextResponse.json({ success: true, data }), requestId)
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const { log, requestId } = logger.withRequest(request, 'api/v1/integrations/[provider]/route.ts', 'PUT')
   const access = await requireIntegrationProviderAccess(request, params, 'write')
-  if (!access.ok) return access.response
+  if (!access.ok) return withRequestId(access.response, requestId)
   const { provider, actingAgentId, serviceClient } = access.context
 
   const schema = await ensureExternalIntegrationsConfigSchema({ supabase: serviceClient })
   if (!schema.ok) {
-    return NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 })
+    return withRequestId(
+      NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 }),
+      requestId
+    )
   }
 
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError('Invalid JSON body', {
+            status: 400,
+            operatorHint:
+              'PUT integrations/[provider] expects a JSON object body before credential parsing',
+            requestId,
+          })
+        ),
+        { status: 400 }
+      ),
+      requestId
+    )
   }
 
   const parsed = upsertSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ success: false, error: parsed.error.flatten() }, { status: 400 })
+    return withRequestId(
+      NextResponse.json(
+        {
+          ...toPublicErrorPayload(
+            new AppError('Invalid request body', {
+              status: 400,
+              operatorHint:
+                'PUT integrations/[provider] expects env/api_key or credentials before zod validation',
+              requestId,
+            })
+          ),
+          details: parsed.error.flatten(),
+        },
+        { status: 400 }
+      ),
+      requestId
+    )
   }
 
   const plugin = getExternalProviderPlugin(provider)
@@ -83,12 +145,37 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     body: parsed.data,
   })
   if (!credentialUpdate.ok) {
-    return NextResponse.json({ success: false, error: credentialUpdate.error }, { status: 400 })
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError(credentialUpdate.error, {
+            status: 400,
+            operatorHint: credentialUpdate.operatorHint,
+            requestId,
+          })
+        ),
+        { status: 400 }
+      ),
+      requestId
+    )
   }
 
   const validatedCredentials = plugin.validateCredentials(credentialUpdate.value.credentials)
   if (!validatedCredentials.ok) {
-    return NextResponse.json({ success: false, error: validatedCredentials.error }, { status: 400 })
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError(validatedCredentials.error, {
+            status: 400,
+            operatorHint:
+              'PUT integrations/[provider] -> plugin.validateCredentials rejected normalized credentials',
+            requestId,
+          })
+        ),
+        { status: 400 }
+      ),
+      requestId
+    )
   }
 
   const encrypted = encryptIntegrationCredentials(credentialUpdate.value.credentials)
@@ -111,20 +198,37 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     .single()
 
   if (error || !data) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed to upsert integration' }, { status: 500 })
+    const normalized = normalizeError(error ?? new Error('Upsert returned no integration row'), {
+      message: 'Failed to upsert integration',
+      operatorHint:
+        'PUT integrations/[provider] -> external_integrations upsert on agent_id/provider/env',
+      requestId,
+      status: 500,
+    })
+
+    log.error('Integration upsert failed', { actingAgentId, provider, env: credentialUpdate.value.env }, normalized)
+
+    return withRequestId(
+      NextResponse.json(toPublicErrorPayload(normalized), { status: normalized.status ?? 500 }),
+      requestId
+    )
   }
 
-  return NextResponse.json({ success: true, data })
+  return withRequestId(NextResponse.json({ success: true, data }), requestId)
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const { log, requestId } = logger.withRequest(request, 'api/v1/integrations/[provider]/route.ts', 'DELETE')
   const access = await requireIntegrationProviderAccess(request, params, 'write')
-  if (!access.ok) return access.response
+  if (!access.ok) return withRequestId(access.response, requestId)
   const { provider, actingAgentId, serviceClient } = access.context
 
   const schema = await ensureExternalIntegrationsConfigSchema({ supabase: serviceClient })
   if (!schema.ok) {
-    return NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 })
+    return withRequestId(
+      NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 }),
+      requestId
+    )
   }
 
   const url = new URL(request.url)
@@ -138,8 +242,24 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     .eq('env', env)
 
   if (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    const normalized = normalizeError(error, {
+      message: 'Failed to delete integration',
+      operatorHint:
+        'DELETE integrations/[provider] -> external_integrations delete for actingAgentId/provider/env',
+      requestId,
+      status: 500,
+    })
+
+    log.error('Integration delete failed', { actingAgentId, provider, env }, normalized)
+
+    return withRequestId(
+      NextResponse.json(toPublicErrorPayload(normalized), { status: normalized.status ?? 500 }),
+      requestId
+    )
   }
 
-  return NextResponse.json({ success: true, data: { provider, env, deleted: true } })
+  return withRequestId(
+    NextResponse.json({ success: true, data: { provider, env, deleted: true } }),
+    requestId
+  )
 }

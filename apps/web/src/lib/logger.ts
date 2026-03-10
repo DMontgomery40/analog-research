@@ -1,20 +1,5 @@
-/**
- * Structured logging utility for Analog Research
- *
- * Provides consistent, structured logging with context (file, function, query)
- * for debugging and observability.
- *
- * Usage:
- *   import { logger } from '@/lib/logger'
- *
- *   // In API routes:
- *   const log = logger.withContext('api/v1/bookings/route.ts', 'GET')
- *   log.error('Failed to fetch booking', { bookingId, error: err.message })
- *
- *   // In lib functions:
- *   const log = logger.withContext('lib/booking-settlement.ts', 'ensureBookingSettlementRecords')
- *   log.info('Processing settlement', { bookingId, amount })
- */
+import pino, { type Logger as PinoLogger } from 'pino'
+import { getRequestId, normalizeError } from '@/lib/errors'
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
@@ -31,141 +16,128 @@ export interface LogEntry {
   data?: Record<string, unknown>
   timestamp: string
   error?: {
+    name: string
     message: string
     code?: string
     details?: unknown
+    operatorHint?: string
   }
+  operatorHint?: string
 }
 
-interface ContextualLogger {
+export interface ContextualLogger {
   debug: (message: string, data?: Record<string, unknown>) => void
   info: (message: string, data?: Record<string, unknown>) => void
   warn: (message: string, data?: Record<string, unknown>) => void
-  error: (message: string, data?: Record<string, unknown>, error?: Error | { message: string; code?: string }) => void
+  error: (message: string, data?: Record<string, unknown>, error?: unknown) => void
 }
 
-function formatLogEntry(entry: LogEntry): string {
-  const parts = [
-    `[${entry.timestamp}]`,
-    `[${entry.level.toUpperCase()}]`,
-    `[${entry.context.file}:${entry.context.function}]`,
-  ]
-
-  if (entry.context.requestId) {
-    parts.push(`[req:${entry.context.requestId}]`)
+function resolveLogLevel(): LogLevel {
+  if (typeof window !== 'undefined') {
+    return (process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevel) || 'info'
   }
 
-  parts.push(entry.message)
-
-  if (entry.data && Object.keys(entry.data).length > 0) {
-    parts.push(JSON.stringify(entry.data))
-  }
-
-  if (entry.error) {
-    parts.push(`error=${JSON.stringify(entry.error)}`)
-  }
-
-  return parts.join(' ')
+  return ((process.env.LOG_LEVEL || process.env.NEXT_PUBLIC_LOG_LEVEL) as LogLevel) || 'info'
 }
 
-function createLogEntry(
+const baseLogger = pino({
+  level: resolveLogLevel(),
+  base: undefined,
+  messageKey: 'message',
+  timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
+  browser: typeof window !== 'undefined'
+    ? {
+        asObject: true,
+      }
+    : undefined,
+})
+
+const rootContextLogger = baseLogger.child({
+  context: {
+    file: 'unknown',
+    function: 'unknown',
+  },
+})
+
+function buildPayload(data?: Record<string, unknown>, error?: unknown) {
+  const normalized = error ? normalizeError(error) : null
+  const operatorHint =
+    normalized?.operatorHint ||
+    (typeof data?.operatorHint === 'string' ? data.operatorHint : undefined)
+
+  return {
+    ...(data && Object.keys(data).length > 0 ? { data } : {}),
+    ...(normalized
+      ? {
+          error: {
+            name: normalized.name,
+            message: normalized.message,
+            ...(normalized.code ? { code: normalized.code } : {}),
+            ...(normalized.details !== undefined ? { details: normalized.details } : {}),
+            ...(normalized.operatorHint ? { operatorHint: normalized.operatorHint } : {}),
+          },
+        }
+      : {}),
+    ...(operatorHint ? { operatorHint } : {}),
+  }
+}
+
+function logWithLevel(
+  instance: PinoLogger,
   level: LogLevel,
   message: string,
-  context: LogContext,
   data?: Record<string, unknown>,
-  error?: Error | { message: string; code?: string }
-): LogEntry {
-  const entry: LogEntry = {
-    level,
-    message,
-    context,
-    timestamp: new Date().toISOString(),
-  }
-
-  if (data && Object.keys(data).length > 0) {
-    entry.data = data
-  }
-
-  if (error) {
-    entry.error = {
-      message: error.message,
-      code: 'code' in error ? error.code : undefined,
-    }
-  }
-
-  return entry
-}
-
-function shouldLog(level: LogLevel): boolean {
-  const levels: LogLevel[] = ['debug', 'info', 'warn', 'error']
-  const minLevel = (process.env.LOG_LEVEL as LogLevel) || 'info'
-  return levels.indexOf(level) >= levels.indexOf(minLevel)
-}
-
-function logEntry(entry: LogEntry): void {
-  if (!shouldLog(entry.level)) return
-
-  const formatted = formatLogEntry(entry)
-
-  switch (entry.level) {
-    case 'debug':
-      console.debug(formatted)
-      break
-    case 'info':
-      console.info(formatted)
-      break
-    case 'warn':
-      console.warn(formatted)
-      break
-    case 'error':
-      console.error(formatted)
-      break
-  }
+  error?: unknown
+): void {
+  instance[level](buildPayload(data, error), message)
 }
 
 function withContext(file: string, fn: string, requestId?: string): ContextualLogger {
-  const context: LogContext = { file, function: fn, requestId }
+  const child = baseLogger.child({
+    context: {
+      file,
+      function: fn,
+      ...(requestId ? { requestId } : {}),
+    },
+    ...(requestId ? { requestId } : {}),
+  })
 
   return {
-    debug: (message: string, data?: Record<string, unknown>) => {
-      logEntry(createLogEntry('debug', message, context, data))
-    },
-    info: (message: string, data?: Record<string, unknown>) => {
-      logEntry(createLogEntry('info', message, context, data))
-    },
-    warn: (message: string, data?: Record<string, unknown>) => {
-      logEntry(createLogEntry('warn', message, context, data))
-    },
-    error: (
-      message: string,
-      data?: Record<string, unknown>,
-      error?: Error | { message: string; code?: string }
-    ) => {
-      logEntry(createLogEntry('error', message, context, data, error))
-    },
+    debug: (message, data) => logWithLevel(child, 'debug', message, data),
+    info: (message, data) => logWithLevel(child, 'info', message, data),
+    warn: (message, data) => logWithLevel(child, 'warn', message, data),
+    error: (message, data, error) => logWithLevel(child, 'error', message, data, error),
+  }
+}
+
+function withRequest(
+  request: Pick<Request, 'headers'>,
+  file: string,
+  fn: string
+): { requestId: string; log: ContextualLogger } {
+  const requestId = getRequestId(request)
+  return {
+    requestId,
+    log: withContext(file, fn, requestId),
   }
 }
 
 export const logger = {
   withContext,
-
-  // Direct logging without context (for simple cases)
+  withRequest,
   debug: (message: string, data?: Record<string, unknown>) => {
-    logEntry(createLogEntry('debug', message, { file: 'unknown', function: 'unknown' }, data))
+    logWithLevel(rootContextLogger, 'debug', message, data)
   },
   info: (message: string, data?: Record<string, unknown>) => {
-    logEntry(createLogEntry('info', message, { file: 'unknown', function: 'unknown' }, data))
+    logWithLevel(rootContextLogger, 'info', message, data)
   },
   warn: (message: string, data?: Record<string, unknown>) => {
-    logEntry(createLogEntry('warn', message, { file: 'unknown', function: 'unknown' }, data))
+    logWithLevel(rootContextLogger, 'warn', message, data)
   },
-  error: (
-    message: string,
-    data?: Record<string, unknown>,
-    error?: Error | { message: string; code?: string }
-  ) => {
-    logEntry(
-      createLogEntry('error', message, { file: 'unknown', function: 'unknown' }, data, error)
-    )
+  error: (message: string, data?: Record<string, unknown>, error?: unknown) => {
+    logWithLevel(rootContextLogger, 'error', message, data, error)
   },
 }

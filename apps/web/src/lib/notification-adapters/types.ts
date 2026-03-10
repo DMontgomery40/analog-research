@@ -35,6 +35,7 @@ export type ChannelConfig = WebhookConfig | EmailConfig | SlackConfig | DiscordC
 export interface DeliveryResult {
   success: boolean
   error?: string
+  operatorHint?: string
   responseStatus?: number
   responseBody?: string
 }
