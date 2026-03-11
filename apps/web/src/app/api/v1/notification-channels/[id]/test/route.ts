@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { AppError, toPublicErrorPayload, withRequestId } from '@/lib/errors'
 import { sendTestNotification } from '@/lib/notification-delivery'
 import { logger } from '@/lib/logger'
 import { authenticateChannelRequest } from '@/lib/notification-channels-auth'
@@ -9,9 +10,13 @@ interface RouteContext {
 
 // POST /api/v1/notification-channels/[id]/test - Send test notification
 export async function POST(request: NextRequest, context: RouteContext) {
-  const log = logger.withContext('api/v1/notification-channels/[id]/test', 'POST')
+  const { log, requestId } = logger.withRequest(
+    request,
+    'api/v1/notification-channels/[id]/test',
+    'POST'
+  )
   const auth = await authenticateChannelRequest(request, log)
-  if (!auth.ok) return auth.response
+  if (!auth.ok) return withRequestId(auth.response, requestId)
 
   const { entityType, entityId, serviceClient } = auth
   const { id } = await context.params
@@ -26,13 +31,34 @@ export async function POST(request: NextRequest, context: RouteContext) {
     .single()
 
   if (fetchError || !channel) {
-    return NextResponse.json({ success: false, error: 'Channel not found' }, { status: 404 })
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError('Channel not found', {
+            status: 404,
+            operatorHint: 'check notification_channels row',
+            requestId,
+          })
+        ),
+        { status: 404 }
+      ),
+      requestId
+    )
   }
 
   if (!channel.enabled) {
-    return NextResponse.json(
-      { success: false, error: 'Channel is disabled. Enable it first to send test notifications.' },
-      { status: 400 }
+    return withRequestId(
+      NextResponse.json(
+        toPublicErrorPayload(
+          new AppError('Channel is disabled. Enable it first to send test notifications.', {
+            status: 400,
+            operatorHint: 'check channel enabled flag',
+            requestId,
+          })
+        ),
+        { status: 400 }
+      ),
+      requestId
     )
   }
 
@@ -42,22 +68,33 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   if (!result.success) {
     log.warn('Test notification failed', { channelId: id, error: result.error })
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Test notification failed',
-        details: result.error,
-        response_status: result.responseStatus,
-      },
-      { status: 400 }
+    return withRequestId(
+      NextResponse.json(
+        {
+          ...toPublicErrorPayload(
+            new AppError('Test notification failed', {
+              status: 400,
+              operatorHint: result.operatorHint || 'check channel delivery',
+              requestId,
+            })
+          ),
+          details: result.error,
+          response_status: result.responseStatus,
+        },
+        { status: 400 }
+      ),
+      requestId
     )
   }
 
   log.info('Test notification sent', { channelId: id })
 
-  return NextResponse.json({
-    success: true,
-    message: 'Test notification sent successfully',
-    response_status: result.responseStatus,
-  })
+  return withRequestId(
+    NextResponse.json({
+      success: true,
+      message: 'Test notification sent successfully',
+      response_status: result.responseStatus,
+    }),
+    requestId
+  )
 }

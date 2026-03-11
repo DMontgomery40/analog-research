@@ -1,4 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
+import { normalizeError } from '@/lib/errors'
+import { logger } from '@/lib/logger'
 
 export type AdminAction =
   | 'human.verify'
@@ -24,6 +26,8 @@ export interface AuditLogInput {
   afterState?: Record<string, unknown>
   notes?: string
 }
+
+const auditLog = logger.withContext('lib/admin/audit.ts', 'logAdminAction')
 
 /**
  * Log an admin action to the moderation_events table.
@@ -64,14 +68,40 @@ export async function logAdminAction(input: AuditLogInput): Promise<{ success: b
     })
 
     if (error) {
-      console.error('Failed to log admin action:', error)
+      auditLog.error(
+        'Failed to persist admin audit action',
+        {
+          action: input.action,
+          targetType: input.targetType,
+          targetId: input.targetId,
+          adminUserId: input.adminUserId,
+        },
+        normalizeError(error, {
+          operatorHint: 'check moderation_events insert',
+        })
+      )
       return { success: false, error: error.message }
     }
 
     return { success: true }
   } catch (error) {
-    console.error('Failed to log admin action:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    const normalized = normalizeError(error, {
+      message: 'Failed to log admin action',
+      operatorHint: 'check moderation_events insert',
+    })
+
+    auditLog.error(
+      'Admin audit logging threw unexpectedly',
+      {
+        action: input.action,
+        targetType: input.targetType,
+        targetId: input.targetId,
+        adminUserId: input.adminUserId,
+      },
+      normalized
+    )
+
+    return { success: false, error: normalized.message }
   }
 }
 

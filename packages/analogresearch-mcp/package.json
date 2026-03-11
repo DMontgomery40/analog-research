@@ -38,7 +38,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0"
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "pino": "^10.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -71,6 +71,37 @@ describe('integration credential parsing', () => {
     expect(parsed.ok).toBe(false)
     if (!parsed.ok) {
       expect(parsed.error).toContain('Missing required credential fields')
+      expect(parsed.operatorHint).toBe(
+        'parseIntegrationCredentialUpdate did not populate required credentialFields from body or body.credentials'
+      )
+    }
+  })
+
+  it('returns an operator hint when no credential values can be normalized', () => {
+    const optionalDescriptor = {
+      ...proxyPicsDescriptor,
+      credentialFields: proxyPicsDescriptor.credentialFields.map((field) => ({
+        ...field,
+        required: false,
+      })),
+    }
+
+    const parsed = parseIntegrationCredentialUpdate({
+      descriptor: optionalDescriptor,
+      body: {
+        env: 'live',
+        credentials: {
+          api_key: '   ',
+        },
+      },
+    })
+
+    expect(parsed.ok).toBe(false)
+    if (!parsed.ok) {
+      expect(parsed.error).toBe('No credential values provided')
+      expect(parsed.operatorHint).toBe(
+        'parseIntegrationCredentialUpdate found no stringifiable credentials in body or body.credentials'
+      )
     }
   })
 })

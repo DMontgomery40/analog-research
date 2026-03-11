@@ -8,6 +8,8 @@
  */
 
 import { createServiceClient } from '@/lib/supabase/server'
+import { normalizeError } from '@/lib/errors'
+import { logger } from '@/lib/logger'
 import {
   deliverWebhook,
   deliverEmail,
@@ -45,6 +47,28 @@ interface Notification {
   created_at: string
 }
 
+const deliverNotificationLog = logger.withContext(
+  'lib/notification-delivery.ts',
+  'deliverNotification'
+)
+const deliverToChannelLog = logger.withContext(
+  'lib/notification-delivery.ts',
+  'deliverToChannel'
+)
+const logDeliveryLog = logger.withContext('lib/notification-delivery.ts', 'logDelivery')
+const updateChannelStatsLog = logger.withContext(
+  'lib/notification-delivery.ts',
+  'updateChannelStats'
+)
+const sendTestNotificationLog = logger.withContext(
+  'lib/notification-delivery.ts',
+  'sendTestNotification'
+)
+const getChannelsForEntityLog = logger.withContext(
+  'lib/notification-delivery.ts',
+  'getChannelsForEntity'
+)
+
 /**
  * Deliver a notification to all configured channels for the recipient.
  * This is the main entry point - call this after creating a notification.
@@ -66,7 +90,17 @@ export async function deliverNotification(
     .eq('enabled', true)
 
   if (error) {
-    console.error('[notification-delivery] Failed to fetch channels:', error)
+    deliverNotificationLog.error(
+      'Failed to fetch notification channels',
+      {
+        notificationId: notification.id,
+        recipientType: notification.recipient_type,
+        recipientId: notification.recipient_id,
+      },
+      normalizeError(error, {
+        operatorHint: 'check notification_channels query',
+      })
+    )
     return []
   }
 
@@ -132,14 +166,28 @@ async function deliverToChannel(
         return {
           success: false,
           error: `Unknown channel type: ${channel.channel_type}`,
+          operatorHint: 'check channel_type config',
         }
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    console.error(`[notification-delivery] Channel ${channel.id} error:`, errorMessage)
+    const normalized = normalizeError(error, {
+      operatorHint: `check ${channel.channel_type} channel config`,
+    })
+
+    deliverToChannelLog.error(
+      'Notification channel delivery failed',
+      {
+        notificationId: notification.id,
+        channelId: channel.id,
+        channelType: channel.channel_type,
+      },
+      normalized
+    )
+
     return {
       success: false,
-      error: errorMessage,
+      error: normalized.message,
+      operatorHint: normalized.operatorHint,
     }
   }
 }
@@ -164,7 +212,17 @@ async function logDelivery(
   })
 
   if (error) {
-    console.error('[notification-delivery] Failed to log delivery:', error)
+    logDeliveryLog.error(
+      'Failed to persist notification delivery log',
+      {
+        notificationId,
+        channelId,
+        status: result.success ? 'delivered' : 'failed',
+      },
+      normalizeError(error, {
+        operatorHint: 'check delivery_log insert',
+      })
+    )
   }
 }
 
@@ -183,16 +241,43 @@ async function updateChannelStats(
       p_channel_id: channelId,
     })
     if (error) {
+      updateChannelStatsLog.warn('Channel delivery-count RPC unavailable, using row fallback', {
+        channelId,
+        operatorHint: 'check channel stats RPC',
+        rpc: 'increment_channel_delivery_count',
+      })
+
       // Best-effort fallback if the RPC is missing/unavailable.
-      const { data: channel } = await serviceClient
+      const { data: channel, error: channelError } = await serviceClient
         .from('notification_channels')
         .select('delivery_count')
         .eq('id', channelId)
         .maybeSingle()
 
-      if (!channel) return
+      if (channelError) {
+        updateChannelStatsLog.error(
+          'Failed to load channel stats fallback row',
+          {
+            channelId,
+            rpc: 'increment_channel_delivery_count',
+          },
+          normalizeError(channelError, {
+            operatorHint: 'check channel stats fallback',
+          })
+        )
+        return
+      }
 
-      await serviceClient
+      if (!channel) {
+        updateChannelStatsLog.warn('Missing channel row during stats fallback', {
+          channelId,
+          operatorHint: 'check notification_channels row',
+          rpc: 'increment_channel_delivery_count',
+        })
+        return
+      }
+
+      const { error: updateError } = await serviceClient
         .from('notification_channels')
         .update({
           delivery_count: Number(channel.delivery_count || 0) + 1,
@@ -200,6 +285,19 @@ async function updateChannelStats(
           last_error: null,
         } as never)
         .eq('id', channelId)
+
+      if (updateError) {
+        updateChannelStatsLog.error(
+          'Failed to update channel delivery stats fallback',
+          {
+            channelId,
+            rpc: 'increment_channel_delivery_count',
+          },
+          normalizeError(updateError, {
+            operatorHint: 'check channel stats fallback',
+          })
+        )
+      }
     }
   } else {
     const { error } = await serviceClient.rpc('increment_channel_failure_count', {
@@ -207,22 +305,62 @@ async function updateChannelStats(
       p_error: result.error,
     })
     if (error) {
+      updateChannelStatsLog.warn('Channel failure-count RPC unavailable, using row fallback', {
+        channelId,
+        operatorHint: 'check channel stats RPC',
+        rpc: 'increment_channel_failure_count',
+      })
+
       // Best-effort fallback if the RPC is missing/unavailable.
-      const { data: channel } = await serviceClient
+      const { data: channel, error: channelError } = await serviceClient
         .from('notification_channels')
         .select('failure_count')
         .eq('id', channelId)
         .maybeSingle()
 
-      if (!channel) return
+      if (channelError) {
+        updateChannelStatsLog.error(
+          'Failed to load channel failure stats fallback row',
+          {
+            channelId,
+            rpc: 'increment_channel_failure_count',
+          },
+          normalizeError(channelError, {
+            operatorHint: 'check channel stats fallback',
+          })
+        )
+        return
+      }
 
-      await serviceClient
+      if (!channel) {
+        updateChannelStatsLog.warn('Missing channel row during failure stats fallback', {
+          channelId,
+          operatorHint: 'check notification_channels row',
+          rpc: 'increment_channel_failure_count',
+        })
+        return
+      }
+
+      const { error: updateError } = await serviceClient
         .from('notification_channels')
         .update({
           failure_count: Number(channel.failure_count || 0) + 1,
           last_error: result.error ?? null,
         } as never)
         .eq('id', channelId)
+
+      if (updateError) {
+        updateChannelStatsLog.error(
+          'Failed to update channel failure stats fallback',
+          {
+            channelId,
+            rpc: 'increment_channel_failure_count',
+          },
+          normalizeError(updateError, {
+            operatorHint: 'check channel stats fallback',
+          })
+        )
+      }
     }
   }
 }
@@ -240,9 +378,14 @@ export async function sendTestNotification(channelId: string): Promise<DeliveryR
     .single()
 
   if (error || !channel) {
+    sendTestNotificationLog.warn('Test notification channel not found', {
+      channelId,
+      operatorHint: 'check notification_channels row',
+    })
     return {
       success: false,
       error: 'Channel not found',
+      operatorHint: 'check notification_channels row',
     }
   }
 
@@ -276,7 +419,16 @@ export async function getChannelsForEntity(
     .eq('entity_id', entityId)
 
   if (error) {
-    console.error('[notification-delivery] Failed to get channels:', error)
+    getChannelsForEntityLog.error(
+      'Failed to load notification channels for entity',
+      {
+        entityType,
+        entityId,
+      },
+      normalizeError(error, {
+        operatorHint: 'check notification_channels query',
+      })
+    )
     return []
   }
 

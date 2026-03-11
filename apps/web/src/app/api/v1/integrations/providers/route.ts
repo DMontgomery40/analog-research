@@ -1,19 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { listExternalProviderDescriptors } from '@/lib/external-jobs/providers/registry'
+import { normalizeError, toPublicErrorPayload, withRequestId } from '@/lib/errors'
+import { logger } from '@/lib/logger'
 import { requireOwnerAgentAccess } from '@/lib/owner-agent-auth'
 import { ensureExternalIntegrationsConfigSchema, toSchemaParityErrorBody } from '@/lib/schema-parity'
 
 export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
+  const { log, requestId } = logger.withRequest(
+    request,
+    'api/v1/integrations/providers/route.ts',
+    'GET'
+  )
   const auth = await requireOwnerAgentAccess(request, 'read', { createIfMissing: true })
-  if (!auth.ok) return auth.response
+  if (!auth.ok) return withRequestId(auth.response, requestId)
   const { actingAgentId, serviceClient } = auth.context
 
   const schema = await ensureExternalIntegrationsConfigSchema({ supabase: serviceClient })
   if (!schema.ok) {
-    return NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 })
+    return withRequestId(
+      NextResponse.json(toSchemaParityErrorBody(schema), { status: 503 }),
+      requestId
+    )
   }
 
   const descriptors = listExternalProviderDescriptors()
@@ -25,7 +35,20 @@ export async function GET(request: NextRequest) {
     .eq('is_active', true)
 
   if (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    const normalized = normalizeError(error, {
+      message: 'Failed to list integration providers',
+      operatorHint:
+        'GET integrations/providers -> external_integrations select for actingAgentId before providerStatus mapping',
+      requestId,
+      status: 500,
+    })
+
+    log.error('Integration providers query failed', { actingAgentId }, normalized)
+
+    return withRequestId(
+      NextResponse.json(toPublicErrorPayload(normalized), { status: normalized.status ?? 500 }),
+      requestId
+    )
   }
 
   const rows = data ?? []
@@ -47,5 +70,5 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({ success: true, data: providerStatus })
+  return withRequestId(NextResponse.json({ success: true, data: providerStatus }), requestId)
 }

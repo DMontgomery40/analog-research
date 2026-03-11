@@ -18,6 +18,7 @@ type ParseCredentialUpdateResult =
   | {
     ok: false
     error: string
+    operatorHint: string
   }
 
 function normalizeStringValue(value: unknown): string | null {
@@ -99,6 +100,8 @@ export function parseIntegrationCredentialUpdate(
     return {
       ok: false,
       error: `Missing required credential fields: ${missingRequired.join(', ')}`,
+      operatorHint:
+        'parseIntegrationCredentialUpdate did not populate required credentialFields from body or body.credentials',
     }
   }
 
@@ -106,6 +109,8 @@ export function parseIntegrationCredentialUpdate(
     return {
       ok: false,
       error: 'No credential values provided',
+      operatorHint:
+        'parseIntegrationCredentialUpdate found no stringifiable credentials in body or body.credentials',
     }
   }
 

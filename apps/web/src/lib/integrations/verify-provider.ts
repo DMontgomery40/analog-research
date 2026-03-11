@@ -18,6 +18,7 @@ export type VerifyProviderConnectionResult =
       ok: false
       status: number
       error: string
+      operatorHint: string
     }
 
 /**
@@ -39,11 +40,23 @@ export async function verifyProviderConnection(
     .maybeSingle()
 
   if (error) {
-    return { ok: false, status: 500, error: error.message }
+    return {
+      ok: false,
+      status: 500,
+      error: error.message,
+      operatorHint:
+        'verifyProviderConnection -> external_integrations maybeSingle for actingAgentId/provider/env',
+    }
   }
 
   if (!integration) {
-    return { ok: false, status: 404, error: `Integration not configured for ${provider} (${env})` }
+    return {
+      ok: false,
+      status: 404,
+      error: `Integration not configured for ${provider} (${env})`,
+      operatorHint:
+        'verifyProviderConnection expected an active external_integrations row for actingAgentId/provider/env',
+    }
   }
 
   const plugin = getExternalProviderPlugin(provider)
@@ -52,13 +65,33 @@ export async function verifyProviderConnection(
       ok: false,
       status: 501,
       error: `Provider ${provider} does not support test_connection yet`,
+      operatorHint:
+        'verifyProviderConnection reached provider plugin without testConnection implementation',
     }
   }
 
-  const decrypted = decryptIntegrationCredentials<unknown>(integration.credentials_encrypted)
+  let decrypted: unknown
+  try {
+    decrypted = decryptIntegrationCredentials<unknown>(integration.credentials_encrypted)
+  } catch {
+    return {
+      ok: false,
+      status: 500,
+      error: `Stored integration credentials for ${provider} could not be decrypted`,
+      operatorHint:
+        'verifyProviderConnection -> decryptIntegrationCredentials could not decode stored credentials',
+    }
+  }
+
   const validation = plugin.validateCredentials(decrypted)
   if (!validation.ok) {
-    return { ok: false, status: 400, error: validation.error }
+    return {
+      ok: false,
+      status: 400,
+      error: validation.error,
+      operatorHint:
+        'verifyProviderConnection decrypted credentials then plugin.validateCredentials rejected the stored shape',
+    }
   }
 
   try {
@@ -71,6 +104,8 @@ export async function verifyProviderConnection(
       ok: false,
       status: 502,
       error: error instanceof Error ? error.message : `Failed to contact ${provider}`,
+      operatorHint:
+        'verifyProviderConnection -> plugin.testConnection rejected provider credentials or upstream reachability',
     }
   }
 
