@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { encryptIntegrationCredentials } from '@/lib/integrations-secrets'
 import { verifyProviderConnection } from '@/lib/integrations/verify-provider'
@@ -18,8 +18,20 @@ function createServiceClient(result: { data: unknown; error: { message: string }
 }
 
 describe('verifyProviderConnection', () => {
+  let previousEncryptionKey: string | undefined
+
   beforeEach(() => {
+    previousEncryptionKey = process.env.INTEGRATIONS_ENCRYPTION_KEY_BASE64
     process.env.INTEGRATIONS_ENCRYPTION_KEY_BASE64 = Buffer.alloc(32, 7).toString('base64')
+  })
+
+  afterEach(() => {
+    if (previousEncryptionKey === undefined) {
+      delete process.env.INTEGRATIONS_ENCRYPTION_KEY_BASE64
+      return
+    }
+
+    process.env.INTEGRATIONS_ENCRYPTION_KEY_BASE64 = previousEncryptionKey
   })
 
   it('returns an operator hint for integration lookup failures', async () => {
@@ -75,7 +87,7 @@ describe('verifyProviderConnection', () => {
 
     expect(result).toEqual({
       ok: false,
-      status: 400,
+      status: 500,
       error: 'Invalid ProxyPics credentials: missing apiKey',
       operatorHint:
         'verifyProviderConnection decrypted credentials then plugin.validateCredentials rejected the stored shape',

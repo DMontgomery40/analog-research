@@ -87,7 +87,7 @@ export async function verifyProviderConnection(
   if (!validation.ok) {
     return {
       ok: false,
-      status: 400,
+      status: 500,
       error: validation.error,
       operatorHint:
         'verifyProviderConnection decrypted credentials then plugin.validateCredentials rejected the stored shape',

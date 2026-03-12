@@ -18,12 +18,16 @@ export async function GET(request: NextRequest) {
   )
   const agent = await authenticateAgent(request)
   if (!agent) {
+    log.warn('Agent notifications auth failed', {
+      requestId,
+      operatorHint: 'authenticateAgent rejected API key and OAuth credentials',
+    })
     return withRequestId(
       NextResponse.json(
         toPublicErrorPayload(
           new AppError('Unauthorized', {
             status: 401,
-            operatorHint: 'check agent API key',
+            operatorHint: 'authenticateAgent rejected API key and OAuth credentials',
             requestId,
           })
         ),
@@ -110,12 +114,16 @@ export async function PATCH(request: NextRequest) {
   )
   const agent = await authenticateAgent(request)
   if (!agent) {
+    log.warn('Agent notifications auth failed', {
+      requestId,
+      operatorHint: 'authenticateAgent rejected API key and OAuth credentials',
+    })
     return withRequestId(
       NextResponse.json(
         toPublicErrorPayload(
           new AppError('Unauthorized', {
             status: 401,
-            operatorHint: 'check agent API key',
+            operatorHint: 'authenticateAgent rejected API key and OAuth credentials',
             requestId,
           })
         ),

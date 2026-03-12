@@ -57,6 +57,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@testing-library/react': path.resolve(
+        __dirname,
+        'node_modules/@testing-library/react/dist/index.js'
+      ),
+      '@testing-library/user-event': path.resolve(
+        __dirname,
+        'node_modules/@testing-library/user-event/dist/index.js'
+      ),
+      'react': path.resolve(__dirname, 'node_modules/react'),
+      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime.js'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+      'react-dom/client': path.resolve(__dirname, 'node_modules/react-dom/client.js'),
     },
   },
 })

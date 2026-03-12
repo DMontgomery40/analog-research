@@ -137,7 +137,6 @@ export function toPublicErrorPayload(error: unknown): {
   success: false
   error: string
   code?: string
-  operatorHint?: string
   requestId?: string
 } {
   const normalized = normalizeError(error)
@@ -146,7 +145,6 @@ export function toPublicErrorPayload(error: unknown): {
     success: false,
     error: normalized.message,
     ...(normalized.code ? { code: normalized.code } : {}),
-    ...(normalized.operatorHint ? { operatorHint: normalized.operatorHint } : {}),
     ...(normalized.requestId ? { requestId: normalized.requestId } : {}),
   }
 }

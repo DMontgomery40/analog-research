@@ -56,7 +56,6 @@ describe('error utilities', () => {
       success: false,
       error: 'Unauthorized',
       code: 'AUTH_REQUIRED',
-      operatorHint: 'check agent API key',
       requestId: 'req_456',
     })
   })

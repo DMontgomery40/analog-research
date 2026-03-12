@@ -27,6 +27,7 @@ export interface NotificationData {
 interface NotificationItemProps {
   notification: NotificationData
   onMarkRead?: (id: string) => void
+  disabled?: boolean
 }
 
 const NOTIFICATION_CONFIG: Record<string, { icon: typeof Bell; color: string }> = {
@@ -60,7 +61,7 @@ function formatTimeAgo(dateString: string): string {
   return date.toLocaleDateString()
 }
 
-export function NotificationItem({ notification, onMarkRead }: NotificationItemProps) {
+export function NotificationItem({ notification, onMarkRead, disabled = false }: NotificationItemProps) {
   const config = NOTIFICATION_CONFIG[notification.type] || { icon: Bell, color: 'text-muted-foreground' }
   const Icon = config.icon
 
@@ -74,9 +75,10 @@ export function NotificationItem({ notification, onMarkRead }: NotificationItemP
     <button
       type="button"
       onClick={handleClick}
+      disabled={disabled}
       className={`w-full flex items-start gap-3 p-3 text-left hover:bg-accent transition-colors ${
         !notification.is_read ? 'bg-accent/50' : ''
-      }`}
+      } disabled:cursor-not-allowed disabled:opacity-60`}
     >
       <div className={`shrink-0 mt-0.5 ${config.color}`}>
         <Icon className="w-5 h-5" />
