@@ -23,6 +23,7 @@ describe('notifications helpers', () => {
       ok: false,
       status: 400,
       error: 'Invalid JSON body',
+      operatorHint: 'check notifications payload',
     })
   })
 

@@ -27,20 +27,69 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [pollingEnabled, setPollingEnabled] = useState(true)
+  const [pendingReadIds, setPendingReadIds] = useState<Set<string>>(new Set())
+  const [markAllPending, setMarkAllPending] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const pendingReadIdsRef = useRef<Set<string>>(new Set())
+  const markAllPendingRef = useRef(false)
 
-  const disablePolling = useCallback(() => {
+  const clearNotifications = useCallback(() => {
     abortRef.current?.abort()
-    setPollingEnabled(false)
     setNotifications([])
     setUnreadCount(0)
   }, [])
 
-  const fetchNotifications = useCallback(async () => {
-    if (!pollingEnabled) return
+  const beginMarkRead = useCallback((notificationId: string) => {
+    if (markAllPendingRef.current || pendingReadIdsRef.current.has(notificationId)) {
+      return false
+    }
 
+    const next = new Set(pendingReadIdsRef.current)
+    next.add(notificationId)
+    pendingReadIdsRef.current = next
+    setPendingReadIds(next)
+    return true
+  }, [])
+
+  const finishMarkRead = useCallback((notificationId: string) => {
+    if (!pendingReadIdsRef.current.has(notificationId)) {
+      return
+    }
+
+    const next = new Set(pendingReadIdsRef.current)
+    next.delete(notificationId)
+    pendingReadIdsRef.current = next
+    setPendingReadIds(next)
+  }, [])
+
+  const beginMarkAll = useCallback(() => {
+    if (markAllPendingRef.current || pendingReadIdsRef.current.size > 0) {
+      return false
+    }
+
+    markAllPendingRef.current = true
+    setMarkAllPending(true)
+    return true
+  }, [])
+
+  const finishMarkAll = useCallback(() => {
+    markAllPendingRef.current = false
+    setMarkAllPending(false)
+  }, [])
+
+  const markNotificationReadLocally = useCallback((notificationId: string) => {
+    setNotifications((prev) => prev.map((notification) => {
+      if (notification.id !== notificationId || notification.is_read) {
+        return notification
+      }
+
+      setUnreadCount((prevCount) => Math.max(0, prevCount - 1))
+      return { ...notification, is_read: true }
+    }))
+  }, [])
+
+  const fetchNotifications = useCallback(async () => {
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
@@ -52,7 +101,7 @@ export function NotificationBell() {
 
       // Quietly stop polling if user is logged out or doesn't have a profile yet.
       if (response.status === 401 || response.status === 404) {
-        disablePolling()
+        clearNotifications()
         return
       }
 
@@ -103,12 +152,10 @@ export function NotificationBell() {
     } finally {
       setIsLoading(false)
     }
-  }, [disablePolling, pollingEnabled])
+  }, [clearNotifications])
 
   // Initial fetch and polling
   useEffect(() => {
-    if (!pollingEnabled) return
-
     fetchNotifications()
     const interval = setInterval(fetchNotifications, POLL_INTERVAL_MS)
 
@@ -116,7 +163,7 @@ export function NotificationBell() {
       clearInterval(interval)
       abortRef.current?.abort()
     }
-  }, [fetchNotifications, pollingEnabled])
+  }, [fetchNotifications])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -131,6 +178,10 @@ export function NotificationBell() {
   }, [])
 
   const handleMarkRead = async (notificationId: string) => {
+    if (!beginMarkRead(notificationId)) {
+      return
+    }
+
     try {
       const response = await fetch('/api/v1/notifications', {
         method: 'PATCH',
@@ -139,15 +190,12 @@ export function NotificationBell() {
       })
 
       if (response.status === 401 || response.status === 404) {
-        disablePolling()
+        clearNotifications()
         return
       }
 
       if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((n) => (n.id === notificationId ? { ...n, is_read: true } : n))
-        )
-        setUnreadCount((prev) => Math.max(0, prev - 1))
+        markNotificationReadLocally(notificationId)
         return
       }
 
@@ -176,10 +224,16 @@ export function NotificationBell() {
             'NotificationBell handleMarkRead -> /api/v1/notifications PATCH failed before the read mutation completed',
         })
       )
+    } finally {
+      finishMarkRead(notificationId)
     }
   }
 
   const handleMarkAllRead = async () => {
+    if (!beginMarkAll()) {
+      return
+    }
+
     try {
       const response = await fetch('/api/v1/notifications', {
         method: 'PATCH',
@@ -188,7 +242,7 @@ export function NotificationBell() {
       })
 
       if (response.status === 401 || response.status === 404) {
-        disablePolling()
+        clearNotifications()
         return
       }
 
@@ -221,6 +275,8 @@ export function NotificationBell() {
             'NotificationBell handleMarkAllRead -> /api/v1/notifications PATCH failed before the bulk read mutation completed',
         })
       )
+    } finally {
+      finishMarkAll()
     }
   }
 
@@ -248,7 +304,8 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                disabled={markAllPending || pendingReadIds.size > 0}
+                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Check className="w-3 h-3" />
                 Mark all read
@@ -273,6 +330,7 @@ export function NotificationBell() {
                     key={notification.id}
                     notification={notification}
                     onMarkRead={handleMarkRead}
+                    disabled={markAllPending || pendingReadIds.has(notification.id)}
                   />
                 ))}
               </div>

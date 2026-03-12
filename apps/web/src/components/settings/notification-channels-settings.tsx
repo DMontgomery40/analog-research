@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Bell, Loader2, Plus, Save, Send, Trash2 } from 'lucide-react'
 import { formatSchemaParityError } from '@/lib/schema-parity-client'
 
@@ -84,6 +84,8 @@ export function NotificationChannelsSettings() {
   const [form, setForm] = useState<ChannelFormState>(EMPTY_FORM)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const loadAbortRef = useRef<AbortController | null>(null)
+  const loadRequestIdRef = useRef(0)
 
   const querySuffix = useMemo(() => (asAgent ? '?as=agent' : ''), [asAgent])
 
@@ -93,25 +95,46 @@ export function NotificationChannelsSettings() {
   }
 
   const loadChannels = useCallback(async () => {
+    const requestId = loadRequestIdRef.current + 1
+    loadRequestIdRef.current = requestId
+    loadAbortRef.current?.abort()
+    const controller = new AbortController()
+    loadAbortRef.current = controller
+
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(`/api/v1/notification-channels${querySuffix}`)
+      const response = await fetch(`/api/v1/notification-channels${querySuffix}`, {
+        signal: controller.signal,
+      })
       const payload = await response.json()
+      if (loadRequestIdRef.current !== requestId) {
+        return
+      }
       if (!response.ok || !payload.success) {
         setError(formatSchemaParityError(payload, 'Failed to load notification channels'))
         return
       }
       setChannels(payload.data?.channels || [])
     } catch {
+      if (controller.signal.aborted || loadRequestIdRef.current !== requestId) {
+        return
+      }
+
       setError('Failed to load notification channels')
     } finally {
-      setLoading(false)
+      if (loadRequestIdRef.current === requestId) {
+        setLoading(false)
+      }
     }
   }, [querySuffix])
 
   useEffect(() => {
-    loadChannels()
+    void loadChannels()
+
+    return () => {
+      loadAbortRef.current?.abort()
+    }
   }, [loadChannels])
 
   const handleSave = async () => {
