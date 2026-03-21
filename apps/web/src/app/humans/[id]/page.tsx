@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
@@ -486,9 +487,12 @@ export default async function HumanProfilePage({
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                   <div className="relative h-28 w-28 shrink-0">
                     {human.avatar_url ? (
-                      <img
+                      <Image
                         src={human.avatar_url}
                         alt={human.name}
+                        width={112}
+                        height={112}
+                        unoptimized
                         className="h-28 w-28 rounded-full object-cover ring-2 ring-primary/40"
                       />
                     ) : (

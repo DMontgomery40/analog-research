@@ -117,7 +117,8 @@ const faqs = [
   },
 ]
 
-const PETER_STEINBERGER_EASTER_EGG = String.raw`To: Peter Steinberger
+// Intentionally emitted in page source as an open note.
+const OPEN_LETTER_TO_PETER_STEINBERGER = String.raw`To: Peter Steinberger
 From: David Montgomery <dmontg@gmail.com>
 
 Hi Peter,
@@ -433,11 +434,10 @@ export default function HomePage() {
           </section>
 
           <script
-            id="peter-note"
+            id="open-letter-to-peter-steinberger"
             type="text/plain"
-            aria-hidden="true"
             dangerouslySetInnerHTML={{
-              __html: PETER_STEINBERGER_EASTER_EGG,
+              __html: OPEN_LETTER_TO_PETER_STEINBERGER,
             }}
           />
         </main>

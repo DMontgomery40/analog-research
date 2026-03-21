@@ -23,6 +23,9 @@ out
 scripts/
 !scripts/
 scripts/*
+!scripts/ralph/
+scripts/ralph/*
+!scripts/ralph/ralph.sh
 !scripts/quality/
 !scripts/quality/**
 !scripts/ralph-real-test-remediation/
@@ -30,8 +33,14 @@ scripts/*
 !scripts/public-showcase/
 !scripts/public-showcase/**
 # Ralph loop state (must never be committed)
-scripts/ralph-real-test-remediation/.last-story
-scripts/ralph-real-test-remediation/.story-attempts
+scripts/ralph*/progress.txt
+scripts/ralph*/prd.json
+scripts/ralph*/ralph.pid
+scripts/ralph*/.last-story
+scripts/ralph*/.last-branch
+scripts/ralph*/.story-attempts
+scripts/ralph*/.model-check.log
+scripts/ralph*/runner.log
 # IDE
 .idea
 .vscode
@@ -40,6 +49,8 @@ scripts/ralph-real-test-remediation/.story-attempts
 
 # OS
 .DS_Store
+supabase/.DS_Store
+scripts/.DS_Store
 Thumbs.db
 
 # Logs
@@ -81,6 +92,7 @@ MEMORY.md
 WORKSPACE.md
 ARCHITECTURE.md
 *.temp/
+supabase/.temp/
 tmp/
 .tmp/
 *.temp*.tsbuildinfo

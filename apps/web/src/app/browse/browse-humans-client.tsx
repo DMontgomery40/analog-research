@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { MapPin, Star, DollarSign, Search, Github, Linkedin, Instagram, Youtube, Globe, Twitter } from 'lucide-react'
@@ -431,9 +432,12 @@ function BrowseHumansPageInner() {
                   <div className="rounded-2xl border border-border/60 bg-card/80 p-5 transition-colors hover:border-primary/40">
                     <div className="flex items-start gap-4 mb-4">
                       {human.avatar_url ? (
-                        <img
+                        <Image
                           src={human.avatar_url}
                           alt={human.name}
+                          width={64}
+                          height={64}
+                          unoptimized
                           className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/30"
                         />
                       ) : (
