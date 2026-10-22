@@ -9,6 +9,18 @@
   NODE_VERSION = "22.23.4"
   NEXT_USE_NETLIFY_EDGE = "true"
 
+[[redirects]]
+  from = "/llms.txt"
+  to = "/api/v1/llms.txt"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.well-known/llms.txt"
+  to = "/api/v1/llms.txt"
+  status = 200
+  force = true
+
 [dev]
   command = "pnpm --filter ./apps/web dev"
   targetPort = 3000
