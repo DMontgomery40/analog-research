@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { getSupabaseAuthCookieDomain } from '@/lib/supabase/cookie-domain'
 import { sanitizeRedirectPath } from '@/lib/auth-callback'
-import { logger } from '@/lib/logger'
 
 type CookieToSet = { name: string; value: string; options?: Partial<ResponseCookie> }
 
@@ -81,9 +80,8 @@ export async function updateSession(request: NextRequest) {
    */
   if (!isProtectedRoute && !isAuthRoute) {
     if (authDebug && pathname.startsWith('/auth/callback')) {
-      logger
-        .withContext('lib/supabase/session-gate.ts', 'updateSession')
-        .info('Auth debug: bypassing session gate for callback route', { pathname })
+      // This module runs in the edge proxy, where the Node logger cannot be bundled.
+      console.info('Auth debug: bypassing session gate for callback route', { pathname })
     }
     return NextResponse.next({ request })
   }
